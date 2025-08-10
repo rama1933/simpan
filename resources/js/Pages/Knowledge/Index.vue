@@ -314,13 +314,13 @@ const formatDate = (dateString) => {
 
 const getSelectedSKPDInfo = () => {
   if (!filters.value.skpd) return 'Pilih SKPD untuk melihat informasi detail';
-  
+
   const selectedSKPD = props.skpds.find(skpd => skpd.id == filters.value.skpd);
   if (!selectedSKPD) return '';
-  
+
   const metadata = selectedSKPD.metadata;
   if (!metadata) return selectedSKPD.name;
-  
+
   return `${metadata.skpd_description || ''} | ${metadata.skpd_address || ''} | ${metadata.skpd_phone || ''}`;
 };
 </script>
