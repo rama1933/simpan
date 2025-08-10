@@ -22,6 +22,11 @@ Route::get('/', function () {
     return Inertia::render('Home');
 })->name('home');
 
+// Auth Routes
+Route::get('/login', [App\Http\Controllers\Auth\AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login']);
+Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard/Index', [
         'stats' => [

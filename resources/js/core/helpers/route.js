@@ -16,7 +16,9 @@ export function route(name, params = {}) {
             'ai.index': '/ai',
             'users.index': '/users',
             'users.create': '/users/create',
-            'users.edit': (id) => `/users/${id}/edit`
+            'users.edit': (id) => `/users/${id}/edit`,
+            'login': '/login',
+            'logout': '/logout'
   };
 
   const route = routes[name];
