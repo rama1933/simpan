@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Knowledge;
 use App\Models\User;
+use App\Models\Category;
 
 class KnowledgeSeeder extends Seeder
 {
@@ -24,6 +25,8 @@ class KnowledgeSeeder extends Seeder
             ]
         );
 
+        // Create categories first
+        $categoryMap = [];
         $categories = [
             'Teknologi',
             'Bisnis',
@@ -34,6 +37,11 @@ class KnowledgeSeeder extends Seeder
             'Sains',
             'Lainnya'
         ];
+
+        foreach ($categories as $categoryName) {
+            $category = Category::firstOrCreate(['name' => $categoryName]);
+            $categoryMap[$categoryName] = $category->id;
+        }
 
         $sampleKnowledge = [
             [
@@ -75,12 +83,48 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Seni & Budaya',
                 'tags' => ['Fotografi', 'Seni', 'Kamera', 'Komposisi'],
                 'status' => 'published'
+            ],
+            [
+                'title' => 'Olahraga untuk Pemula',
+                'content' => 'Memulai olahraga bisa menjadi tantangan bagi pemula. Artikel ini membahas berbagai jenis olahraga yang cocok untuk pemula dan tips memulai dengan aman.',
+                'description' => 'Panduan olahraga untuk pemula yang aman dan efektif',
+                'category' => 'Olahraga',
+                'tags' => ['Olahraga', 'Fitness', 'Pemula', 'Kesehatan'],
+                'status' => 'draft'
+            ],
+            [
+                'title' => 'Penemuan Sains Terbaru',
+                'content' => 'Sains terus berkembang dengan penemuan-penemuan baru yang menarik. Artikel ini membahas beberapa penemuan sains terbaru yang berpotensi mengubah dunia.',
+                'description' => 'Ringkasan penemuan sains terbaru yang menarik',
+                'category' => 'Sains',
+                'tags' => ['Sains', 'Penemuan', 'Penelitian', 'Teknologi'],
+                'status' => 'published'
+            ],
+            [
+                'title' => 'Tips Wirausaha Sukses',
+                'content' => 'Wirausaha membutuhkan strategi dan mindset yang tepat. Artikel ini membahas berbagai tips dan strategi untuk memulai dan mengembangkan bisnis yang sukses.',
+                'description' => 'Panduan lengkap tips wirausaha untuk pemula',
+                'category' => 'Bisnis',
+                'tags' => ['Wirausaha', 'Bisnis', 'Startup', 'Strategi'],
+                'status' => 'archived'
+            ],
+            [
+                'title' => 'Pemrograman Web Modern',
+                'content' => 'Web development telah berkembang pesat dengan teknologi modern. Artikel ini membahas berbagai teknologi dan framework terbaru dalam pengembangan web.',
+                'description' => 'Panduan teknologi web development modern',
+                'category' => 'Teknologi',
+                'tags' => ['Web Development', 'JavaScript', 'React', 'Vue'],
+                'status' => 'published'
             ]
         ];
 
         foreach ($sampleKnowledge as $knowledgeData) {
+            $categoryName = $knowledgeData['category'];
+            unset($knowledgeData['category']); // Remove category name
+
             Knowledge::create(array_merge($knowledgeData, [
-                'author_id' => $user->id
+                'author_id' => $user->id,
+                'category_id' => $categoryMap[$categoryName]
             ]));
         }
 
