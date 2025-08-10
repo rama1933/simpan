@@ -176,7 +176,7 @@ class KnowledgeService
      */
     public function getAllKnowledge($filters = [], $perPage = 15)
     {
-        $query = Knowledge::with(['category', 'user'])
+        $query = Knowledge::with(['category', 'author'])
             ->orderBy('created_at', 'desc');
 
         // Apply search filter
