@@ -24,6 +24,7 @@ class Knowledge extends Model
         'tags',
         'status',
         'author_id',
+        'skpd_id',
     ];
 
     /**
@@ -61,6 +62,14 @@ class Knowledge extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get the SKPD that owns the knowledge.
+     */
+    public function skpd(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'skpd_id');
     }
 
     /**

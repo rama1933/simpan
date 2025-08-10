@@ -118,15 +118,16 @@ class KnowledgeSeeder extends Seeder
             ]
         ];
 
-        foreach ($sampleKnowledge as $knowledgeData) {
-            $categoryName = $knowledgeData['category'];
-            unset($knowledgeData['category']); // Remove category name
+                        foreach ($sampleKnowledge as $knowledgeData) {
+                    $categoryName = $knowledgeData['category'];
+                    unset($knowledgeData['category']); // Remove category name
 
-            Knowledge::create(array_merge($knowledgeData, [
-                'author_id' => $user->id,
-                'category_id' => $categoryMap[$categoryName]
-            ]));
-        }
+                    Knowledge::create(array_merge($knowledgeData, [
+                        'author_id' => $user->id,
+                        'category_id' => $categoryMap[$categoryName],
+                        'skpd_id' => $user->id // Set SKPD as the same user for now
+                    ]));
+                }
 
         $this->command->info('Sample knowledge data has been seeded successfully!');
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Knowledge;
 use App\Models\Category;
+use App\Models\User;
 use App\Services\Knowledge\KnowledgeService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,7 +24,7 @@ class KnowledgeController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Knowledge::with(['author', 'category'])
+        $query = Knowledge::with(['author', 'category', 'skpd'])
             ->when($request->search, function ($query, $search) {
                 $query->search($search);
             })
@@ -35,6 +36,9 @@ class KnowledgeController extends Controller
             })
             ->when($request->author, function ($query, $author) {
                 $query->filter(['author' => $author]);
+            })
+            ->when($request->skpd, function ($query, $skpd) {
+                $query->filter(['skpd' => $skpd]);
             });
 
         // Apply sorting
@@ -44,11 +48,15 @@ class KnowledgeController extends Controller
 
         $knowledge = $query->paginate(15)->withQueryString();
         $categories = Category::all();
+        $skpds = User::whereHas('roles', function ($query) {
+            $query->where('name', 'User SKPD');
+        })->get();
 
         return Inertia::render('Knowledge/Index', [
             'knowledge' => $knowledge,
             'categories' => $categories,
-            'filters' => $request->only(['search', 'category', 'status', 'author', 'sort_by', 'sort_order']),
+            'skpds' => $skpds,
+            'filters' => $request->only(['search', 'category', 'status', 'author', 'skpd', 'sort_by', 'sort_order']),
             'user' => Auth::user()
         ]);
     }

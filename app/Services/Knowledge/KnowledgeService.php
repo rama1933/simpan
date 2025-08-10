@@ -176,15 +176,15 @@ class KnowledgeService
      */
     public function getAllKnowledge($filters = [], $perPage = 15)
     {
-        $query = Knowledge::with(['category', 'author'])
+        $query = Knowledge::with(['category', 'author', 'skpd'])
             ->orderBy('created_at', 'desc');
 
         // Apply search filter
         if (!empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('title', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('content', 'like', '%' . $filters['search'] . '%');
+                    ->orWhere('description', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('content', 'like', '%' . $filters['search'] . '%');
             });
         }
 
@@ -198,6 +198,11 @@ class KnowledgeService
         // Apply status filter
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
+        }
+
+        // Apply SKPD filter
+        if (!empty($filters['skpd'])) {
+            $query->where('skpd_id', $filters['skpd']);
         }
 
         return [

@@ -59,6 +59,18 @@
                 <option value="archived">Diarsipkan</option>
               </select>
             </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">SKPD</label>
+              <select
+                v-model="filters.skpd"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">Semua SKPD</option>
+                <option v-for="skpd in skpds" :key="skpd.id" :value="skpd.id">
+                  {{ skpd.name }}
+                </option>
+              </select>
+            </div>
             <div class="flex items-end">
               <button
                 @click="applyFilters"
@@ -87,6 +99,9 @@
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Penulis
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    SKPD
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Tanggal
@@ -132,6 +147,12 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {{ item.author ? item.author.name : '-' }}
                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span v-if="item.skpd" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      {{ item.skpd.name }}
+                    </span>
+                    <span v-else class="text-gray-400">-</span>
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(item.created_at) }}
                   </td>
@@ -162,7 +183,7 @@
               </tbody>
             </table>
           </div>
-          
+
           <!-- Empty State -->
           <div v-if="!knowledge || !knowledge.data || knowledge.data.length === 0" class="px-6 py-12 text-center">
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -220,13 +241,18 @@ const props = defineProps({
   user: {
     type: Object,
     default: null
+  },
+  skpds: {
+    type: Array,
+    default: () => []
   }
 });
 
 const filters = ref({
   search: props.filters.search || '',
   category: props.filters.category || '',
-  status: props.filters.status || ''
+  status: props.filters.status || '',
+  skpd: props.filters.skpd || ''
 });
 
 const debounceSearch = (() => {
