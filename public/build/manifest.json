@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CZdzOGCh.css",
+    "file": "assets/app-Bky6AG2Q.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [
@@ -8,7 +8,7 @@
     ]
   },
   "resources/js/Pages/Auth/Login.vue": {
-    "file": "assets/Login-CPPVOFzE.js",
+    "file": "assets/Login-BXQgkAe0.js",
     "name": "Login",
     "src": "resources/js/Pages/Auth/Login.vue",
     "isDynamicEntry": true,
@@ -17,7 +17,7 @@
     ]
   },
   "resources/js/Pages/Dashboard/Index.vue": {
-    "file": "assets/Index-BQecIhZY.js",
+    "file": "assets/Index-D3pQedpJ.js",
     "name": "Index",
     "src": "resources/js/Pages/Dashboard/Index.vue",
     "isDynamicEntry": true,
@@ -26,7 +26,7 @@
     ]
   },
   "resources/js/Pages/Home.vue": {
-    "file": "assets/Home-B-9CpIGV.js",
+    "file": "assets/Home-D2lq-crt.js",
     "name": "Home",
     "src": "resources/js/Pages/Home.vue",
     "isDynamicEntry": true,
@@ -34,15 +34,98 @@
       "resources/js/app.js"
     ]
   },
+  "resources/js/Pages/Knowledge/Create.vue": {
+    "file": "assets/Create-D4yOEg0o.js",
+    "name": "Create",
+    "src": "resources/js/Pages/Knowledge/Create.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/Pages/Knowledge/Dashboard.vue": {
+    "file": "assets/Dashboard-BXiWREaX.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Knowledge/Dashboard.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/Pages/Knowledge/Edit.vue": {
+    "file": "assets/Edit-Du8hBw3J.js",
+    "name": "Edit",
+    "src": "resources/js/Pages/Knowledge/Edit.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/Pages/Knowledge/Export.vue": {
+    "file": "assets/Export-DIW0yKJC.js",
+    "name": "Export",
+    "src": "resources/js/Pages/Knowledge/Export.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/Pages/Knowledge/Index.vue": {
+    "file": "assets/Index-BAUEzPvd.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Knowledge/Index.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/Pages/Knowledge/Search.vue": {
+    "file": "assets/Search-BQCHm5mB.js",
+    "name": "Search",
+    "src": "resources/js/Pages/Knowledge/Search.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "css": [
+      "assets/Search-BlAO-pGd.css"
+    ]
+  },
+  "resources/js/Pages/Knowledge/Show.vue": {
+    "file": "assets/Show-DwfVR7gz.js",
+    "name": "Show",
+    "src": "resources/js/Pages/Knowledge/Show.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/Pages/Knowledge/Statistics.vue": {
+    "file": "assets/Statistics-CjaBPSsj.js",
+    "name": "Statistics",
+    "src": "resources/js/Pages/Knowledge/Statistics.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
   "resources/js/app.js": {
-    "file": "assets/app-DhhMDYkw.js",
+    "file": "assets/app-CaAfbfFu.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "dynamicImports": [
       "resources/js/Pages/Auth/Login.vue",
       "resources/js/Pages/Dashboard/Index.vue",
-      "resources/js/Pages/Home.vue"
+      "resources/js/Pages/Home.vue",
+      "resources/js/Pages/Knowledge/Create.vue",
+      "resources/js/Pages/Knowledge/Dashboard.vue",
+      "resources/js/Pages/Knowledge/Edit.vue",
+      "resources/js/Pages/Knowledge/Export.vue",
+      "resources/js/Pages/Knowledge/Index.vue",
+      "resources/js/Pages/Knowledge/Search.vue",
+      "resources/js/Pages/Knowledge/Show.vue",
+      "resources/js/Pages/Knowledge/Statistics.vue"
     ]
   }
 }

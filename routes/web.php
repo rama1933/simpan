@@ -1,9 +1,21 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Knowledge\KnowledgeController;
+use App\Http\Controllers\User\UserController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -19,10 +31,18 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// Knowledge Module Routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('knowledge', KnowledgeController::class);
+    Route::get('knowledge/search', [KnowledgeController::class, 'search'])->name('knowledge.search');
+    Route::post('knowledge/{knowledge}/status', [KnowledgeController::class, 'changeStatus'])->name('knowledge.status');
+    Route::get('knowledge-statistics', [KnowledgeController::class, 'statistics'])->name('knowledge.statistics');
 });
 
-require __DIR__.'/auth.php';
+// User Module Routes
+Route::middleware(['auth', 'role:Admin'])->group(function () {
+    Route::resource('users', UserController::class);
+    Route::get('users/role/{role}', [UserController::class, 'getByRole'])->name('users.by-role');
+});
+
+require __DIR__ . '/auth.php';
