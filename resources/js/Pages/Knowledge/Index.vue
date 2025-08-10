@@ -177,6 +177,7 @@
 import { ref, onMounted } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import { route } from '@/core/helpers/route';
 // import { debounce } from 'lodash';
 
 const props = defineProps({
