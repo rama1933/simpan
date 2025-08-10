@@ -48,7 +48,8 @@ class KnowledgeController extends Controller
         return Inertia::render('Knowledge/Index', [
             'knowledge' => $knowledge,
             'categories' => $categories,
-            'filters' => $request->only(['search', 'category', 'status', 'author', 'sort_by', 'sort_order'])
+            'filters' => $request->only(['search', 'category', 'status', 'author', 'sort_by', 'sort_order']),
+            'user' => Auth::user()
         ]);
     }
 
