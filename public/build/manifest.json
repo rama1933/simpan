@@ -1,14 +1,27 @@
 {
+  "_route-C5FCBtya.js": {
+    "file": "assets/route-C5FCBtya.js",
+    "name": "route"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-Bky6AG2Q.css",
+    "file": "assets/app-DYTT6mBw.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [
       "app.css"
     ]
   },
+  "resources/js/Pages/AI/Index.vue": {
+    "file": "assets/Index-njHeM4cG.js",
+    "name": "Index",
+    "src": "resources/js/Pages/AI/Index.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
   "resources/js/Pages/Auth/Login.vue": {
-    "file": "assets/Login-BXQgkAe0.js",
+    "file": "assets/Login-DQEE5fr5.js",
     "name": "Login",
     "src": "resources/js/Pages/Auth/Login.vue",
     "isDynamicEntry": true,
@@ -17,7 +30,7 @@
     ]
   },
   "resources/js/Pages/Dashboard/Index.vue": {
-    "file": "assets/Index-D3pQedpJ.js",
+    "file": "assets/Index-kjyOpZFu.js",
     "name": "Index",
     "src": "resources/js/Pages/Dashboard/Index.vue",
     "isDynamicEntry": true,
@@ -26,16 +39,17 @@
     ]
   },
   "resources/js/Pages/Home.vue": {
-    "file": "assets/Home-D2lq-crt.js",
+    "file": "assets/Home-BJb9gub9.js",
     "name": "Home",
     "src": "resources/js/Pages/Home.vue",
     "isDynamicEntry": true,
     "imports": [
-      "resources/js/app.js"
+      "resources/js/app.js",
+      "_route-C5FCBtya.js"
     ]
   },
   "resources/js/Pages/Knowledge/Create.vue": {
-    "file": "assets/Create-D4yOEg0o.js",
+    "file": "assets/Create-Ci9DESjN.js",
     "name": "Create",
     "src": "resources/js/Pages/Knowledge/Create.vue",
     "isDynamicEntry": true,
@@ -44,7 +58,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Dashboard.vue": {
-    "file": "assets/Dashboard-BXiWREaX.js",
+    "file": "assets/Dashboard-CrcbJrjK.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Knowledge/Dashboard.vue",
     "isDynamicEntry": true,
@@ -53,7 +67,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Edit.vue": {
-    "file": "assets/Edit-Du8hBw3J.js",
+    "file": "assets/Edit-Dmc6Hy5P.js",
     "name": "Edit",
     "src": "resources/js/Pages/Knowledge/Edit.vue",
     "isDynamicEntry": true,
@@ -62,7 +76,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Export.vue": {
-    "file": "assets/Export-DIW0yKJC.js",
+    "file": "assets/Export-BEro3BBa.js",
     "name": "Export",
     "src": "resources/js/Pages/Knowledge/Export.vue",
     "isDynamicEntry": true,
@@ -71,7 +85,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Index.vue": {
-    "file": "assets/Index-BAUEzPvd.js",
+    "file": "assets/Index-p-1NNyN_.js",
     "name": "Index",
     "src": "resources/js/Pages/Knowledge/Index.vue",
     "isDynamicEntry": true,
@@ -80,7 +94,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Search.vue": {
-    "file": "assets/Search-BQCHm5mB.js",
+    "file": "assets/Search-BldputoB.js",
     "name": "Search",
     "src": "resources/js/Pages/Knowledge/Search.vue",
     "isDynamicEntry": true,
@@ -92,7 +106,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Show.vue": {
-    "file": "assets/Show-DwfVR7gz.js",
+    "file": "assets/Show-CipDm4Dj.js",
     "name": "Show",
     "src": "resources/js/Pages/Knowledge/Show.vue",
     "isDynamicEntry": true,
@@ -101,7 +115,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Statistics.vue": {
-    "file": "assets/Statistics-CjaBPSsj.js",
+    "file": "assets/Statistics-BCJwKGdK.js",
     "name": "Statistics",
     "src": "resources/js/Pages/Knowledge/Statistics.vue",
     "isDynamicEntry": true,
@@ -109,12 +123,23 @@
       "resources/js/app.js"
     ]
   },
+  "resources/js/Pages/User/Index.vue": {
+    "file": "assets/Index-DOPMB5uL.js",
+    "name": "Index",
+    "src": "resources/js/Pages/User/Index.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js",
+      "_route-C5FCBtya.js"
+    ]
+  },
   "resources/js/app.js": {
-    "file": "assets/app-CaAfbfFu.js",
+    "file": "assets/app-Cz2Meecu.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "dynamicImports": [
+      "resources/js/Pages/AI/Index.vue",
       "resources/js/Pages/Auth/Login.vue",
       "resources/js/Pages/Dashboard/Index.vue",
       "resources/js/Pages/Home.vue",
@@ -125,7 +150,8 @@
       "resources/js/Pages/Knowledge/Index.vue",
       "resources/js/Pages/Knowledge/Search.vue",
       "resources/js/Pages/Knowledge/Show.vue",
-      "resources/js/Pages/Knowledge/Statistics.vue"
+      "resources/js/Pages/Knowledge/Statistics.vue",
+      "resources/js/Pages/User/Index.vue"
     ]
   }
 }

@@ -12,7 +12,11 @@ export function route(name, params = {}) {
     'knowledge.destroy': (id) => `/knowledge/${id}`,
     'knowledge.search': '/knowledge/search',
     'knowledge.export': '/knowledge/export',
-    'knowledge.statistics': '/knowledge/statistics'
+                'knowledge.statistics': '/knowledge/statistics',
+            'ai.index': '/ai',
+            'users.index': '/users',
+            'users.create': '/users/create',
+            'users.edit': (id) => `/users/${id}/edit`
   };
 
   const route = routes[name];
