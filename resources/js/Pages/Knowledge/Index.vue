@@ -72,7 +72,7 @@
 
         <!-- Knowledge List -->
         <div class="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul class="divide-y divide-gray-200">
+          <ul v-if="knowledge && knowledge.data && knowledge.data.length > 0" class="divide-y divide-gray-200">
             <li v-for="item in knowledge.data" :key="item.id" class="px-6 py-4">
               <div class="flex items-center justify-between">
                 <div class="flex-1">
@@ -147,6 +147,15 @@
               </div>
             </li>
           </ul>
+          
+          <!-- Empty State -->
+          <div v-else-if="!knowledge || !knowledge.data || knowledge.data.length === 0" class="px-6 py-12 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada pengetahuan</h3>
+            <p class="mt-1 text-sm text-gray-500">Mulai dengan menambahkan pengetahuan baru.</p>
+          </div>
         </div>
 
         <!-- Pagination -->
@@ -156,16 +165,16 @@
               <Link
                 v-for="(link, index) in knowledge.links"
                 :key="index"
-                :href="link.url"
+                :href="link.url || '#'"
                 :class="[
                   'px-3 py-2 text-sm font-medium rounded-md',
-                  link.url === null
+                  !link.url || link.url === '#'
                     ? 'text-gray-400 cursor-not-allowed'
-                    : link.active
+                    : link.active === true
                     ? 'bg-indigo-600 text-white'
                     : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
                 ]"
-                v-html="link.label"
+                v-html="link.label || ''"
               />
             </div>
           </nav>
