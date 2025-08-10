@@ -5,17 +5,21 @@ namespace App\Http\Controllers\AI;
 use App\Http\Controllers\BaseController;
 use App\Services\AI\GeminiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AIController extends BaseController
 {
     public function __construct(
         private GeminiService $geminiService
-    ) {}
+    ) {
+    }
 
     public function index()
     {
-        return $this->renderPage('AI/Index');
+        return $this->renderPage('AI/Index', [
+            'user' => auth()->user()
+        ]);
     }
 
     public function analyze(Request $request)
@@ -25,11 +29,11 @@ class AIController extends BaseController
         ]);
 
         $result = $this->geminiService->analyzeKnowledge($request->content);
-        
+
         if ($result['success']) {
             return $this->jsonSuccess($result['data'], $result['message']);
         }
-        
+
         return $this->jsonError($result['message']);
     }
 
@@ -40,11 +44,11 @@ class AIController extends BaseController
         ]);
 
         $result = $this->geminiService->suggestTags($request->content);
-        
+
         if ($result['success']) {
             return $this->jsonSuccess($result['data'], $result['message']);
         }
-        
+
         return $this->jsonError($result['message']);
     }
 
@@ -56,14 +60,14 @@ class AIController extends BaseController
         ]);
 
         $result = $this->geminiService->generateContent(
-            $request->prompt, 
+            $request->prompt,
             $request->options ?? []
         );
-        
+
         if ($result['success']) {
             return $this->jsonSuccess($result['data'], $result['message']);
         }
-        
+
         return $this->jsonError($result['message']);
     }
 }

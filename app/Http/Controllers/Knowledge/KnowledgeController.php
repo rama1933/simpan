@@ -41,7 +41,8 @@ class KnowledgeController extends BaseController
         return $this->renderPage('Knowledge/Index', [
             'knowledge' => $result['data'],
             'filters' => $filters,
-            'perPage' => $perPage
+            'perPage' => $perPage,
+            'user' => auth()->user()
         ]);
     }
 

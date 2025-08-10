@@ -1,7 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="mb-8">
+  <AdminLayout page-title="AI Assistant" :user="user">
+    <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">AI Assistant</h1>
         <p class="mt-2 text-gray-600">Gunakan Gemini AI untuk menganalisis dan menghasilkan konten</p>
       </div>
@@ -116,13 +115,19 @@
           <div class="whitespace-pre-line text-sm text-gray-700">{{ generationResult }}</div>
         </div>
       </div>
-    </div>
-  </div>
+    </AdminLayout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+
+interface Props {
+  user?: any
+}
+
+const props = defineProps<Props>()
 
 const analyzing = ref(false)
 const suggesting = ref(false)

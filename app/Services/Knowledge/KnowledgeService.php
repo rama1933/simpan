@@ -170,4 +170,39 @@ class KnowledgeService
                 ];
             });
     }
+
+    /**
+     * Get all knowledge with filters and pagination
+     */
+    public function getAllKnowledge($filters = [], $perPage = 15)
+    {
+        $query = Knowledge::with(['category', 'user'])
+            ->orderBy('created_at', 'desc');
+
+        // Apply search filter
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', '%' . $filters['search'] . '%')
+                  ->orWhere('description', 'like', '%' . $filters['search'] . '%')
+                  ->orWhere('content', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+
+        // Apply category filter
+        if (!empty($filters['category'])) {
+            $query->whereHas('category', function ($q) use ($filters) {
+                $q->where('name', $filters['category']);
+            });
+        }
+
+        // Apply status filter
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        return [
+            'success' => true,
+            'data' => $query->paginate($perPage)
+        ];
+    }
 }

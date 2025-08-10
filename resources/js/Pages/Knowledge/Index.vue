@@ -1,9 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div class="px-4 py-6 sm:px-0">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
+  <AdminLayout page-title="Knowledge Management" :user="user">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
           <div>
             <h1 class="text-3xl font-bold text-gray-900">Manajemen Pengetahuan</h1>
             <p class="text-gray-600 mt-2">Kelola dan atur semua pengetahuan dalam sistem</p>
@@ -172,14 +170,13 @@
             </div>
           </nav>
         </div>
-      </div>
-    </div>
-  </div>
+    </AdminLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 // import { debounce } from 'lodash';
 
 const props = defineProps({
@@ -194,6 +191,10 @@ const props = defineProps({
   perPage: {
     type: Number,
     default: 15
+  },
+  user: {
+    type: Object,
+    default: null
   }
 });
 

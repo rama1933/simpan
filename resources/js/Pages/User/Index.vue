@@ -1,7 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="mb-8 flex justify-between items-center">
+  <AdminLayout page-title="User Management" :user="user">
+    <div class="mb-8 flex justify-between items-center">
         <div>
           <h1 class="text-3xl font-bold text-gray-900">User Management</h1>
           <p class="mt-2 text-gray-600">Kelola user dan role dalam sistem</p>
@@ -117,14 +116,14 @@
           </tbody>
         </table>
       </div>
-    </div>
-  </div>
+    </AdminLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { route } from '@/core/helpers/route'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 interface User {
   id: number
@@ -133,6 +132,11 @@ interface User {
   roles: Array<{ id: number; name: string }>
 }
 
+interface Props {
+  user?: any
+}
+
+const props = defineProps<Props>()
 const users = ref<User[]>([])
 const filters = ref({
   role: '',

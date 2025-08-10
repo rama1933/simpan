@@ -61,4 +61,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('ai/generate', [AIController::class, 'generate'])->name('ai.generate');
 });
 
+// Test Route
+Route::get('/test-auth', function () {
+    return response()->json([
+        'authenticated' => Auth::check(),
+        'user' => Auth::user(),
+        'roles' => Auth::user() ? Auth::user()->roles->pluck('name') : []
+    ]);
+})->middleware('auth');
+
 require __DIR__ . '/auth.php';
