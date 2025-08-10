@@ -50,6 +50,7 @@
 
 <script setup>
 import { useForm } from '@inertiajs/vue3';
+import { route } from '@/core/helpers/route';
 
 const form = useForm({
   email: '',

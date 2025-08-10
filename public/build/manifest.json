@@ -1,6 +1,6 @@
 {
-  "_route-C5FCBtya.js": {
-    "file": "assets/route-C5FCBtya.js",
+  "_route-DkycQbEi.js": {
+    "file": "assets/route-DkycQbEi.js",
     "name": "route"
   },
   "resources/css/app.css": {
@@ -12,7 +12,7 @@
     ]
   },
   "resources/js/Pages/AI/Index.vue": {
-    "file": "assets/Index-njHeM4cG.js",
+    "file": "assets/Index-CYEM6YwS.js",
     "name": "Index",
     "src": "resources/js/Pages/AI/Index.vue",
     "isDynamicEntry": true,
@@ -21,16 +21,17 @@
     ]
   },
   "resources/js/Pages/Auth/Login.vue": {
-    "file": "assets/Login-DQEE5fr5.js",
+    "file": "assets/Login-E-SrC9Q9.js",
     "name": "Login",
     "src": "resources/js/Pages/Auth/Login.vue",
     "isDynamicEntry": true,
     "imports": [
-      "resources/js/app.js"
+      "resources/js/app.js",
+      "_route-DkycQbEi.js"
     ]
   },
   "resources/js/Pages/Dashboard/Index.vue": {
-    "file": "assets/Index-kjyOpZFu.js",
+    "file": "assets/Index-B8oiNnnH.js",
     "name": "Index",
     "src": "resources/js/Pages/Dashboard/Index.vue",
     "isDynamicEntry": true,
@@ -39,17 +40,17 @@
     ]
   },
   "resources/js/Pages/Home.vue": {
-    "file": "assets/Home-BJb9gub9.js",
+    "file": "assets/Home-Bl4n4amq.js",
     "name": "Home",
     "src": "resources/js/Pages/Home.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_route-C5FCBtya.js"
+      "_route-DkycQbEi.js"
     ]
   },
   "resources/js/Pages/Knowledge/Create.vue": {
-    "file": "assets/Create-Ci9DESjN.js",
+    "file": "assets/Create-DLeu37OR.js",
     "name": "Create",
     "src": "resources/js/Pages/Knowledge/Create.vue",
     "isDynamicEntry": true,
@@ -58,7 +59,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Dashboard.vue": {
-    "file": "assets/Dashboard-CrcbJrjK.js",
+    "file": "assets/Dashboard-D32_2QHg.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Knowledge/Dashboard.vue",
     "isDynamicEntry": true,
@@ -67,7 +68,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Edit.vue": {
-    "file": "assets/Edit-Dmc6Hy5P.js",
+    "file": "assets/Edit-kaxnN4XL.js",
     "name": "Edit",
     "src": "resources/js/Pages/Knowledge/Edit.vue",
     "isDynamicEntry": true,
@@ -76,7 +77,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Export.vue": {
-    "file": "assets/Export-BEro3BBa.js",
+    "file": "assets/Export-BOwXMqCl.js",
     "name": "Export",
     "src": "resources/js/Pages/Knowledge/Export.vue",
     "isDynamicEntry": true,
@@ -85,7 +86,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Index.vue": {
-    "file": "assets/Index-p-1NNyN_.js",
+    "file": "assets/Index-CkKcc1jD.js",
     "name": "Index",
     "src": "resources/js/Pages/Knowledge/Index.vue",
     "isDynamicEntry": true,
@@ -94,7 +95,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Search.vue": {
-    "file": "assets/Search-BldputoB.js",
+    "file": "assets/Search-Dc_ICNw_.js",
     "name": "Search",
     "src": "resources/js/Pages/Knowledge/Search.vue",
     "isDynamicEntry": true,
@@ -106,7 +107,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Show.vue": {
-    "file": "assets/Show-CipDm4Dj.js",
+    "file": "assets/Show-uRm5YzAH.js",
     "name": "Show",
     "src": "resources/js/Pages/Knowledge/Show.vue",
     "isDynamicEntry": true,
@@ -115,7 +116,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Statistics.vue": {
-    "file": "assets/Statistics-BCJwKGdK.js",
+    "file": "assets/Statistics-Do6GmoAK.js",
     "name": "Statistics",
     "src": "resources/js/Pages/Knowledge/Statistics.vue",
     "isDynamicEntry": true,
@@ -124,17 +125,17 @@
     ]
   },
   "resources/js/Pages/User/Index.vue": {
-    "file": "assets/Index-DOPMB5uL.js",
+    "file": "assets/Index-CBgyTfg-.js",
     "name": "Index",
     "src": "resources/js/Pages/User/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_route-C5FCBtya.js"
+      "_route-DkycQbEi.js"
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-Cz2Meecu.js",
+    "file": "assets/app-CCAvJyZn.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
