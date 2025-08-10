@@ -50,7 +50,7 @@ class KnowledgeController extends Controller
         $categories = Category::all();
         $skpds = User::whereHas('roles', function ($query) {
             $query->where('name', 'User SKPD');
-        })->get();
+        })->with('metadata')->get();
 
         return Inertia::render('Knowledge/Index', [
             'knowledge' => $knowledge,

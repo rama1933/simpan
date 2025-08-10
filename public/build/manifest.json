@@ -1,6 +1,6 @@
 {
-  "_AdminLayout-CzL6OpTq.js": {
-    "file": "assets/AdminLayout-CzL6OpTq.js",
+  "_AdminLayout-DNv_2wpW.js": {
+    "file": "assets/AdminLayout-DNv_2wpW.js",
     "name": "AdminLayout",
     "imports": [
       "_route-fMlyL4SZ.js",
@@ -20,18 +20,18 @@
     ]
   },
   "resources/js/Pages/AI/Index.vue": {
-    "file": "assets/Index-BW-mPyLq.js",
+    "file": "assets/Index-UxdcegnF.js",
     "name": "Index",
     "src": "resources/js/Pages/AI/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_AdminLayout-CzL6OpTq.js",
+      "_AdminLayout-DNv_2wpW.js",
       "_route-fMlyL4SZ.js"
     ]
   },
   "resources/js/Pages/Auth/Login.vue": {
-    "file": "assets/Login-DpMTmyZR.js",
+    "file": "assets/Login-DtvTmuGa.js",
     "name": "Login",
     "src": "resources/js/Pages/Auth/Login.vue",
     "isDynamicEntry": true,
@@ -41,18 +41,18 @@
     ]
   },
   "resources/js/Pages/Dashboard/Index.vue": {
-    "file": "assets/Index-CyyNZnKq.js",
+    "file": "assets/Index-CPeghtjv.js",
     "name": "Index",
     "src": "resources/js/Pages/Dashboard/Index.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_AdminLayout-CzL6OpTq.js",
+      "_AdminLayout-DNv_2wpW.js",
       "resources/js/app.js",
       "_route-fMlyL4SZ.js"
     ]
   },
   "resources/js/Pages/Home.vue": {
-    "file": "assets/Home-0aQ1zZ_H.js",
+    "file": "assets/Home-BVFmGWJo.js",
     "name": "Home",
     "src": "resources/js/Pages/Home.vue",
     "isDynamicEntry": true,
@@ -62,7 +62,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Create.vue": {
-    "file": "assets/Create-D0h6o50n.js",
+    "file": "assets/Create-CRoNEqMq.js",
     "name": "Create",
     "src": "resources/js/Pages/Knowledge/Create.vue",
     "isDynamicEntry": true,
@@ -71,7 +71,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Dashboard.vue": {
-    "file": "assets/Dashboard-Bfl02lHk.js",
+    "file": "assets/Dashboard-d2mC_1h6.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Knowledge/Dashboard.vue",
     "isDynamicEntry": true,
@@ -80,7 +80,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Edit.vue": {
-    "file": "assets/Edit-D0iFKZx_.js",
+    "file": "assets/Edit-oFFs3rO8.js",
     "name": "Edit",
     "src": "resources/js/Pages/Knowledge/Edit.vue",
     "isDynamicEntry": true,
@@ -89,7 +89,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Export.vue": {
-    "file": "assets/Export-DiHgLLK7.js",
+    "file": "assets/Export-CXNi-UOE.js",
     "name": "Export",
     "src": "resources/js/Pages/Knowledge/Export.vue",
     "isDynamicEntry": true,
@@ -98,18 +98,18 @@
     ]
   },
   "resources/js/Pages/Knowledge/Index.vue": {
-    "file": "assets/Index-CGPTmrUD.js",
+    "file": "assets/Index-CxnntufM.js",
     "name": "Index",
     "src": "resources/js/Pages/Knowledge/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_AdminLayout-CzL6OpTq.js",
+      "_AdminLayout-DNv_2wpW.js",
       "_route-fMlyL4SZ.js"
     ]
   },
   "resources/js/Pages/Knowledge/Search.vue": {
-    "file": "assets/Search-BD3-Gd9J.js",
+    "file": "assets/Search-Bq6N4x5O.js",
     "name": "Search",
     "src": "resources/js/Pages/Knowledge/Search.vue",
     "isDynamicEntry": true,
@@ -121,7 +121,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Show.vue": {
-    "file": "assets/Show-By6rCmSu.js",
+    "file": "assets/Show-LpCcmRMR.js",
     "name": "Show",
     "src": "resources/js/Pages/Knowledge/Show.vue",
     "isDynamicEntry": true,
@@ -130,7 +130,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Statistics.vue": {
-    "file": "assets/Statistics-BwWsTciP.js",
+    "file": "assets/Statistics-BY_nT9AQ.js",
     "name": "Statistics",
     "src": "resources/js/Pages/Knowledge/Statistics.vue",
     "isDynamicEntry": true,
@@ -139,18 +139,18 @@
     ]
   },
   "resources/js/Pages/User/Index.vue": {
-    "file": "assets/Index-CDaYpu4N.js",
+    "file": "assets/Index-WkTqZRXb.js",
     "name": "Index",
     "src": "resources/js/Pages/User/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
       "_route-fMlyL4SZ.js",
-      "_AdminLayout-CzL6OpTq.js"
+      "_AdminLayout-DNv_2wpW.js"
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-CE_rQSty.js",
+    "file": "assets/app-KTcUsjKQ.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

@@ -67,9 +67,12 @@
               >
                 <option value="">Semua SKPD</option>
                 <option v-for="skpd in skpds" :key="skpd.id" :value="skpd.id">
-                  {{ skpd.name }}
+                  {{ skpd.metadata?.skpd_code || 'N/A' }} - {{ skpd.name }}
                 </option>
               </select>
+              <p class="mt-1 text-xs text-gray-500">
+                {{ getSelectedSKPDInfo() }}
+              </p>
             </div>
             <div class="flex items-end">
               <button
@@ -147,12 +150,15 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {{ item.author ? item.author.name : '-' }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span v-if="item.skpd" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                      {{ item.skpd.name }}
-                    </span>
-                    <span v-else class="text-gray-400">-</span>
-                  </td>
+                              <td class="px-6 py-4 whitespace-nowrap">
+              <div v-if="item.skpd" class="flex flex-col">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 mb-1">
+                  {{ item.skpd.metadata?.skpd_code || 'N/A' }}
+                </span>
+                <span class="text-xs text-gray-600">{{ item.skpd.name }}</span>
+              </div>
+              <span v-else class="text-gray-400">-</span>
+            </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(item.created_at) }}
                   </td>
@@ -304,5 +310,17 @@ const formatDate = (dateString) => {
     month: 'long',
     day: 'numeric'
   });
+};
+
+const getSelectedSKPDInfo = () => {
+  if (!filters.value.skpd) return 'Pilih SKPD untuk melihat informasi detail';
+  
+  const selectedSKPD = props.skpds.find(skpd => skpd.id == filters.value.skpd);
+  if (!selectedSKPD) return '';
+  
+  const metadata = selectedSKPD.metadata;
+  if (!metadata) return selectedSKPD.name;
+  
+  return `${metadata.skpd_description || ''} | ${metadata.skpd_address || ''} | ${metadata.skpd_phone || ''}`;
 };
 </script>
