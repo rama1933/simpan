@@ -118,16 +118,29 @@ class KnowledgeSeeder extends Seeder
             ]
         ];
 
-                        foreach ($sampleKnowledge as $knowledgeData) {
-                    $categoryName = $knowledgeData['category'];
-                    unset($knowledgeData['category']); // Remove category name
+        // Get SKPD users for distribution
+        $skpdUsers = User::whereHas('roles', function ($query) {
+            $query->where('name', 'User SKPD');
+        })->get();
 
-                    Knowledge::create(array_merge($knowledgeData, [
-                        'author_id' => $user->id,
-                        'category_id' => $categoryMap[$categoryName],
-                        'skpd_id' => $user->id // Set SKPD as the same user for now
-                    ]));
-                }
+        if ($skpdUsers->isEmpty()) {
+            // Fallback to admin user if no SKPD users exist
+            $skpdUsers = collect([$user]);
+        }
+
+        foreach ($sampleKnowledge as $index => $knowledgeData) {
+            $categoryName = $knowledgeData['category'];
+            unset($knowledgeData['category']); // Remove category name
+
+            // Distribute knowledge across different SKPDs
+            $skpdUser = $skpdUsers[$index % $skpdUsers->count()];
+
+            Knowledge::create(array_merge($knowledgeData, [
+                'author_id' => $user->id,
+                'category_id' => $categoryMap[$categoryName],
+                'skpd_id' => $skpdUser->id
+            ]));
+        }
 
         $this->command->info('Sample knowledge data has been seeded successfully!');
     }
