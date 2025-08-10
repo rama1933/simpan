@@ -20,7 +20,7 @@ class Knowledge extends Model
         'title',
         'content',
         'description',
-        'category',
+        'category_id',
         'tags',
         'status',
         'author_id',
@@ -53,6 +53,14 @@ class Knowledge extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * Get the category that owns the knowledge.
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     /**
@@ -96,7 +104,9 @@ class Knowledge extends Model
      */
     public function scopeByCategory($query, $category)
     {
-        return $query->where('category', $category);
+        return $query->whereHas('category', function ($q) use ($category) {
+            $q->where('name', $category);
+        });
     }
 
     /**
