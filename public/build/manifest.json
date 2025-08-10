@@ -1,10 +1,10 @@
 {
-  "_route-DkycQbEi.js": {
-    "file": "assets/route-DkycQbEi.js",
+  "_route-fMlyL4SZ.js": {
+    "file": "assets/route-fMlyL4SZ.js",
     "name": "route"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DYTT6mBw.css",
+    "file": "assets/app-B_luiCcj.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [
@@ -12,7 +12,7 @@
     ]
   },
   "resources/js/Pages/AI/Index.vue": {
-    "file": "assets/Index-CYEM6YwS.js",
+    "file": "assets/Index-DbHaLWrY.js",
     "name": "Index",
     "src": "resources/js/Pages/AI/Index.vue",
     "isDynamicEntry": true,
@@ -21,36 +21,37 @@
     ]
   },
   "resources/js/Pages/Auth/Login.vue": {
-    "file": "assets/Login-E-SrC9Q9.js",
+    "file": "assets/Login-B1G-jv8f.js",
     "name": "Login",
     "src": "resources/js/Pages/Auth/Login.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_route-DkycQbEi.js"
+      "_route-fMlyL4SZ.js"
     ]
   },
   "resources/js/Pages/Dashboard/Index.vue": {
-    "file": "assets/Index-B8oiNnnH.js",
+    "file": "assets/Index-Btap0KAt.js",
     "name": "Index",
     "src": "resources/js/Pages/Dashboard/Index.vue",
     "isDynamicEntry": true,
     "imports": [
+      "_route-fMlyL4SZ.js",
       "resources/js/app.js"
     ]
   },
   "resources/js/Pages/Home.vue": {
-    "file": "assets/Home-Bl4n4amq.js",
+    "file": "assets/Home-DEcwIpOw.js",
     "name": "Home",
     "src": "resources/js/Pages/Home.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_route-DkycQbEi.js"
+      "_route-fMlyL4SZ.js"
     ]
   },
   "resources/js/Pages/Knowledge/Create.vue": {
-    "file": "assets/Create-DLeu37OR.js",
+    "file": "assets/Create-DSIDd1vv.js",
     "name": "Create",
     "src": "resources/js/Pages/Knowledge/Create.vue",
     "isDynamicEntry": true,
@@ -59,7 +60,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Dashboard.vue": {
-    "file": "assets/Dashboard-D32_2QHg.js",
+    "file": "assets/Dashboard-BIOhXLiD.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Knowledge/Dashboard.vue",
     "isDynamicEntry": true,
@@ -68,7 +69,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Edit.vue": {
-    "file": "assets/Edit-kaxnN4XL.js",
+    "file": "assets/Edit-ClNeQpZd.js",
     "name": "Edit",
     "src": "resources/js/Pages/Knowledge/Edit.vue",
     "isDynamicEntry": true,
@@ -77,7 +78,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Export.vue": {
-    "file": "assets/Export-BOwXMqCl.js",
+    "file": "assets/Export-Dt8E_U37.js",
     "name": "Export",
     "src": "resources/js/Pages/Knowledge/Export.vue",
     "isDynamicEntry": true,
@@ -86,7 +87,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Index.vue": {
-    "file": "assets/Index-CkKcc1jD.js",
+    "file": "assets/Index-BDf4Ibv2.js",
     "name": "Index",
     "src": "resources/js/Pages/Knowledge/Index.vue",
     "isDynamicEntry": true,
@@ -95,7 +96,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Search.vue": {
-    "file": "assets/Search-Dc_ICNw_.js",
+    "file": "assets/Search-BtOref6D.js",
     "name": "Search",
     "src": "resources/js/Pages/Knowledge/Search.vue",
     "isDynamicEntry": true,
@@ -107,7 +108,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Show.vue": {
-    "file": "assets/Show-uRm5YzAH.js",
+    "file": "assets/Show-DArlZEIy.js",
     "name": "Show",
     "src": "resources/js/Pages/Knowledge/Show.vue",
     "isDynamicEntry": true,
@@ -116,7 +117,7 @@
     ]
   },
   "resources/js/Pages/Knowledge/Statistics.vue": {
-    "file": "assets/Statistics-Do6GmoAK.js",
+    "file": "assets/Statistics-CrGfn9r_.js",
     "name": "Statistics",
     "src": "resources/js/Pages/Knowledge/Statistics.vue",
     "isDynamicEntry": true,
@@ -125,17 +126,17 @@
     ]
   },
   "resources/js/Pages/User/Index.vue": {
-    "file": "assets/Index-CBgyTfg-.js",
+    "file": "assets/Index-B_ZpXCSj.js",
     "name": "Index",
     "src": "resources/js/Pages/User/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_route-DkycQbEi.js"
+      "_route-fMlyL4SZ.js"
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-CCAvJyZn.js",
+    "file": "assets/app-CQj9TRP-.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

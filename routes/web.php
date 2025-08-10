@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Http\Controllers\Knowledge\KnowledgeController;
 use App\Http\Controllers\User\UserController;
@@ -29,13 +30,14 @@ Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard/Index', [
+        'user' => Auth::user(),
         'stats' => [
-            'knowledge' => 0,
-            'ai_interactions' => 0,
-            'users' => 0
+            'knowledge' => \App\Models\Knowledge::count(),
+            'ai_interactions' => 0, // TODO: implement AI interaction tracking
+            'users' => \App\Models\User::count(),
         ]
     ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 // Knowledge Module Routes
 Route::middleware(['auth'])->group(function () {

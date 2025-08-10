@@ -13,6 +13,7 @@ export function route(name, params = {}) {
     'knowledge.search': '/knowledge/search',
     'knowledge.export': '/knowledge/export',
                 'knowledge.statistics': '/knowledge/statistics',
+            'dashboard': '/dashboard',
             'ai.index': '/ai',
             'users.index': '/users',
             'users.create': '/users/create',

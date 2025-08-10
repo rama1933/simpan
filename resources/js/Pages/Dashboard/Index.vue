@@ -1,12 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div class="px-4 py-6 sm:px-0">
-        <h1 class="text-3xl font-bold text-gray-900 mb-6">
-          Dashboard
-        </h1>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <AdminLayout page-title="Dashboard" :user="user">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Knowledge Stats -->
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
@@ -82,13 +76,12 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+    </AdminLayout>
 </template>
 
 <script setup>
 import { defineProps } from 'vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 defineProps({
   stats: {
@@ -98,6 +91,10 @@ defineProps({
       ai_interactions: 0,
       users: 0
     })
+  },
+  user: {
+    type: Object,
+    default: null
   }
 });
 </script>
