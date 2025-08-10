@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Knowledge\KnowledgeController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\AI\AIController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,14 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::get('users/role/{role}', [UserController::class, 'getByRole'])->name('users.by-role');
+});
+
+// AI Module Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('ai', [AIController::class, 'index'])->name('ai.index');
+    Route::post('ai/analyze', [AIController::class, 'analyze'])->name('ai.analyze');
+    Route::post('ai/suggest-tags', [AIController::class, 'suggestTags'])->name('ai.suggest-tags');
+    Route::post('ai/generate', [AIController::class, 'generate'])->name('ai.generate');
 });
 
 require __DIR__ . '/auth.php';
