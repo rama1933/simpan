@@ -204,9 +204,15 @@ const filters = ref({
   status: props.filters.status || ''
 });
 
-const debounceSearch = debounce(() => {
-  applyFilters();
-}, 500);
+const debounceSearch = (() => {
+  let timeout;
+  return () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      applyFilters();
+    }, 500);
+  };
+})();
 
 const applyFilters = () => {
   router.get(route('knowledge.index'), filters.value, {
