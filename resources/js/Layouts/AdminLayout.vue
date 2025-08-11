@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-white to-brand-50 text-gray-900">
     <!-- Mobile top bar -->
-    <div class="md:hidden sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-blue-100">
+    <div class="md:hidden sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-brand-100">
       <div class="flex items-center justify-between px-4 py-3">
-        <button @click="sidebarOpen = true" class="p-2 rounded-md text-blue-600 hover:bg-blue-50">
+        <button @click="sidebarOpen = true" class="p-2 rounded-md text-brand-700 hover:bg-brand-50">
           <i class="pi pi-bars text-lg"></i>
         </button>
         <div class="flex items-center gap-2">
@@ -23,7 +23,7 @@
       <div class="space-y-1">
         <Link v-for="item in navItems" :key="item.href" :href="item.href"
               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm"
-              :class="item.active ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'">
+              :class="item.active ? 'bg-brand-50 text-brand-700' : 'text-gray-700 hover:bg-brand-50 hover:text-brand-700'">
           <i class="pi pi-angle-right text-sm"></i>
           <span class="font-medium">{{ item.label }}</span>
         </Link>
@@ -45,7 +45,7 @@
               <Link v-for="item in navItems" :key="item.href"
                     :href="item.href"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
-                    :class="item.active ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'">
+                    :class="item.active ? 'bg-brand-50 text-brand-700 border border-brand-100' : 'text-gray-700 hover:bg-brand-50 hover:text-brand-700'">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" :d="iconPaths[item.icon]" />
                 </svg>
