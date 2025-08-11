@@ -41,7 +41,10 @@
                           <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h3l2 2h3a2 2 0 012 2v2H4V4zM4 9h12v5a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>
                           </div>
-                          <input v-bind="field" id="title" type="text" class="w-full pl-10 pr-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan judul pengetahuan" />
+                          <input v-bind="field" id="title" type="text" class="w-full pl-10 pr-10 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan judul pengetahuan" @blur="() => onTitleReady(field.value)" />
+                          <button type="button" @click="() => onTitleReady(field.value)" class="absolute inset-y-0 right-0 px-2 text-indigo-600 hover:text-indigo-800" title="Buat draft dengan AI">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"/></svg>
+                          </button>
                         </div>
                         <div class="mt-1 text-xs text-gray-400 text-right">{{ (field.value || '').length }}/{{ titleMax }}</div>
                       </Field>
@@ -177,6 +180,10 @@ const props = defineProps({
   user: { type: Object, default: null }
 })
 
+// reference to vee-validate helpers
+import { useForm } from 'vee-validate'
+const { setFieldValue } = useForm()
+
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
 const submitting = ref(false)
 const titleMax = 255
@@ -262,6 +269,25 @@ const suggestTagsAI = async () => {
     else toast.info('AI tidak menemukan tag baru')
   } catch (e: any) {
     toast.error(e?.response?.data?.message || 'Gagal meminta saran AI')
+  }
+}
+
+const onTitleReady = async (title: string) => {
+  const t = (title || '').trim()
+  if (t.length < 5) return
+  try {
+    const res = await axios.post('/api/ai/draft-from-title', { title: t })
+    const data = res.data?.data || {}
+    if (data.description) setFieldValue('description', data.description)
+    if (data.content) setFieldValue('content', data.content)
+    if (Array.isArray(data.tags)) {
+      for (const tg of data.tags) {
+        if (tg && !tags.value.includes(tg)) tags.value.push(String(tg))
+      }
+    }
+    toast.success('Draft diisi otomatis oleh AI')
+  } catch (e: any) {
+    toast.error(e?.response?.data?.message || 'Gagal membuat draft dari judul')
   }
 }
 

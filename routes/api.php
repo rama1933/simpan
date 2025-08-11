@@ -28,3 +28,4 @@ Route::get('/knowledge/tags', [KnowledgeController::class, 'tags']);
 // AI API routes
 Route::post('/ai/suggest-tags', [AIController::class, 'suggestTags']);
 Route::post('/ai/analyze', [AIController::class, 'analyze']);
+Route::post('/ai/draft-from-title', [AIController::class, 'draftFromTitle']);
