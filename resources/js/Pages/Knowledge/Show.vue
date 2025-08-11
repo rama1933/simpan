@@ -76,16 +76,10 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { marked } from 'marked'
 import { toast } from 'vue3-toastify'
 
-const props = defineProps<{ knowledge: any, user?: any }>()
+const props = defineProps<{ knowledge: any, user?: any, canVerify?: boolean }>()
 const knowledge = props.knowledge
 const user = props.user || (usePage().props as any)?.auth?.user || null
-const isAdmin = computed(() => {
-  const roles: any[] = (user?.roles || []) as any[]
-  if (Array.isArray(roles)) {
-    return roles.some((r: any) => (typeof r === 'string' ? r : r?.name) === 'Admin')
-  }
-  return (user?.role === 'Admin')
-})
+const isAdmin = computed(() => !!props.canVerify)
 
 const verifyNote = ref('')
 const loading = ref(false)

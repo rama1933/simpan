@@ -139,7 +139,8 @@ class KnowledgeController extends Controller
 
         return Inertia::render('Knowledge/Show', [
             'knowledge' => $result['data'],
-            'user' => auth()->user()
+            'user' => auth()->user(),
+            'canVerify' => auth()->check() && auth()->user()->hasRole('Admin')
         ]);
     }
 
