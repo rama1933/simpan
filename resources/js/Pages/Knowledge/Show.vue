@@ -38,6 +38,18 @@
           </div>
         </div>
 
+        <div v-if="(knowledge.attachments || []).length" class="bg-white rounded-lg border p-6 space-y-3">
+          <h3 class="text-lg font-semibold text-gray-900">Lampiran</h3>
+          <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
+            <li v-for="att in knowledge.attachments" :key="att.id">
+              <a :href="`/storage/${att.path}`" target="_blank" class="text-indigo-600 hover:text-indigo-800">
+                {{ att.original_name }}
+              </a>
+              <span class="text-gray-500">• {{ (att.size_bytes/1024).toFixed(1) }} KB</span>
+            </li>
+          </ul>
+        </div>
+
         <div v-if="knowledge.verification_status === 'pending' && isAdmin" class="bg-white rounded-lg border p-6 space-y-4">
           <h3 class="text-lg font-semibold text-gray-900">Verifikasi (Admin)</h3>
           <textarea v-model="verifyNote" rows="3" class="w-full border rounded-md px-3 py-2" placeholder="Catatan verifikasi (opsional)"></textarea>

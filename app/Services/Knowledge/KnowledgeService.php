@@ -235,7 +235,7 @@ class KnowledgeService
      */
     public function getKnowledgeById($id)
     {
-        $knowledge = Knowledge::with(['category', 'author', 'skpd'])->find($id);
+        $knowledge = Knowledge::with(['category', 'author', 'skpd', 'attachments'])->find($id);
 
         if (!$knowledge) {
             return [

@@ -138,7 +138,8 @@ class KnowledgeController extends Controller
         }
 
         return Inertia::render('Knowledge/Show', [
-            'knowledge' => $result['data']
+            'knowledge' => $result['data'],
+            'user' => auth()->user()
         ]);
     }
 
