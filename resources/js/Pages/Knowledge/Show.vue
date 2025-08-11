@@ -64,6 +64,16 @@
             </button>
           </div>
         </div>
+
+        <div v-else-if="isAdmin && ['approved','rejected'].includes(knowledge.verification_status)" class="bg-white rounded-lg border p-6 space-y-3">
+          <h3 class="text-lg font-semibold text-gray-900">Aksi Verifikasi</h3>
+          <p class="text-sm text-gray-600">Status saat ini: <span :class="verifyBadge(knowledge.verification_status)" class="px-2 py-0.5 rounded text-xs">{{ verifyText(knowledge.verification_status) }}</span></p>
+          <textarea v-model="verifyNote" rows="2" class="w-full border rounded-md px-3 py-2" placeholder="Catatan pembatalan (opsional)"></textarea>
+          <button :disabled="loading" @click="unverify()" class="px-3 py-2 rounded-md bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50">
+            <span v-if="loading && action==='unverify'" class="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+            Batalkan Verifikasi (Kembali ke Pending)
+          </button>
+        </div>
       </div>
     </div>
   </AdminLayout>
@@ -104,6 +114,22 @@ const verify = async (act: 'approve'|'reject') => {
     setTimeout(() => window.location.reload(), 300)
   } catch (e) {
     toast.error('Gagal menyimpan verifikasi')
+  } finally {
+    loading.value = false
+    action.value = null
+  }
+}
+
+const unverify = async () => {
+  loading.value = true
+  action.value = 'unverify'
+  try {
+    const res = await axios.post(`/knowledge/${knowledge.id}/unverify`, { note: verifyNote.value })
+    if (res?.data?.success) toast.success('Verifikasi dibatalkan')
+    else toast.info(res?.data?.message || 'Pembatalan diproses')
+    setTimeout(() => window.location.reload(), 300)
+  } catch (e) {
+    toast.error('Gagal membatalkan verifikasi')
   } finally {
     loading.value = false
     action.value = null

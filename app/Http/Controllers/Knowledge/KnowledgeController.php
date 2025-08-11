@@ -220,6 +220,30 @@ class KnowledgeController extends Controller
     }
 
     /**
+     * Unverify knowledge (Admin only)
+     */
+    public function unverify(Request $request, int $id)
+    {
+        $request->validate([
+            'note' => 'nullable|string|max:500'
+        ]);
+
+        $result = $this->knowledgeService->unverifyKnowledge($id, $request->note);
+
+        if (!$result['success']) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $result['message']], 422);
+            }
+            return back()->withErrors(['error' => $result['message']]);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => $result['message']]);
+        }
+        return back()->with('success', $result['message']);
+    }
+
+    /**
      * Search knowledge
      */
     public function search(Request $request)

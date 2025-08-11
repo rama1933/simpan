@@ -519,6 +519,30 @@ class KnowledgeService
     }
 
     /**
+     * Batalkan verifikasi: set kembali ke pending dan kosongkan metadata verifikasi
+     */
+    public function unverifyKnowledge(int $id, ?string $note = null): array
+    {
+        try {
+            $knowledge = Knowledge::find($id);
+            if (!$knowledge) {
+                return ['success' => false, 'message' => 'Knowledge tidak ditemukan'];
+            }
+
+            $knowledge->update([
+                'verification_status' => 'pending',
+                'verified_by' => null,
+                'verified_at' => null,
+                'verification_note' => $note,
+            ]);
+
+            return ['success' => true, 'message' => 'Verifikasi dibatalkan (kembali ke pending)', 'data' => $knowledge];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Gagal membatalkan verifikasi: ' . $e->getMessage()];
+        }
+    }
+
+    /**
      * Create or fetch tags and return their IDs
      */
     private function upsertTagsAndGetIds(array $tags): array
