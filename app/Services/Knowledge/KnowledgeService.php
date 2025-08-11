@@ -265,6 +265,7 @@ class KnowledgeService
                 'author_id' => auth()->id(),
                 'category_id' => $dto->category_id,
                 'skpd_id' => $dto->skpd_id,
+                'verification_status' => 'pending',
                 'published_at' => $dto->status === 'published' ? now() : null
             ]);
 
@@ -476,6 +477,36 @@ class KnowledgeService
                 'success' => false,
                 'message' => 'Gagal melakukan export: ' . $e->getMessage()
             ];
+        }
+    }
+
+    /**
+     * Verify knowledge (approve/reject) by admin
+     */
+    public function verifyKnowledge(int $id, string $action, ?string $note = null)
+    {
+        try {
+            $knowledge = Knowledge::find($id);
+            if (!$knowledge) {
+                return ['success' => false, 'message' => 'Knowledge tidak ditemukan'];
+            }
+
+            if (!in_array($action, ['approve', 'reject'], true)) {
+                return ['success' => false, 'message' => 'Aksi verifikasi tidak valid'];
+            }
+
+            $knowledge->update([
+                'verification_status' => $action === 'approve' ? 'approved' : 'rejected',
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+                'verification_note' => $note,
+                // Jika disetujui dan sebelumnya draft, kita bisa set published (opsional)
+                // 'status' => $action === 'approve' ? 'published' : $knowledge->status,
+            ]);
+
+            return ['success' => true, 'message' => 'Verifikasi berhasil disimpan', 'data' => $knowledge];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Gagal verifikasi: ' . $e->getMessage()];
         }
     }
 

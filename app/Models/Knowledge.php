@@ -26,6 +26,10 @@ class Knowledge extends Model
         'skpd_id',
         'author_id',
         'status',
+        'verification_status',
+        'verified_by',
+        'verified_at',
+        'verification_note',
         'published_at'
     ];
 
@@ -39,6 +43,7 @@ class Knowledge extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
+        'verified_at' => 'datetime',
     ];
 
     /**
@@ -173,6 +178,21 @@ class Knowledge extends Model
             'archived' => 'Diarsipkan',
             default => 'Tidak Diketahui'
         };
+    }
+
+    public function isPendingVerification(): bool
+    {
+        return $this->verification_status === 'pending';
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->verification_status === 'approved';
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->verification_status === 'rejected';
     }
 
     /**

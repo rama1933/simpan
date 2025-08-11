@@ -193,6 +193,25 @@ class KnowledgeController extends Controller
     }
 
     /**
+     * Verify knowledge (Admin only)
+     */
+    public function verify(Request $request, int $id)
+    {
+        $request->validate([
+            'action' => 'required|in:approve,reject',
+            'note' => 'nullable|string|max:500'
+        ]);
+
+        $result = $this->knowledgeService->verifyKnowledge($id, $request->action, $request->note);
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']]);
+        }
+
+        return back()->with('success', $result['message']);
+    }
+
+    /**
      * Search knowledge
      */
     public function search(Request $request)
