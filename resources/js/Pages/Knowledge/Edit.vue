@@ -1,230 +1,153 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div class="px-4 py-6 sm:px-0">
-        <!-- Header -->
-        <div class="mb-6">
-          <div class="flex items-center">
-            <Link
-              :href="route('knowledge.show', knowledge.id)"
-              class="text-indigo-600 hover:text-indigo-500 mr-4"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-              </svg>
-            </Link>
-            <div>
-              <h1 class="text-3xl font-bold text-gray-900">Edit Pengetahuan</h1>
-              <p class="text-gray-600 mt-2">Edit pengetahuan: {{ knowledge.title }}</p>
-            </div>
+  <AdminLayout page-title="Edit Pengetahuan" :user="user">
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-gray-900">Edit: {{ form.title }}</h1>
+      <Link :href="`/knowledge/${knowledge.id}`" class="px-3 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">Kembali</Link>
+    </div>
+
+    <form @submit.prevent="onSubmit" class="space-y-6">
+      <div class="bg-white rounded-lg border p-6 grid grid-cols-1 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Judul</label>
+          <input v-model="form.title" type="text" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+          <textarea v-model="form.description" rows="3" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Konten</label>
+          <textarea v-model="form.content" rows="12" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500" required></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+            <VueSelect v-model="form.category_id" :options="categoryOptions" placeholder="Pilih kategori..." />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">SKPD</label>
+            <VueSelect v-model="form.skpd_id" :options="skpdOptions" placeholder="Pilih SKPD..." />
           </div>
         </div>
-
-        <!-- Form -->
-        <div class="bg-white shadow rounded-lg">
-          <form @submit.prevent="submitForm" class="p-6 space-y-6">
-            <!-- Title -->
-            <div>
-              <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
-                Judul <span class="text-red-500">*</span>
-              </label>
-              <input
-                id="title"
-                v-model="form.title"
-                type="text"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                :class="{ 'border-red-500': errors.title }"
-                placeholder="Masukkan judul pengetahuan"
-              />
-              <p v-if="errors.title" class="mt-1 text-sm text-red-600">{{ errors.title }}</p>
-            </div>
-
-            <!-- Description -->
-            <div>
-              <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                Deskripsi Singkat
-              </label>
-              <textarea
-                id="description"
-                v-model="form.description"
-                rows="3"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                :class="{ 'border-red-500': errors.description }"
-                placeholder="Masukkan deskripsi singkat pengetahuan"
-              ></textarea>
-              <p v-if="errors.description" class="mt-1 text-sm text-red-600">{{ errors.description }}</p>
-            </div>
-
-            <!-- Content -->
-            <div>
-              <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
-                Konten <span class="text-red-500">*</span>
-              </label>
-              <textarea
-                id="content"
-                v-model="form.content"
-                rows="10"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                :class="{ 'border-red-500': errors.content }"
-                placeholder="Masukkan konten lengkap pengetahuan"
-              ></textarea>
-              <p v-if="errors.content" class="mt-1 text-sm text-red-600">{{ errors.content }}</p>
-            </div>
-
-            <!-- Category -->
-            <div>
-              <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
-                Kategori <span class="text-red-500">*</span>
-              </label>
-              <select
-                id="category"
-                v-model="form.category"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                :class="{ 'border-red-500': errors.category }"
-              >
-                <option value="">Pilih Kategori</option>
-                <option value="Teknologi">Teknologi</option>
-                <option value="Bisnis">Bisnis</option>
-                <option value="Kesehatan">Kesehatan</option>
-                <option value="Pendidikan">Pendidikan</option>
-                <option value="Seni & Budaya">Seni & Budaya</option>
-                <option value="Olahraga">Olahraga</option>
-                <option value="Sains">Sains</option>
-                <option value="Lainnya">Lainnya</option>
-              </select>
-              <p v-if="errors.category" class="mt-1 text-sm text-red-600">{{ errors.category }}</p>
-            </div>
-
-            <!-- Tags -->
-            <div>
-              <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
-                Tags
-              </label>
-              <input
-                id="tags"
-                v-model="tagsInput"
-                type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Masukkan tags dipisahkan dengan koma (contoh: Laravel, PHP, Web)"
-                @keydown.enter.prevent="addTag"
-              />
-              <p class="mt-1 text-sm text-gray-500">Tekan Enter untuk menambah tag</p>
-              <div v-if="form.tags && form.tags.length > 0" class="mt-2 flex flex-wrap gap-2">
-                <span
-                  v-for="(tag, index) in form.tags"
-                  :key="index"
-                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
-                >
-                  {{ tag }}
-                  <button
-                    type="button"
-                    @click="removeTag(index)"
-                    class="ml-2 text-indigo-600 hover:text-indigo-800"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
-                </span>
-              </div>
-              <p v-if="errors.tags" class="mt-1 text-sm text-red-600">{{ errors.tags }}</p>
-            </div>
-
-            <!-- Status -->
-            <div>
-              <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-                Status <span class="text-red-500">*</span>
-              </label>
-              <select
-                id="status"
-                v-model="form.status"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                :class="{ 'border-red-500': errors.status }"
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Dipublikasi</option>
-                <option value="archived">Diarsipkan</option>
-              </select>
-              <p v-if="errors.status" class="mt-1 text-sm text-red-600">{{ errors.status }}</p>
-            </div>
-
-            <!-- Form Actions -->
-            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-              <Link
-                :href="route('knowledge.show', knowledge.id)"
-                class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Batal
-              </Link>
-              <button
-                type="submit"
-                :disabled="processing"
-                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span v-if="processing">Menyimpan...</span>
-                <span v-else>Update Pengetahuan</span>
-              </button>
-            </div>
-          </form>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <VueSelect v-model="form.status" :options="statusOptions" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+          <div class="flex flex-wrap gap-2 mb-2">
+            <span v-for="(t, i) in form.tags" :key="i" class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 px-2 py-1 rounded-full text-xs">
+              {{ t }}
+              <button type="button" @click="removeTag(i)" class="text-indigo-600 hover:text-indigo-800">×</button>
+            </span>
+          </div>
+          <input v-model="tagInput" @keydown.enter.prevent="addTag" type="text" placeholder="Ketik tag lalu Enter" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Lampiran (opsional) — Dokumen/Gambar, total maks 5MB</label>
+          <input ref="fileInput" type="file" multiple class="hidden" @change="onFilesSelected" />
+          <div @click="() => fileInput?.click()" class="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer bg-white hover:bg-gray-50">
+            <p class="text-sm text-gray-600">Klik untuk pilih file atau seret ke sini</p>
+          </div>
+          <ul class="mt-2 text-sm text-gray-700 list-disc pl-5">
+            <li v-for="(f, idx) in attachments" :key="idx" class="flex items-center justify-between">
+              <span>{{ f.name }} ({{ (f.size/1024).toFixed(1) }} KB)</span>
+              <button type="button" @click="removeFile(idx)" class="text-rose-600 hover:text-rose-800">Hapus</button>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
-  </div>
+
+      <div class="flex items-center justify-end gap-3">
+        <Link :href="`/knowledge/${knowledge.id}`" class="px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">Batal</Link>
+        <button :disabled="submitting" type="submit" class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60">
+          <span v-if="submitting" class="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+          Simpan Perubahan
+        </button>
+      </div>
+    </form>
+  </AdminLayout>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import { Link, useForm } from '@inertiajs/vue3';
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { Link, router } from '@inertiajs/vue3'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import VueSelect from '@/Components/VueSelect.vue'
+import { toast } from 'vue3-toastify'
 
-const props = defineProps({
-  knowledge: {
-    type: Object,
-    required: true
-  },
-  errors: {
-    type: Object,
-    default: () => ({})
-  }
-});
+const props = defineProps<{ knowledge: any, categories: any[], skpds: any[] }>()
+const user = null
 
-const form = useForm({
-  title: props.knowledge.title || '',
-  description: props.knowledge.description || '',
-  content: props.knowledge.content || '',
-  category: props.knowledge.category || '',
-  tags: props.knowledge.tags || [],
-  status: props.knowledge.status || 'draft'
-});
+const statusOptions = [
+  { value: 'draft', label: 'Draft' },
+  { value: 'published', label: 'Published' },
+  { value: 'archived', label: 'Archived' }
+]
 
-const tagsInput = ref('');
-const processing = ref(false);
+const categoryOptions = computed(() => props.categories.map(c => ({ value: c.id, label: c.name })))
+const skpdOptions = computed(() => props.skpds.map(s => ({ value: s.id, label: s.nama_skpd })))
 
+const form = ref({
+  title: props.knowledge.title,
+  description: props.knowledge.description,
+  content: props.knowledge.content,
+  category_id: props.knowledge.category_id,
+  skpd_id: props.knowledge.skpd_id,
+  status: props.knowledge.status,
+  tags: Array.isArray(props.knowledge.tags) ? props.knowledge.tags : []
+})
+
+const tagInput = ref('')
 const addTag = () => {
-  const tag = tagsInput.value.trim();
-  if (tag && !form.tags.includes(tag)) {
-    form.tags.push(tag);
-    tagsInput.value = '';
+  const v = tagInput.value.trim()
+  if (!v) return
+  if (!form.value.tags.includes(v)) form.value.tags.push(v)
+  tagInput.value = ''
+}
+const removeTag = (i: number) => form.value.tags.splice(i, 1)
+
+const fileInput = ref<HTMLInputElement | null>(null)
+const attachments = ref<File[]>([])
+const onFilesSelected = (e: Event) => {
+  const files = Array.from((e.target as HTMLInputElement).files || [])
+  if (!files.length) return
+  const next = [...attachments.value, ...files]
+  const total = next.reduce((s, f) => s + (f?.size || 0), 0)
+  if (total > 5 * 1024 * 1024) {
+    return toast.error('Total ukuran lampiran maksimal 5MB')
   }
-};
+  const allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.ms-powerpoint','application/vnd.openxmlformats-officedocument.presentationml.presentation','image/jpeg','image/png']
+  if (next.some(f => !allowed.includes(f.type))) {
+    return toast.error('Hanya dokumen/gambar yang diperbolehkan')
+  }
+  attachments.value = next
+  if (fileInput.value) fileInput.value.value = ''
+}
+const removeFile = (i: number) => attachments.value.splice(i, 1)
 
-const removeTag = (index) => {
-  form.tags.splice(index, 1);
-};
+const submitting = ref(false)
+const onSubmit = async () => {
+  submitting.value = true
+  try {
+    const fd = new FormData()
+    Object.entries(form.value).forEach(([k, v]) => {
+      if (k === 'tags') {
+        (v as string[]).forEach((t, idx) => fd.append('tags['+idx+']', t))
+      } else {
+        fd.append(k, String(v ?? ''))
+      }
+    })
+    attachments.value.forEach(f => fd.append('attachments[]', f))
+    fd.append('_method', 'PUT')
 
-const submitForm = () => {
-  processing.value = true;
-  form.put(route('knowledge.update', props.knowledge.id), {
-    onSuccess: () => {
-      processing.value = false;
-    },
-    onError: () => {
-      processing.value = false;
-    }
-  });
-};
+    await router.post(`/knowledge/${props.knowledge.id}`, fd, { forceFormData: true })
+    toast.success('Berhasil mengubah pengetahuan')
+  } catch (e) {
+    toast.error('Gagal menyimpan perubahan')
+  } finally {
+    submitting.value = false
+  }
+}
 </script>
 
