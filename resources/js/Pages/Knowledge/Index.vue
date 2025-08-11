@@ -646,11 +646,14 @@ const confirmDelete = async (item: any) => {
     cancelButtonColor: '#6b7280'
   })
   if (!result.isConfirmed) return
-  router.delete(r('knowledge.delete', item.id), {
-    preserveScroll: true,
-    onSuccess: () => toast.success('Pengetahuan berhasil dihapus'),
-    onError: () => toast.error('Gagal menghapus pengetahuan'),
-  })
+  try {
+    await axios.delete(r('knowledge.delete', item.id))
+    toast.success('Pengetahuan berhasil dihapus')
+    // refresh data
+    applyFilters(filters.value, 1)
+  } catch (_) {
+    toast.error('Gagal menghapus pengetahuan')
+  }
 }
 
 const getStatusBadgeClass = (status) => {
