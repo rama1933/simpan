@@ -278,26 +278,25 @@
 
       <!-- Custom Actions Column -->
       <template #actions="{ item }">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1">
           <template v-if="openRowId === item.id">
-            <Link :href="`/knowledge/${item?.id}`" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md text-indigo-700 bg-indigo-50 hover:bg-indigo-100">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7.305 4.5 3.274 7.334 1.5 12c1.774 4.666 5.805 7.5 10.5 7.5s8.726-2.834 10.5-7.5C20.726 7.334 16.695 4.5 12 4.5zm0 12a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/></svg>
-              Lihat
+            <!-- Ikon aksi muncul di kiri -->
+            <Link :href="`/knowledge/${item?.id}`" :title="'Lihat'" class="p-2 rounded-md text-indigo-700 hover:bg-indigo-50">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7.305 4.5 3.274 7.334 1.5 12c1.774 4.666 5.805 7.5 10.5 7.5s8.726-2.834 10.5-7.5C20.726 7.334 16.695 4.5 12 4.5zm0 12a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/></svg>
             </Link>
-            <Link :href="`/knowledge/${item?.id}/edit`" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md text-emerald-700 bg-emerald-50 hover:bg-emerald-100">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
-              Edit
+            <Link :href="`/knowledge/${item?.id}/edit`" :title="'Edit'" class="p-2 rounded-md text-emerald-700 hover:bg-emerald-50">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
             </Link>
-            <button @click="deleteKnowledge(item?.id)" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md text-rose-700 bg-rose-50 hover:bg-rose-100">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 12a2 2 0 01-2 2H9a2 2 0 01-2-2L6 7zm3-3h6a1 1 0 011 1v1H8V5a1 1 0 011-1z"/></svg>
-              Hapus
+            <button :title="'Hapus'" @click="deleteKnowledge(item?.id)" class="p-2 rounded-md text-rose-700 hover:bg-rose-50">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 12a2 2 0 01-2 2H9a2 2 0 01-2-2L6 7zm3-3h6a1 1 0 011 1v1H8V5a1 1 0 011-1z"/></svg>
             </button>
-            <button @click="openRowId = null" class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md text-gray-600 hover:text-gray-800">
-              Tutup
+            <!-- Toggle menjadi ikon X di kanan -->
+            <button @click="openRowId = null" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none" :title="'Tutup'">
+              <svg class="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
           </template>
           <template v-else>
-            <button @click="toggleRowActions(item.id)" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+            <button @click="toggleRowActions(item.id)" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none" :title="'Aksi'">
               <svg class="w-5 h-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
             </button>
           </template>
