@@ -647,7 +647,8 @@ const confirmDelete = async (item: any) => {
   })
   if (!result.isConfirmed) return
   try {
-    await axios.delete(r('knowledge.delete', item.id))
+    const url = r('knowledge.delete', item.id) || `/knowledge/${item.id}`
+    await axios.delete(url)
     toast.success('Pengetahuan berhasil dihapus')
     // refresh data
     applyFilters(filters.value, 1)
