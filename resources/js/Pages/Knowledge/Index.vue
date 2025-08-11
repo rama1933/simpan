@@ -114,16 +114,13 @@
         <!-- Tags -->
         <div class="space-y-2 md:col-span-2 lg:col-span-2">
           <label class="block text-sm font-medium text-gray-700">Tags</label>
-          <div class="flex gap-2">
-            <input
-              v-model="tagsQuery"
-              @input="searchTags"
-              type="text"
-              placeholder="Cari tag..."
-              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
-            />
-            <button @click="applyFiltersManually" class="px-3 py-2.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100">Terapkan</button>
-          </div>
+          <input
+            v-model="tagsQuery"
+            @input="searchTags"
+            type="text"
+            placeholder="Cari tag..."
+            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
+          />
           <div class="mt-2 flex flex-wrap gap-2">
             <button
               v-for="tag in tagOptions"
