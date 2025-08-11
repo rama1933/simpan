@@ -7,7 +7,7 @@
         </div>
         <a
           :href="route('users.create')"
-          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          class="bg-brand-700 text-white px-4 py-2 rounded-md hover:bg-brand-800"
         >
           Tambah User
         </a>
@@ -20,7 +20,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Role</label>
             <select
               v-model="filters.role"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="">Semua Role</option>
               <option value="Admin">Admin</option>
@@ -33,7 +33,7 @@
               v-model="filters.search"
               type="text"
               placeholder="Cari nama atau email..."
-              class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
           <div class="flex items-end">
@@ -88,7 +88,7 @@
                   v-for="role in user.roles"
                   :key="role.id"
                   class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="role.name === 'Admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'"
+                  :class="role.name === 'Admin' ? 'bg-red-100 text-red-800' : 'bg-brand-100 text-brand-800'"
                 >
                   {{ role.name }}
                 </span>
@@ -101,7 +101,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <a
                   :href="route('users.edit', user.id)"
-                  class="text-blue-600 hover:text-blue-900 mr-4"
+                  class="text-brand-700 hover:text-brand-900 mr-4"
                 >
                   Edit
                 </a>
