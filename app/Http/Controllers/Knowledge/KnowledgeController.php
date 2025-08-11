@@ -24,7 +24,7 @@ class KnowledgeController extends Controller
      */
     public function index(Request $request): Response
     {
-        $filters = $request->only(['search', 'category_id', 'skpd_id', 'status']);
+        $filters = $request->only(['search', 'category_id', 'skpd_id', 'status', 'verification_status']);
         $knowledge = $this->knowledgeService->getAllKnowledge($filters);
 
         // Get categories and SKPDs for filters
@@ -45,7 +45,7 @@ class KnowledgeController extends Controller
      */
     public function filter(Request $request)
     {
-        $filters = $request->only(['search', 'category_id', 'skpd_id', 'status']);
+        $filters = $request->only(['search', 'category_id', 'skpd_id', 'status', 'verification_status']);
         $knowledge = $this->knowledgeService->getAllKnowledge($filters);
 
         // Return JSON response for API

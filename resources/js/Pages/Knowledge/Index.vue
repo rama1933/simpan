@@ -100,6 +100,16 @@
             placeholder="Pilih Status..."
           />
         </div>
+
+        <!-- Verifikasi -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Verifikasi</label>
+          <VueSelect
+            v-model="filters.verification_status"
+            :options="verificationOptions"
+            placeholder="Pilih Status Verifikasi..."
+          />
+        </div>
       </div>
 
       <!-- Active filters display -->
@@ -151,6 +161,18 @@
               <button
                 @click="filters.status = ''"
                 class="ml-1.5 text-yellow-600 hover:text-yellow-800"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              v-if="filters.verification_status"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+            >
+              Verifikasi: {{ getVerifyText(filters.verification_status) }}
+              <button
+                @click="filters.verification_status = ''"
+                class="ml-1.5 text-amber-600 hover:text-amber-800"
               >
                 ×
               </button>
@@ -412,7 +434,8 @@ const filters = ref({
     search: props.filters?.search || '',
     category_id: props.filters?.category_id || '',
     skpd_id: props.filters?.skpd_id || '',
-    status: props.filters?.status || ''
+    status: props.filters?.status || '',
+    verification_status: props.filters?.verification_status || ''
 })
 
 // Computed properties for filter options
@@ -428,6 +451,13 @@ const statusOptions = computed(() => [
   { value: 'draft', label: 'Draft' },
   { value: 'published', label: 'Published' },
   { value: 'archived', label: 'Archived' }
+])
+
+const verificationOptions = computed(() => [
+  { value: '', label: 'Semua Verifikasi' },
+  { value: 'pending', label: 'Menunggu' },
+  { value: 'approved', label: 'Disetujui' },
+  { value: 'rejected', label: 'Ditolak' }
 ])
 
 const skpdOptions = computed(() => {
@@ -477,7 +507,8 @@ const loadInitialData = async () => {
         search: '',
         category_id: '',
         skpd_id: '',
-        status: ''
+        status: '',
+        verification_status: ''
     })
 }
 
@@ -504,7 +535,8 @@ const clearFilters = () => {
         search: '',
         category_id: '',
         skpd_id: '',
-        status: ''
+        status: '',
+        verification_status: ''
     }
     // Apply empty filters to reset data
     applyFilters(filters.value, 1)

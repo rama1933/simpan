@@ -208,6 +208,11 @@ class KnowledgeService
             $query->where('skpd_id', $filters['skpd_id']);
         }
 
+        // Apply verification status filter
+        if (!empty($filters['verification_status'])) {
+            $query->where('verification_status', $filters['verification_status']);
+        }
+
         return [
             'success' => true,
             'data' => $query->paginate($perPage)
@@ -495,14 +500,17 @@ class KnowledgeService
                 return ['success' => false, 'message' => 'Aksi verifikasi tidak valid'];
             }
 
-            $knowledge->update([
+            $updates = [
                 'verification_status' => $action === 'approve' ? 'approved' : 'rejected',
                 'verified_by' => auth()->id(),
                 'verified_at' => now(),
                 'verification_note' => $note,
-                // Jika disetujui dan sebelumnya draft, kita bisa set published (opsional)
-                // 'status' => $action === 'approve' ? 'published' : $knowledge->status,
-            ]);
+            ];
+            if ($action === 'approve') {
+                $updates['status'] = 'published';
+                $updates['published_at'] = now();
+            }
+            $knowledge->update($updates);
 
             return ['success' => true, 'message' => 'Verifikasi berhasil disimpan', 'data' => $knowledge];
         } catch (\Exception $e) {
