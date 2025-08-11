@@ -53,15 +53,28 @@
               </Link>
             </div>
           </nav>
-          <div class="px-4 py-3 border-t border-brand-100 bg-white/70">
-            <div class="flex items-center gap-2">
+          <div class="px-4 py-3 border-t border-brand-100 bg-white/70 relative" ref="userMenuWrapper">
+            <button @click="userMenuOpen = !userMenuOpen" ref="userMenuButton" class="w-full flex items-center gap-2 rounded-md hover:bg-brand-50 px-2 py-1.5">
               <div class="h-9 w-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center text-sm font-semibold">
                 {{ (user?.name || 'U').slice(0,1) }}
               </div>
-              <div class="min-w-0">
+              <div class="min-w-0 text-left flex-1">
                 <div class="text-sm font-semibold truncate">{{ user?.name || 'User' }}</div>
                 <div class="text-xs text-brand-700">Admin</div>
               </div>
+              <svg class="w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.14l3.71-3.91a.75.75 0 111.08 1.04l-4.24 4.46a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"/></svg>
+            </button>
+            <div v-if="userMenuOpen" ref="userMenu" class="absolute right-3 bottom-14 z-50 w-48 rounded-lg bg-white shadow-lg border border-brand-100 overflow-hidden">
+              <Link href="/settings" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-brand-50">
+                <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8a4 4 0 100 8 4 4 0 000-8z"/><path stroke-linecap="round" stroke-linejoin="round" d="M4.93 4.93l2.12 2.12M16.95 4.93l-2.12 2.12M4.93 19.07l2.12-2.12M16.95 19.07l-2.12-2.12M3 12h3M18 12h3M12 3v3M12 18v3"/></svg>
+                <span>Setting</span>
+              </Link>
+              <form :action="route('logout')" method="POST">
+                <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-700 hover:bg-rose-50">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m12 0l-4-4m4 4l-4 4m6-9V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
+                  <span>Logout</span>
+                </button>
+              </form>
             </div>
           </div>
         </aside>
@@ -72,9 +85,6 @@
         <!-- Desktop topbar -->
         <div class="hidden md:flex items-center justify-between sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-brand-100 px-6 h-16">
           <span class="text-xl font-semibold">{{ pageTitle }}</span>
-          <form :action="route('logout')" method="POST">
-            <button class="px-3 py-1.5 rounded-md text-sm text-white bg-brand-700 hover:bg-brand-800">Logout</button>
-          </form>
         </div>
 
         <main class="p-4 md:p-6">
@@ -90,7 +100,7 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3'
 import { route } from '@/core/helpers/route'
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import Sidebar from 'primevue/sidebar'
 
@@ -101,6 +111,24 @@ const props = defineProps({
 
 const page = usePage()
 const sidebarOpen = ref(false)
+const userMenuOpen = ref(false)
+const userMenuWrapper = ref(null)
+const userMenu = ref(null)
+const userMenuButton = ref(null)
+
+function handleClickOutside(e) {
+  const w = userMenuWrapper.value
+  if (!w) return
+  if (!w.contains(e.target)) userMenuOpen.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 const navItems = computed(() => {
   const url = page.url || ''
