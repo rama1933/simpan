@@ -13,14 +13,16 @@ export function route(name, params = {}) {
     'knowledge.destroy': (id) => `/knowledge/${id}`,
     'knowledge.search': '/knowledge/search',
     'knowledge.export': '/knowledge/export',
-                'knowledge.statistics': '/knowledge/statistics',
-            'dashboard': '/dashboard',
-            'ai.index': '/ai',
-            'users.index': '/users',
-            'users.create': '/users/create',
-            'users.edit': (id) => `/users/${id}/edit`,
-            'login': '/login',
-            'logout': '/logout'
+    'knowledge.statistics': '/knowledge/statistics',
+    'ai.index': '/ai',
+
+    'users.index': '/users',
+    'users.create': '/users/create',
+    'users.store': '/users',
+    'users.edit': (id) => `/users/${id}/edit`,
+    'users.update': (id) => `/users/${id}`,
+
+    'logout': '/logout'
   };
 
   const route = routes[name];
