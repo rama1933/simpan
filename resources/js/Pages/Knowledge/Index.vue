@@ -284,7 +284,7 @@
             <Link :href="`/knowledge/${item?.id}/edit`" :title="'Edit'" class="p-2 rounded-md text-emerald-700 hover:bg-emerald-50">
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
             </Link>
-            <button :title="'Hapus'" @click="deleteKnowledge(item?.id)" class="p-2 rounded-md text-rose-700 hover:bg-rose-50">
+            <button :title="'Hapus'" @click="confirmDelete(item)" class="p-2 rounded-md text-rose-700 hover:bg-rose-50">
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 12a2 2 0 01-2 2H9a2 2 0 01-2-2L6 7zm3-3h6a1 1 0 011 1v1H8V5a1 1 0 011-1z"/></svg>
             </button>
             <!-- Toggle menjadi ikon X di kanan -->
@@ -630,11 +630,17 @@ const clearFilters = () => {
     applyFilters(filters.value, 1)
 }
 
-const deleteKnowledge = (id) => {
-  if (confirm('Apakah Anda yakin ingin menghapus pengetahuan ini?')) {
-    router.delete(`/knowledge/${id}`);
-  }
-};
+const confirmDelete = (item: any) => {
+  if (!item?.id) return
+  const title = item?.title ? `\n\nJudul: ${item.title}` : ''
+  const ok = confirm(`Apakah Anda yakin ingin menghapus pengetahuan ini?${title}\n\nTindakan ini tidak dapat dibatalkan.`)
+  if (!ok) return
+  router.delete(`/knowledge/${item.id}`, {
+    preserveScroll: true,
+    onSuccess: () => toast.success('Pengetahuan berhasil dihapus'),
+    onError: () => toast.error('Gagal menghapus pengetahuan'),
+  })
+}
 
 const getStatusBadgeClass = (status) => {
   const classes = {
