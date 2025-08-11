@@ -27,6 +27,12 @@ class UpdateKnowledgeRequest extends BaseFormRequest
         $rules['title'] = 'sometimes|required|string|max:255';
         $rules['content'] = 'sometimes|required|string|min:10';
 
+        // Attachment rules for update
+        $rules['attachments'] = 'nullable|array';
+        $rules['attachments.*'] = 'file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpeg,jpg,png|max:5120';
+        $rules['remove_attachment_ids'] = 'nullable|array';
+        $rules['remove_attachment_ids.*'] = 'integer|exists:knowledge_attachments,id';
+
         return $rules;
     }
 

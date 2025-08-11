@@ -351,6 +351,37 @@ class KnowledgeService
             $tagIds = is_array($dto->tags) ? $this->upsertTagsAndGetIds($dto->tags) : [];
             $knowledge->tagsRelation()->sync($tagIds);
 
+            // Remove attachments if requested
+            $removeIds = (array) request()->input('remove_attachment_ids', []);
+            if (!empty($removeIds)) {
+                $attachments = KnowledgeAttachment::whereIn('id', $removeIds)->where('knowledge_id', $knowledge->id)->get();
+                foreach ($attachments as $att) {
+                    if ($att->disk && $att->path && Storage::disk($att->disk)->exists($att->path)) {
+                        Storage::disk($att->disk)->delete($att->path);
+                    }
+                    $att->delete();
+                }
+            }
+
+            // Add new attachments
+            if (request()->hasFile('attachments')) {
+                $files = request()->file('attachments');
+                foreach ((array) $files as $file) {
+                    if (!$file->isValid()) {
+                        continue;
+                    }
+                    $stored = $file->store('knowledge/attachments', 'public');
+                    KnowledgeAttachment::create([
+                        'knowledge_id' => $knowledge->id,
+                        'original_name' => $file->getClientOriginalName(),
+                        'path' => $stored,
+                        'mime_type' => $file->getClientMimeType(),
+                        'size_bytes' => $file->getSize(),
+                        'disk' => 'public',
+                    ]);
+                }
+            }
+
             return [
                 'success' => true,
                 'message' => 'Knowledge berhasil diupdate',

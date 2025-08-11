@@ -60,6 +60,23 @@
                 <!-- Attachments -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Lampiran</label>
+                  <!-- Existing attachments -->
+                  <div v-if="existingAttachments.length" class="mb-3 space-y-2">
+                    <div class="text-xs text-gray-500">Lampiran saat ini:</div>
+                    <ul class="space-y-2">
+                      <li v-for="att in existingAttachments" :key="att.id" class="flex items-center justify-between bg-gray-50 border rounded px-3 py-2 text-sm">
+                        <div class="truncate flex items-center gap-2">
+                          <svg class="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/></svg>
+                          <span class="font-medium truncate max-w-[320px]" :title="att.original_name">{{ att.original_name }}</span>
+                          <span class="text-gray-500">({{ formatSize(att.size_bytes) }})</span>
+                        </div>
+                        <label class="inline-flex items-center gap-2 text-red-600 cursor-pointer">
+                          <input type="checkbox" v-model="removeIds" :value="att.id" class="rounded border-gray-300 text-red-600 focus:ring-red-500" />
+                          Hapus
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
                   <div
                     class="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer bg-white hover:bg-gray-50"
                     :class="dragOver ? 'border-indigo-400 bg-indigo-50/30' : 'border-gray-300'"
@@ -197,6 +214,8 @@ const { setFieldValue } = useForm()
 // Attachments
 const fileInput = ref<HTMLInputElement | null>(null)
 const attachments = ref<File[]>([])
+const existingAttachments = ref<any[]>(props.knowledge?.attachments || [])
+const removeIds = ref<number[]>([])
 const dragOver = ref(false)
 const onFilesSelected = (e: Event) => {
   const input = e.target as HTMLInputElement
@@ -225,6 +244,11 @@ const onDrop = (e: DragEvent) => {
   else attachments.value = next
 }
 const removeAttachment = (idx: number) => { attachments.value.splice(idx, 1) }
+const formatSize = (bytes?: number) => {
+  if (!bytes || bytes <= 0) return '0 B'
+  const mb = bytes / 1024 / 1024
+  return `${mb.toFixed(2)} MB`
+}
 
 // Tags state & suggestion
 const tagsInput = ref('')
@@ -341,6 +365,7 @@ const onSubmit = async (values: any) => {
   fd.append('status', values.status || 'draft')
   tags.value.forEach(t => fd.append('tags[]', t))
   attachments.value.forEach(f => fd.append('attachments[]', f))
+  removeIds.value.forEach(id => fd.append('remove_attachment_ids[]', String(id)))
   fd.append('_method', 'PUT')
 
   router.post(`/knowledge/${props.knowledge.id}`, fd, {
