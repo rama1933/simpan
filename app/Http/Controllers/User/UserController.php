@@ -10,6 +10,7 @@ use App\Repositories\User\UserRepositoryInterface;
 use App\Data\User\UserDTO;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
+use App\Models\MasterSKPD;
 
 class UserController extends Controller
 {
@@ -34,9 +35,11 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $roles = Role::query()->select('id','name')->get();
+        $skpds = MasterSKPD::query()->select('id','nama_skpd')->orderBy('nama_skpd')->get();
         return Inertia::render('User/Create', [
             'user' => $request->user(),
             'roles' => $roles,
+            'skpds' => $skpds,
         ]);
     }
 
@@ -47,14 +50,16 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'min:8', 'confirmed'],
             'roles' => ['array'],
-            'roles.*' => ['string']
+            'roles.*' => ['string'],
+            'skpd_id' => ['required','exists:master_skpds,id']
         ]);
 
         $dto = new UserDTO(
             name: $validated['name'] ?? null,
             email: $validated['email'] ?? null,
             password: $validated['password'] ?? null,
-            roles: $validated['roles'] ?? []
+            roles: $validated['roles'] ?? [],
+            skpd_id: $validated['skpd_id'] ?? null,
         );
 
         $this->userService->createUser($dto);
@@ -67,11 +72,13 @@ class UserController extends Controller
         $user = $this->userRepository->find($id);
         $user->load('roles:id,name');
         $roles = Role::select('id','name')->get();
+        $skpds = MasterSKPD::query()->select('id','nama_skpd')->orderBy('nama_skpd')->get();
 
         return Inertia::render('User/Edit', [
             'user' => $request->user(),
             'editing' => $user,
             'roles' => $roles,
+            'skpds' => $skpds,
         ]);
     }
 
@@ -82,14 +89,16 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users','email')->ignore($id)],
             'password' => ['nullable', 'min:8', 'confirmed'],
             'roles' => ['array'],
-            'roles.*' => ['string']
+            'roles.*' => ['string'],
+            'skpd_id' => ['nullable','exists:master_skpds,id']
         ]);
 
         $dto = new UserDTO(
             name: $validated['name'] ?? null,
             email: $validated['email'] ?? null,
             password: $validated['password'] ?? null,
-            roles: $validated['roles'] ?? []
+            roles: $validated['roles'] ?? [],
+            skpd_id: $validated['skpd_id'] ?? null,
         );
 
         $this->userService->updateUser($id, $dto);

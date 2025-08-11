@@ -21,7 +21,7 @@ class UserService extends BaseService
         $user = $this->userRepository->create($userData);
         
         if ($data->roles) {
-            $user->assignRoles($data->roles);
+            $user->syncRoles($data->roles);
         }
         
         return $this->success('User berhasil dibuat', $user);
@@ -35,7 +35,8 @@ class UserService extends BaseService
             $userData['password'] = Hash::make($data->password);
         }
         
-        $user = $this->userRepository->update($id, $userData);
+        $updated = $this->userRepository->update($id, $userData);
+        $user = $this->userRepository->find($id);
         
         if ($data->roles) {
             $user->syncRoles($data->roles);

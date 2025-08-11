@@ -12,6 +12,13 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input v-model="form.email" type="email" class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" required />
           </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">SKPD</label>
+            <select v-model.number="form.skpd_id" class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <option :value="null">Pilih SKPD</option>
+              <option v-for="s in skpds" :key="s.id" :value="s.id">{{ s.nama_skpd }}</option>
+            </select>
+          </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Password (opsional)</label>
@@ -47,11 +54,12 @@ import { Link, router } from '@inertiajs/vue3'
 import { reactive } from 'vue'
 import { route } from '@/core/helpers/route'
 
-const props = defineProps({ user: Object, editing: Object, roles: Array })
+const props = defineProps({ user: Object, editing: Object, roles: Array, skpds: Array })
 
 const form = reactive({
   name: props.editing?.name || '',
   email: props.editing?.email || '',
+  skpd_id: props.editing?.skpd_id ?? null,
   password: '',
   password_confirmation: '',
   roles: (props.editing?.roles || []).map(r => r.name)
