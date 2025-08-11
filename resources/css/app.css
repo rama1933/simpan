@@ -1,6 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Flowbite styles should be imported here to share the same Tailwind context */
-@import 'flowbite';
