@@ -38,7 +38,7 @@
           </div>
         </div>
 
-        <div v-if="knowledge.verification_status === 'pending'" class="bg-white rounded-lg border p-6 space-y-4">
+        <div v-if="knowledge.verification_status === 'pending' && isAdmin" class="bg-white rounded-lg border p-6 space-y-4">
           <h3 class="text-lg font-semibold text-gray-900">Verifikasi (Admin)</h3>
           <textarea v-model="verifyNote" rows="3" class="w-full border rounded-md px-3 py-2" placeholder="Catatan verifikasi (opsional)"></textarea>
           <div class="flex gap-2">
@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Link, usePage, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { marked } from 'marked'
@@ -67,6 +67,13 @@ import { toast } from 'vue3-toastify'
 const props = defineProps<{ knowledge: any, user?: any }>()
 const knowledge = props.knowledge
 const user = props.user || (usePage().props as any)?.auth?.user || null
+const isAdmin = computed(() => {
+  const roles: any[] = (user?.roles || []) as any[]
+  if (Array.isArray(roles)) {
+    return roles.some((r: any) => (typeof r === 'string' ? r : r?.name) === 'Admin')
+  }
+  return (user?.role === 'Admin')
+})
 
 const verifyNote = ref('')
 const loading = ref(false)

@@ -201,6 +201,13 @@
         </span>
       </template>
 
+      <!-- Custom Verification Column -->
+      <template #verification_status="{ item }">
+        <span :class="getVerifyBadgeClass(item?.verification_status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+          {{ getVerifyText(item?.verification_status) || '-' }}
+        </span>
+      </template>
+
       <!-- Custom SKPD Column -->
       <template #skpd.kode_skpd="{ item }">
         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
@@ -379,6 +386,11 @@ const tableColumns = ref([
     type: 'badge'
   },
   {
+    key: 'verification_status',
+    label: 'VERIFIKASI',
+    type: 'custom'
+  },
+  {
     key: 'author.name',
     label: 'PENULIS',
     type: 'text'
@@ -521,6 +533,17 @@ const getStatusText = (status) => {
   };
   return texts[status] || 'Tidak Diketahui';
 };
+
+const getVerifyBadgeClass = (v) => {
+  const classes = {
+    pending: 'bg-amber-100 text-amber-800',
+    approved: 'bg-emerald-100 text-emerald-800',
+    rejected: 'bg-rose-100 text-rose-800'
+  }
+  return classes[v] || 'bg-gray-100 text-gray-800'
+}
+
+const getVerifyText = (v) => ({ pending: 'Menunggu', approved: 'Disetujui', rejected: 'Ditolak' }[v] || '-')
 
 const formatDate = (dateString) => {
   if (!dateString) return '';

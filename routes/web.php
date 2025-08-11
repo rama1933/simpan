@@ -39,7 +39,7 @@ Route::prefix('knowledge')->name('knowledge.')->group(function () {
     Route::put('/{knowledge}', [KnowledgeController::class, 'update'])->name('update');
     Route::delete('/{knowledge}', [KnowledgeController::class, 'destroy'])->name('delete');
     Route::post('/{knowledge}/change-status', [KnowledgeController::class, 'changeStatus'])->name('change-status');
-    Route::post('/{knowledge}/verify', [KnowledgeController::class, 'verify'])->name('verify');
+    Route::post('/{knowledge}/verify', [KnowledgeController::class, 'verify'])->middleware('role:Admin')->name('verify');
     Route::get('/{knowledge}/export', [KnowledgeController::class, 'export'])->name('export');
     Route::get('/search', [KnowledgeController::class, 'search'])->name('search');
     Route::get('/statistics', [KnowledgeController::class, 'statistics'])->name('statistics');
