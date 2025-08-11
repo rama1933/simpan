@@ -41,9 +41,10 @@
                           <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h3l2 2h3a2 2 0 012 2v2H4V4zM4 9h12v5a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>
                           </div>
-                          <input v-bind="field" id="title" type="text" class="w-full pl-10 pr-10 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan judul pengetahuan" @blur="() => onTitleReady(field.value)" />
-                          <button type="button" @click="() => onTitleReady(field.value)" class="absolute inset-y-0 right-0 px-2 text-indigo-600 hover:text-indigo-800" title="Buat draft dengan AI">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"/></svg>
+                          <input v-bind="field" id="title" type="text" class="w-full pl-10 pr-24 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan judul pengetahuan" @input="onTitleInput(field.value)" @blur="() => onTitleReady(field.value)" />
+                          <button type="button" @click="() => onTitleReady(field.value)" :disabled="aiLoading" class="absolute inset-y-0 right-2 my-1 px-3 inline-flex items-center gap-2 rounded-md text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:from-indigo-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
+                            <span v-if="aiLoading" class="inline-block w-4 h-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin"></span>
+                            <span>{{ aiLoading ? 'Memproses…' : 'Bantu AI' }}</span>
                           </button>
                         </div>
                         <div class="mt-1 text-xs text-gray-400 text-right">{{ (field.value || '').length }}/{{ titleMax }}</div>
@@ -121,7 +122,6 @@
                       <div class="space-y-2">
                         <div class="flex gap-2">
                           <input v-model="tagsInput" id="tags" type="text" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors hover:border-gray-400" placeholder="Ketik tag lalu Enter, atau klik saran di bawah" @focus="loadInitialTags" @input="onTagInput" @keydown.enter.prevent="addTag" />
-                          <button type="button" @click="suggestTagsAI" class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">Minta Saran AI</button>
                         </div>
                         <div v-if="tagSuggestions.length > 0" class="bg-white border border-gray-200 rounded-md shadow-sm divide-y z-10 max-h-56 overflow-auto">
                           <button
@@ -182,8 +182,10 @@ const props = defineProps({
 
 // reference to vee-validate helpers
 import { useForm } from 'vee-validate'
-const { setFieldValue } = useForm()
+const { setFieldValue, values } = useForm()
 
+const aiLoading = ref(false)
+let aiDebounceTimer: any = null
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
 const submitting = ref(false)
 const titleMax = 255
@@ -276,6 +278,7 @@ const onTitleReady = async (title: string) => {
   const t = (title || '').trim()
   if (t.length < 5) return
   try {
+    aiLoading.value = true
     const res = await axios.post('/api/ai/draft-from-title', { title: t })
     const data = res.data?.data || {}
     if (data.description) setFieldValue('description', data.description)
@@ -288,7 +291,18 @@ const onTitleReady = async (title: string) => {
     toast.success('Draft diisi otomatis oleh AI')
   } catch (e: any) {
     toast.error(e?.response?.data?.message || 'Gagal membuat draft dari judul')
+  } finally {
+    aiLoading.value = false
   }
+}
+
+const onTitleInput = (title: string) => {
+  if (aiDebounceTimer) clearTimeout(aiDebounceTimer)
+  const t = (title || '').trim()
+  if (t.length < 5) return
+  aiDebounceTimer = setTimeout(() => {
+    if (!aiLoading.value) onTitleReady(t)
+  }, 800)
 }
 
 // Disable submit helper

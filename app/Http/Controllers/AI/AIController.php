@@ -85,7 +85,7 @@ class AIController extends BaseController
             return $this->jsonError($result['message']);
         }
 
-        $raw = (string)($result['data']['content'] ?? '');
+        $raw = (string) ($result['data']['content'] ?? '');
         // Coba decode JSON langsung
         $json = null;
         // Jika model mengembalikan dalam blok code, ambil isi di dalamnya
@@ -100,7 +100,7 @@ class AIController extends BaseController
             // Fallback ekstraksi sederhana
             $desc = mb_substr($raw, 0, 300);
             $tags = collect(preg_split('/[,\n\-•\u2022]/u', $raw))
-                ->map(fn ($t) => trim(preg_replace('/^\d+\.?\s*/', '', (string)$t)))
+                ->map(fn($t) => trim(preg_replace('/^\d+\.?\s*/', '', (string) $t)))
                 ->filter()
                 ->unique()
                 ->take(8)
@@ -115,9 +115,9 @@ class AIController extends BaseController
 
         // Normalisasi field
         $data = [
-            'description' => (string)($json['description'] ?? ''),
-            'content' => (string)($json['content'] ?? ''),
-            'tags' => array_values(array_unique(array_map('strval', (array)($json['tags'] ?? []))))
+            'description' => (string) ($json['description'] ?? ''),
+            'content' => (string) ($json['content'] ?? ''),
+            'tags' => array_values(array_unique(array_map('strval', (array) ($json['tags'] ?? []))))
         ];
 
         return $this->jsonSuccess($data, 'Draft dibuat');
