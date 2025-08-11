@@ -1,19 +1,19 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-white to-blue-50 text-gray-900">
     <!-- Mobile top bar -->
-    <Navbar class="md:hidden" fluid rounded>
+    <FwbNavbar class="md:hidden" :fluid="true" :rounded="true">
       <template #brand>
         <span class="self-center whitespace-nowrap text-lg font-semibold">{{ pageTitle }}</span>
       </template>
       <template #default>
-        <NavbarToggle @click="sidebarOpen = true" />
+        <FwbNavbarToggle @click="sidebarOpen = true" />
       </template>
       <template #right-side>
         <form :action="route('logout')" method="POST">
           <button class="px-3 py-1.5 rounded-md text-sm text-blue-700 bg-blue-50 border border-blue-100">Logout</button>
         </form>
       </template>
-    </Navbar>
+    </FwbNavbar>
 
     <!-- Shell -->
     <div class="flex">
@@ -65,7 +65,7 @@
       <!-- Content -->
       <div class="flex-1 min-w-0 md:ml-0">
         <!-- Topbar desktop -->
-        <Navbar class="hidden md:flex sticky top-0 z-30" fluid rounded>
+        <FwbNavbar class="hidden md:flex sticky top-0 z-30" :fluid="true" :rounded="true">
           <template #brand>
             <span class="self-center whitespace-nowrap text-xl font-semibold">{{ pageTitle }}</span>
           </template>
@@ -79,7 +79,7 @@
               <button class="inline-flex items-center text-sm text-blue-700 hover:text-blue-800 px-3 py-1.5 bg-blue-50 rounded-md border border-blue-100">Logout</button>
             </form>
           </template>
-        </Navbar>
+        </FwbNavbar>
 
         <!-- Main -->
         <main class="p-4 md:p-6">
@@ -97,7 +97,7 @@ import { Link, usePage } from '@inertiajs/vue3'
 import { route } from '@/core/helpers/route'
 import { ref, computed, onMounted, watch } from 'vue'
 import { toast } from 'vue3-toastify'
-import { Navbar, NavbarToggle } from 'flowbite-vue'
+import { FwbNavbar, FwbNavbarToggle } from 'flowbite-vue'
 
 const props = defineProps({
   pageTitle: { type: String, default: 'Dashboard' },
