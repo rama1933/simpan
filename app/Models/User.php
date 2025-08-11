@@ -22,7 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'metadata',
+        'skpd_id',
+        'metadata'
     ];
 
     /**
@@ -51,7 +52,13 @@ class User extends Authenticatable
 
     public function getMetadataAttribute($value)
     {
-        if (is_null($value)) return [];
+        if (is_null($value))
+            return [];
         return json_decode($value, true) ?: [];
+    }
+
+    public function skpd()
+    {
+        return $this->belongsTo(MasterSKPD::class, 'skpd_id');
     }
 }

@@ -2,22 +2,21 @@
 
 namespace App\Http\Controllers\Knowledge;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Controller;
+use App\Services\Knowledge\KnowledgeService;
 use App\Http\Requests\Knowledge\StoreKnowledgeRequest;
 use App\Http\Requests\Knowledge\UpdateKnowledgeRequest;
-use App\Services\Knowledge\KnowledgeService;
 use App\Data\Knowledge\KnowledgeDTO;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Tag;
+use App\Models\MasterTag;
 
-class KnowledgeController extends BaseController
+class KnowledgeController extends Controller
 {
-    protected $knowledgeService;
-
-    public function __construct(KnowledgeService $knowledgeService)
+    public function __construct(private KnowledgeService $knowledgeService)
     {
-        $this->knowledgeService = $knowledgeService;
     }
 
     /**
@@ -25,25 +24,74 @@ class KnowledgeController extends BaseController
      */
     public function index(Request $request): Response
     {
-        $filters = $request->only(['search', 'category', 'status', 'author_id', 'tags']);
-        $perPage = $request->get('per_page', 15);
+        $filters = $request->only(['search', 'category_id', 'skpd_id', 'status']);
+        $knowledge = $this->knowledgeService->getAllKnowledge($filters);
 
-        $result = $this->knowledgeService->getAllKnowledge($filters, $perPage);
+        // Get categories and SKPDs for filters
+        $categories = $this->knowledgeService->getCategories();
+        $skpds = $this->knowledgeService->getSKPDs();
 
-        if (!$result['success']) {
-            return $this->renderPageWithError('Knowledge/Index', [
-                'knowledge' => [],
-                'filters' => $filters,
-                'perPage' => $perPage
-            ], $result['message']);
-        }
-
-        return $this->renderPage('Knowledge/Index', [
-            'knowledge' => $result['data'],
+        return Inertia::render('Knowledge/Index', [
+            'knowledge' => $knowledge['data'],
             'filters' => $filters,
-            'perPage' => $perPage,
+            'categories' => $categories,
+            'skpds' => $skpds,
             'user' => auth()->user()
         ]);
+    }
+
+    /**
+     * Filter knowledge data
+     */
+    public function filter(Request $request)
+    {
+        $filters = $request->only(['search', 'category_id', 'skpd_id', 'status']);
+        $knowledge = $this->knowledgeService->getAllKnowledge($filters);
+
+        // Return JSON response for API
+        return response()->json([
+            'success' => true,
+            'knowledge' => [
+                'success' => true,
+                'data' => $knowledge['data']
+            ],
+            'filters' => $filters
+        ]);
+    }
+
+    /**
+     * Quick create category from form (AJAX)
+     */
+    public function quickCreateCategory(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $result = $this->knowledgeService->createCategory($request->input('name'));
+
+        if (!$result['success']) {
+            return response()->json(['success' => false, 'message' => $result['message']], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $result['data']
+        ]);
+    }
+
+    /**
+     * List available tags (optional search)
+     */
+    public function tags(Request $request)
+    {
+        $q = trim((string) $request->get('q', ''));
+        $query = MasterTag::query()->where('is_active', true);
+        if ($q !== '') {
+            $query->where('name', 'like', "%{$q}%");
+        }
+        $tags = $query->orderBy('name')->limit(50)->get(['id', 'name', 'slug']);
+        return response()->json(['success' => true, 'data' => $tags]);
     }
 
     /**
@@ -51,7 +99,14 @@ class KnowledgeController extends BaseController
      */
     public function create(): Response
     {
-        return $this->renderPage('Knowledge/Create');
+        $categories = $this->knowledgeService->getCategories();
+        $skpds = $this->knowledgeService->getSKPDs();
+
+        return Inertia::render('Knowledge/Create', [
+            'categories' => $categories,
+            'skpds' => $skpds,
+            'user' => auth()->user()
+        ]);
     }
 
     /**
@@ -63,10 +118,10 @@ class KnowledgeController extends BaseController
         $result = $this->knowledgeService->createKnowledge($dto);
 
         if (!$result['success']) {
-            return $this->backWithError($result['message']);
+            return back()->withErrors($result['message'])->withInput();
         }
 
-        return $this->redirectWithSuccess('knowledge.index', $result['message']);
+        return redirect()->route('knowledge.index')->with('success', 'Pengetahuan berhasil disimpan');
     }
 
     /**
@@ -82,7 +137,7 @@ class KnowledgeController extends BaseController
             ], $result['message']);
         }
 
-        return $this->renderPage('Knowledge/Show', [
+        return Inertia::render('Knowledge/Show', [
             'knowledge' => $result['data']
         ]);
     }
@@ -95,13 +150,16 @@ class KnowledgeController extends BaseController
         $result = $this->knowledgeService->getKnowledgeById($id);
 
         if (!$result['success']) {
-            return $this->renderPageWithError('Knowledge/Edit', [
-                'knowledge' => null
-            ], $result['message']);
+            return back()->withErrors(['error' => $result['message']]);
         }
 
-        return $this->renderPage('Knowledge/Edit', [
-            'knowledge' => $result['data']
+        $categories = $this->knowledgeService->getCategories();
+        $skpds = $this->knowledgeService->getSKPDs();
+
+        return Inertia::render('Knowledge/Edit', [
+            'knowledge' => $result['data'],
+            'categories' => $categories,
+            'skpds' => $skpds
         ]);
     }
 
@@ -114,10 +172,10 @@ class KnowledgeController extends BaseController
         $result = $this->knowledgeService->updateKnowledge($id, $dto);
 
         if (!$result['success']) {
-            return $this->backWithError($result['message']);
+            return back()->withErrors(['error' => $result['message']]);
         }
 
-        return $this->redirectWithSuccess('knowledge.show', $result['message'], ['knowledge' => $id]);
+        return redirect()->route('knowledge.show', $id)->with('success', $result['message']);
     }
 
     /**
@@ -128,10 +186,10 @@ class KnowledgeController extends BaseController
         $result = $this->knowledgeService->deleteKnowledge($id);
 
         if (!$result['success']) {
-            return $this->backWithError($result['message']);
+            return back()->withErrors(['error' => $result['message']]);
         }
 
-        return $this->redirectWithSuccess('knowledge.index', $result['message']);
+        return redirect()->route('knowledge.index')->with('success', $result['message']);
     }
 
     /**
@@ -142,16 +200,19 @@ class KnowledgeController extends BaseController
         $query = $request->get('q');
 
         if (empty($query)) {
-            return $this->jsonError('Query pencarian tidak boleh kosong');
+            return back()->withErrors(['error' => 'Query pencarian tidak boleh kosong']);
         }
 
         $result = $this->knowledgeService->searchKnowledge($query);
 
         if (!$result['success']) {
-            return $this->jsonError($result['message']);
+            return back()->withErrors(['error' => $result['message']]);
         }
 
-        return $this->jsonSuccess($result['data'], $result['message']);
+        return Inertia::render('Knowledge/Search', [
+            'results' => $result['data'],
+            'query' => $query
+        ]);
     }
 
     /**
@@ -166,24 +227,47 @@ class KnowledgeController extends BaseController
         $result = $this->knowledgeService->changeStatus($id, $request->status);
 
         if (!$result['success']) {
-            return $this->jsonError($result['message'], $result['code']);
+            return back()->withErrors(['error' => $result['message']]);
         }
 
-        return $this->jsonSuccess($result['data'], $result['message']);
+        return back()->with('success', $result['message']);
+    }
+
+    /**
+     * Export knowledge data
+     */
+    public function export(Request $request)
+    {
+        $filters = $request->only(['search', 'category_id', 'skpd_id', 'status']);
+        $result = $this->knowledgeService->exportKnowledge($filters);
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']]);
+        }
+
+        return $result['data'];
     }
 
     /**
      * Get knowledge statistics
      */
-    public function statistics()
+    public function statistics(): Response
     {
-        $result = $this->knowledgeService->getKnowledgeStatistics();
+        $stats = $this->knowledgeService->getKnowledgeStatistics();
+        $categoryDistribution = $this->knowledgeService->getCategoryDistribution();
+        $statusDistribution = $this->knowledgeService->getStatusDistribution();
+        $authorStatistics = $this->knowledgeService->getAuthorStatistics();
+        $monthlyTrends = $this->knowledgeService->getMonthlyTrends();
+        $recentActivities = $this->knowledgeService->getRecentActivities();
 
-        if (!$result['success']) {
-            return $this->jsonError($result['message']);
-        }
-
-        return $this->jsonSuccess($result['data'], $result['message']);
+        return Inertia::render('Knowledge/Statistics', [
+            'stats' => $stats,
+            'categoryDistribution' => $categoryDistribution,
+            'statusDistribution' => $statusDistribution,
+            'authorStatistics' => $authorStatistics,
+            'monthlyTrends' => $monthlyTrends,
+            'recentActivities' => $recentActivities
+        ]);
     }
 }
 

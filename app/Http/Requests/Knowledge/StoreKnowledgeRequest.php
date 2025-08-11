@@ -34,8 +34,10 @@ class StoreKnowledgeRequest extends BaseFormRequest
             'content.required' => 'Konten pengetahuan wajib diisi.',
             'content.min' => 'Konten pengetahuan minimal 10 karakter.',
             'description.max' => 'Deskripsi pengetahuan maksimal 500 karakter.',
-            'category.required' => 'Kategori pengetahuan wajib diisi.',
-            'category.max' => 'Kategori pengetahuan maksimal 100 karakter.',
+            'category_id.required' => 'Kategori pengetahuan wajib diisi.',
+            'category_id.exists' => 'Kategori tidak valid.',
+            'skpd_id.required' => 'SKPD pengetahuan wajib diisi.',
+            'skpd_id.exists' => 'SKPD tidak valid.',
             'tags.array' => 'Tags harus berupa array.',
             'tags.*.string' => 'Setiap tag harus berupa string.',
             'tags.*.max' => 'Setiap tag maksimal 50 karakter.',
@@ -53,7 +55,8 @@ class StoreKnowledgeRequest extends BaseFormRequest
             'title' => 'judul pengetahuan',
             'content' => 'konten pengetahuan',
             'description' => 'deskripsi pengetahuan',
-            'category' => 'kategori pengetahuan',
+            'category_id' => 'kategori pengetahuan',
+            'skpd_id' => 'SKPD',
             'tags' => 'tags pengetahuan',
             'status' => 'status pengetahuan'
         ];

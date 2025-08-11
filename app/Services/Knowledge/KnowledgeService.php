@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Tag;
+use Illuminate\Support\Str;
+use App\Models\MasterTag;
 
 class KnowledgeService
 {
@@ -189,10 +192,8 @@ class KnowledgeService
         }
 
         // Apply category filter
-        if (!empty($filters['category'])) {
-            $query->whereHas('category', function ($q) use ($filters) {
-                $q->where('name', $filters['category']);
-            });
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
         }
 
         // Apply status filter
@@ -201,13 +202,304 @@ class KnowledgeService
         }
 
         // Apply SKPD filter
-        if (!empty($filters['skpd'])) {
-            $query->where('skpd_id', $filters['skpd']);
+        if (!empty($filters['skpd_id'])) {
+            $query->where('skpd_id', $filters['skpd_id']);
         }
 
         return [
             'success' => true,
             'data' => $query->paginate($perPage)
+        ];
+    }
+
+    /**
+     * Get all categories
+     */
+    public function getCategories()
+    {
+        return \App\Models\Category::where('is_active', true)->get();
+    }
+
+    /**
+     * Get all SKPDs
+     */
+    public function getSKPDs()
+    {
+        return \App\Models\MasterSKPD::where('is_active', true)->get();
+    }
+
+    /**
+     * Get knowledge by ID
+     */
+    public function getKnowledgeById($id)
+    {
+        $knowledge = Knowledge::with(['category', 'author', 'skpd'])->find($id);
+
+        if (!$knowledge) {
+            return [
+                'success' => false,
+                'message' => 'Knowledge tidak ditemukan'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'data' => $knowledge
+        ];
+    }
+
+    /**
+     * Create new knowledge
+     */
+    public function createKnowledge($dto)
+    {
+        try {
+            $knowledge = Knowledge::create([
+                'title' => $dto->title,
+                'content' => $dto->content,
+                'description' => $dto->description,
+                'tags' => $dto->tags,
+                'status' => $dto->status ?? 'draft',
+                'author_id' => auth()->id(),
+                'category_id' => $dto->category_id,
+                'skpd_id' => $dto->skpd_id,
+                'published_at' => $dto->status === 'published' ? now() : null
+            ]);
+
+            // Sync tags to relational table
+            if (is_array($dto->tags) && count($dto->tags) > 0) {
+                $tagIds = $this->upsertTagsAndGetIds($dto->tags);
+                $knowledge->tagsRelation()->sync($tagIds);
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Knowledge berhasil dibuat',
+                'data' => $knowledge
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Gagal membuat knowledge: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Update knowledge
+     */
+    public function updateKnowledge($id, $dto)
+    {
+        try {
+            $knowledge = Knowledge::find($id);
+
+            if (!$knowledge) {
+                return [
+                    'success' => false,
+                    'message' => 'Knowledge tidak ditemukan'
+                ];
+            }
+
+            $knowledge->update([
+                'title' => $dto->title,
+                'content' => $dto->content,
+                'description' => $dto->description,
+                'tags' => $dto->tags,
+                'status' => $dto->status,
+                'category_id' => $dto->category_id,
+                'skpd_id' => $dto->skpd_id,
+                'published_at' => $dto->status === 'published' ? now() : null
+            ]);
+
+            // Sync tags to relational table
+            $tagIds = is_array($dto->tags) ? $this->upsertTagsAndGetIds($dto->tags) : [];
+            $knowledge->tagsRelation()->sync($tagIds);
+
+            return [
+                'success' => true,
+                'message' => 'Knowledge berhasil diupdate',
+                'data' => $knowledge
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Gagal mengupdate knowledge: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Delete knowledge
+     */
+    public function deleteKnowledge($id)
+    {
+        try {
+            $knowledge = Knowledge::find($id);
+
+            if (!$knowledge) {
+                return [
+                    'success' => false,
+                    'message' => 'Knowledge tidak ditemukan'
+                ];
+            }
+
+            $knowledge->delete();
+
+            return [
+                'success' => true,
+                'message' => 'Knowledge berhasil dihapus'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Gagal menghapus knowledge: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Search knowledge
+     */
+    public function searchKnowledge($query)
+    {
+        try {
+            $results = Knowledge::with(['category', 'author', 'skpd'])
+                ->where('title', 'like', '%' . $query . '%')
+                ->orWhere('description', 'like', '%' . $query . '%')
+                ->orWhere('content', 'like', '%' . $query . '%')
+                ->get();
+
+            return [
+                'success' => true,
+                'data' => $results,
+                'message' => 'Pencarian berhasil'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Gagal melakukan pencarian: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Change knowledge status
+     */
+    public function changeStatus($id, $status)
+    {
+        try {
+            $knowledge = Knowledge::find($id);
+
+            if (!$knowledge) {
+                return [
+                    'success' => false,
+                    'message' => 'Knowledge tidak ditemukan'
+                ];
+            }
+
+            $knowledge->update([
+                'status' => $status,
+                'published_at' => $status === 'published' ? now() : null
+            ]);
+
+            return [
+                'success' => true,
+                'message' => 'Status knowledge berhasil diubah',
+                'data' => $knowledge
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Gagal mengubah status: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Export knowledge data
+     */
+    public function exportKnowledge($filters = [])
+    {
+        try {
+            $query = Knowledge::with(['category', 'author', 'skpd']);
+
+            // Apply filters
+            if (!empty($filters['search'])) {
+                $query->where(function ($q) use ($filters) {
+                    $q->where('title', 'like', '%' . $filters['search'] . '%')
+                        ->orWhere('description', 'like', '%' . $filters['search'] . '%')
+                        ->orWhere('content', 'like', '%' . $filters['search'] . '%');
+                });
+            }
+
+            if (!empty($filters['category_id'])) {
+                $query->where('category_id', $filters['category_id']);
+            }
+
+            if (!empty($filters['status'])) {
+                $query->where('status', $filters['status']);
+            }
+
+            if (!empty($filters['skpd_id'])) {
+                $query->where('skpd_id', $filters['skpd_id']);
+            }
+
+            $data = $query->get();
+
+            return [
+                'success' => true,
+                'data' => $data,
+                'message' => 'Export berhasil'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Gagal melakukan export: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Create or fetch tags and return their IDs
+     */
+    private function upsertTagsAndGetIds(array $tags): array
+    {
+        $ids = [];
+        foreach ($tags as $raw) {
+            $name = trim((string) $raw);
+            if ($name === '') {
+                continue;
+            }
+            $slug = Str::slug($name);
+            $tag = Tag::firstOrCreate(['slug' => $slug], ['name' => $name, 'is_active' => true]);
+            // Ensure master tag exists as reference
+            MasterTag::firstOrCreate(['slug' => $slug], ['name' => $name, 'is_active' => true]);
+            $ids[] = $tag->id;
+        }
+        return array_values(array_unique($ids));
+    }
+
+    /**
+     * Create category if not exists
+     */
+    public function createCategory(string $name): array
+    {
+        $trimmed = trim($name);
+        if ($trimmed === '') {
+            return ['success' => false, 'message' => 'Nama kategori wajib diisi'];
+        }
+
+        // Basic normalization: title case
+        $normalized = ucwords(mb_strtolower($trimmed));
+        $category = Category::firstOrCreate(['name' => $normalized], [
+            'is_active' => true,
+            'color' => '#3B82F6',
+        ]);
+
+        return [
+            'success' => true,
+            'data' => $category,
+            'message' => 'Kategori berhasil dibuat',
         ];
     }
 }

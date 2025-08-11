@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Knowledge extends Model
 {
@@ -20,11 +21,12 @@ class Knowledge extends Model
         'title',
         'content',
         'description',
-        'category_id',
         'tags',
-        'status',
-        'author_id',
+        'category_id',
         'skpd_id',
+        'author_id',
+        'status',
+        'published_at'
     ];
 
     /**
@@ -67,9 +69,14 @@ class Knowledge extends Model
     /**
      * Get the SKPD that owns the knowledge.
      */
-    public function skpd(): BelongsTo
+    public function skpd()
     {
-        return $this->belongsTo(User::class, 'skpd_id');
+        return $this->belongsTo(MasterSKPD::class, 'skpd_id');
+    }
+
+    public function tagsRelation(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'knowledge_tag');
     }
 
     /**

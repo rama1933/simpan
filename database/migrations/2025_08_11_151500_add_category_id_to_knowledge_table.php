@@ -11,9 +11,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('knowledge', function (Blueprint $table) {
-            if (!Schema::hasColumn('knowledge', 'skpd_id')) {
-                $table->foreignId('skpd_id')->nullable()->constrained('master_skpds')->onDelete('set null');
-                $table->index(['skpd_id']);
+            if (!Schema::hasColumn('knowledge', 'category_id')) {
+                $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+                $table->index('category_id');
             }
         });
     }
@@ -24,9 +24,13 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('knowledge', function (Blueprint $table) {
-            $table->dropIndex(['skpd_id']);
-            $table->dropForeign(['skpd_id']);
-            $table->dropColumn('skpd_id');
+            if (Schema::hasColumn('knowledge', 'category_id')) {
+                $table->dropIndex(['category_id']);
+                $table->dropForeign(['category_id']);
+                $table->dropColumn('category_id');
+            }
         });
     }
 };
+
+
