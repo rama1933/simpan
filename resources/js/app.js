@@ -5,7 +5,6 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import Vue3Toastify from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import Flowbite from 'flowbite-vue';
-import 'flowbite/dist/flowbite.css';
 
 createInertiaApp({
     title: (title) => `${title} - ${import.meta.env.VITE_APP_NAME || 'Laravel'}`,
