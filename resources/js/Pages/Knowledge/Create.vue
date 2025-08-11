@@ -116,11 +116,14 @@
                     <div>
                       <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
                       <div class="space-y-2">
-                        <input v-model="tagsInput" id="tags" type="text" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors hover:border-gray-400" placeholder="Ketik tag lalu Enter, atau klik saran di bawah" @focus="loadInitialTags" @input="onTagInput" @keydown.enter.prevent="addTag" />
+                        <div class="flex gap-2">
+                          <input v-model="tagsInput" id="tags" type="text" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors hover:border-gray-400" placeholder="Ketik tag lalu Enter, atau klik saran di bawah" @focus="loadInitialTags" @input="onTagInput" @keydown.enter.prevent="addTag" />
+                          <button type="button" @click="suggestTagsAI" class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">Minta Saran AI</button>
+                        </div>
                         <div v-if="tagSuggestions.length > 0" class="bg-white border border-gray-200 rounded-md shadow-sm divide-y z-10 max-h-56 overflow-auto">
                           <button
                             v-for="s in tagSuggestions"
-                            :key="s.id"
+                            :key="s.id || s.name"
                             type="button"
                             class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50"
                             @click="addTagFromSuggestion(s.name)"
@@ -232,6 +235,34 @@ const addTagFromSuggestion = (name: string) => {
   if (!tags.value.includes(name)) tags.value.push(name)
   tagsInput.value = ''
   tagSuggestions.value = []
+}
+
+const suggestTagsAI = async () => {
+  try {
+    const content = (document.getElementById('content') as HTMLTextAreaElement)?.value || ''
+    if (!content || content.trim().length < 10) {
+      toast.error('Isi konten minimal 10 karakter untuk meminta saran AI')
+      return
+    }
+    const res = await axios.post('/api/ai/suggest-tags', { content })
+    const raw = res.data?.data?.content || ''
+    // Ekstrak tag dari teks AI (pisah dengan koma/garis atau baris)
+    const candidates = raw
+      .split(/[,\n\-•\u2022]/)
+      .map(t => t.replace(/^\d+\.?\s*/, '').trim())
+      .filter(Boolean)
+    let added = 0
+    for (const t of candidates) {
+      if (!tags.value.includes(t)) {
+        tags.value.push(t)
+        added++
+      }
+    }
+    if (added > 0) toast.success(`AI menambahkan ${added} tag`)
+    else toast.info('AI tidak menemukan tag baru')
+  } catch (e: any) {
+    toast.error(e?.response?.data?.message || 'Gagal meminta saran AI')
+  }
 }
 
 // Disable submit helper
