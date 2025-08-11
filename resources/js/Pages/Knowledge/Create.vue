@@ -12,7 +12,7 @@
 
           <!-- Header -->
           <div class="mb-6 flex items-center justify-between">
-            <Link href="/knowledge" class="text-indigo-600 hover:text-indigo-500 mr-4">
+            <Link href="/knowledge" class="text-brand-700 hover:text-brand-800 mr-4">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
               </svg>
@@ -22,7 +22,7 @@
               <p class="text-gray-600 mt-2">Buat pengetahuan baru untuk sistem manajemen pengetahuan</p>
             </div>
             <div class="hidden md:flex items-center gap-3">
-              <span class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 border border-indigo-100">Form</span>
+              <span class="inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700 border border-brand-100">Form</span>
             </div>
           </div>
 
@@ -41,8 +41,8 @@
                           <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h3l2 2h3a2 2 0 012 2v2H4V4zM4 9h12v5a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>
                           </div>
-                          <input v-bind="field" id="title" type="text" class="w-full pl-10 pr-24 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan judul pengetahuan" />
-                          <button type="button" @click="() => onTitleReady(field.value)" :disabled="aiLoading" class="absolute inset-y-0 right-2 my-1 px-3 inline-flex items-center gap-2 rounded-md text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:from-indigo-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
+                          <input v-bind="field" id="title" type="text" class="w-full pl-10 pr-24 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan judul pengetahuan" />
+                          <button type="button" @click="() => onTitleReady(field.value)" :disabled="aiLoading" class="absolute inset-y-0 right-2 my-1 px-3 inline-flex items-center gap-2 rounded-md text-sm font-medium text-white bg-gradient-to-r from-brand-700 to-brand-500 shadow hover:from-brand-600 hover:to-brand-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50">
                             <span v-if="aiLoading" class="inline-block w-4 h-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin"></span>
                             <span>{{ aiLoading ? 'Memproses…' : 'Bantu AI' }}</span>
                           </button>
@@ -57,7 +57,7 @@
                       <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Singkat</label>
                       <Field name="description" v-slot="{ field, meta }">
                         <div class="relative">
-                          <textarea v-bind="field" id="description" rows="3" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan deskripsi singkat pengetahuan"></textarea>
+                          <textarea v-bind="field" id="description" rows="3" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan deskripsi singkat pengetahuan"></textarea>
                         </div>
                         <div class="mt-1 text-xs text-gray-400 text-right">{{ (field.value || '').length }}/{{ descMax }}</div>
                       </Field>
@@ -68,7 +68,7 @@
                     <div>
                       <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Konten <span class="text-red-500">*</span></label>
                       <Field name="content" v-slot="{ field, meta }">
-                        <textarea v-bind="field" id="content" rows="14" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors resize-none" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan konten lengkap pengetahuan" @input="autoResize"></textarea>
+                        <textarea v-bind="field" id="content" rows="14" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 border transition-colors resize-none" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan konten lengkap pengetahuan" @input="autoResize"></textarea>
                       </Field>
                       <ErrorMessage name="content" class="mt-1 text-sm text-red-600" />
                     </div>
@@ -78,7 +78,7 @@
                       <label class="block text-sm font-medium text-gray-700 mb-2">Lampiran</label>
                       <div
                         class="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer bg-white hover:bg-gray-50"
-                        :class="dragOver ? 'border-indigo-400 bg-indigo-50/30' : 'border-gray-300'"
+                        :class="dragOver ? 'border-brand-400 bg-brand-50/30' : 'border-gray-300'"
                         @dragover.prevent="onDragOver"
                         @dragleave.prevent="onDragLeave"
                         @drop.prevent="onDrop"
@@ -86,8 +86,8 @@
                       >
                         <input ref="fileInput" type="file" multiple class="hidden" @change="onFilesSelected" />
                         <div class="flex flex-col items-center gap-1 text-sm text-gray-600">
-                          <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12l-2 2m0 0l-2-2m2 2V4"/></svg>
-                          <span><span class="font-medium text-indigo-600">Klik</span> atau seret file ke sini</span>
+                          <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12l-2 2m0 0l-2-2m2 2V4"/></svg>
+                          <span><span class="font-medium text-brand-700">Klik</span> atau seret file ke sini</span>
                           <span class="text-xs text-gray-400">Dokumen (PDF, Office) atau Gambar (JPG/PNG). Total maks 5MB.</span>
                         </div>
                       </div>
@@ -150,7 +150,7 @@
                       <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
                       <div class="space-y-2">
                         <div class="flex gap-2">
-                          <input v-model="tagsInput" id="tags" type="text" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors hover:border-gray-400" placeholder="Ketik tag lalu Enter, atau klik saran di bawah" @focus="loadInitialTags" @input="onTagInput" @keydown.enter.prevent="addTag" />
+                          <input v-model="tagsInput" id="tags" type="text" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 border transition-colors hover:border-gray-400" placeholder="Ketik tag lalu Enter, atau klik saran di bawah" @focus="loadInitialTags" @input="onTagInput" @keydown.enter.prevent="addTag" />
                         </div>
                         <div v-if="tagSuggestions.length > 0" class="bg-white border border-gray-200 rounded-md shadow-sm divide-y z-10 max-h-56 overflow-auto">
                           <button
@@ -164,9 +164,9 @@
                           </button>
                         </div>
                         <div v-if="tags.length > 0" class="flex flex-wrap gap-2">
-                          <span v-for="(tag, index) in tags" :key="index" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                          <span v-for="(tag, index) in tags" :key="index" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand-100 text-brand-800">
                             {{ tag }}
-                            <button type="button" @click="removeTag(index)" class="ml-2 text-indigo-600 hover:text-indigo-800">
+                            <button type="button" @click="removeTag(index)" class="ml-2 text-brand-700 hover:text-brand-900">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                           </span>
@@ -180,8 +180,8 @@
 
             <!-- Sticky Action Bar -->
             <div class="sticky bottom-0 inset-x-0 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-t border-gray-200 px-6 py-4 flex justify-end gap-3 shadow-lg">
-              <Link href="/knowledge" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Batal</Link>
-              <button type="submit" :disabled="shouldDisableSubmit(values, meta.valid)" class="px-5 py-2.5 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+              <Link href="/knowledge" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">Batal</Link>
+              <button type="submit" :disabled="shouldDisableSubmit(values, meta.valid)" class="px-5 py-2.5 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-brand-700 hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span v-if="submitting">Menyimpan...</span>
                 <span v-else>Simpan Pengetahuan</span>
               </button>

@@ -6,7 +6,7 @@
         <p class="text-sm text-gray-500">Dibuat: {{ formatDate(knowledge.created_at) }} • Oleh: {{ knowledge.author?.name || '-' }}</p>
       </div>
       <div class="flex items-center gap-2">
-        <Link :href="`/knowledge/${knowledge.id}/edit`" class="px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Edit</Link>
+        <Link :href="`/knowledge/${knowledge.id}/edit`" class="px-3 py-2 rounded-md bg-brand-700 text-white hover:bg-brand-800">Edit</Link>
         <Link href="/knowledge" class="px-3 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">Kembali</Link>
       </div>
     </div>
@@ -42,7 +42,7 @@
           <h3 class="text-lg font-semibold text-gray-900">Lampiran</h3>
           <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
             <li v-for="att in knowledge.attachments" :key="att.id">
-              <a :href="`/storage/${att.path}`" target="_blank" class="text-indigo-600 hover:text-indigo-800">
+              <a :href="`/storage/${att.path}`" target="_blank" class="text-brand-700 hover:text-brand-900">
                 {{ att.original_name }}
               </a>
               <span class="text-gray-500">• {{ (att.size_bytes/1024).toFixed(1) }} KB</span>
