@@ -17,6 +17,7 @@ export function route(name, params = {}) {
     'ai.index': '/ai',
 
     'users.index': '/users',
+    'users.list': '/users/list',
     'users.create': '/users/create',
     'users.store': '/users',
     'users.edit': (id) => `/users/${id}/edit`,

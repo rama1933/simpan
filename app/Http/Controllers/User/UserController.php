@@ -20,14 +20,15 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->wantsJson() || $request->ajax()) {
-            $users = $this->userRepository->getWithRoles();
-            return response()->json(['data' => $users]);
-        }
-
         return Inertia::render('User/Index', [
             'user' => $request->user(),
         ]);
+    }
+
+    public function listJson(Request $request)
+    {
+        $users = $this->userRepository->getWithRoles();
+        return response()->json(['data' => $users]);
     }
 
     public function create(Request $request)

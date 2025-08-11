@@ -165,7 +165,7 @@ const filteredUsers = computed(() => {
 
 const fetchUsers = async () => {
   try {
-    const response = await axios.get('/users')
+    const response = await axios.get(route('users.list'))
     users.value = response.data.data || []
   } catch (error) {
     console.error('Error fetching users:', error)

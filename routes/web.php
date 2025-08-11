@@ -56,6 +56,8 @@ Route::middleware(['auth'])->group(function () {
 
     // User Module Routes
     Route::middleware(['auth', 'role:Admin'])->group(function () {
+        // JSON list endpoint for frontend table fetch
+        Route::get('users/list', [UserController::class, 'listJson'])->name('users.list');
         Route::resource('users', UserController::class);
         Route::get('users/role/{role}', [UserController::class, 'getByRole'])->name('users.by-role');
     });
