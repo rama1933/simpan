@@ -8,7 +8,7 @@
       </div>
       <Link
         href="/knowledge/create"
-        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-brand-700 hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 shadow-sm"
       >
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -27,7 +27,7 @@
         <div class="flex space-x-3">
           <button
             @click="applyFiltersManually"
-            class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-sm"
+            class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-700 border border-transparent rounded-lg hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-all duration-200 shadow-sm"
           >
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"/>
@@ -66,7 +66,7 @@
               v-model="filters.search"
               type="text"
               placeholder="Cari judul atau konten..."
-              class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
+              class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 hover:border-gray-400 transition-colors duration-200"
             />
           </div>
         </div>
@@ -119,7 +119,7 @@
             @input="searchTags"
             type="text"
             placeholder="Cari tag..."
-            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
+            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 hover:border-gray-400 transition-colors duration-200"
           />
           <div class="mt-2 flex flex-wrap gap-2">
             <button
@@ -127,7 +127,7 @@
               :key="tag.id"
               type="button"
               @click="toggleTag(tag)"
-              :class="selectedTagIds.includes(tag.id) ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+              :class="selectedTagIds.includes(tag.id) ? 'bg-brand-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
               class="px-2.5 py-1.5 text-xs rounded-md border border-gray-200"
             >
               {{ tag.name }}
@@ -136,7 +136,7 @@
           <div v-if="selectedTagIds.length" class="mt-2 flex flex-wrap gap-2">
             <span v-for="id in selectedTagIds" :key="`sel-${id}`" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-indigo-100 text-indigo-800">
               {{ tagNameById(id) }}
-              <button class="ml-1 text-indigo-700" @click="removeTag(id)">×</button>
+              <button class="ml-1 text-brand-700" @click="removeTag(id)">×</button>
             </span>
           </div>
         </div>
@@ -149,12 +149,12 @@
           <div class="flex flex-wrap gap-2">
             <span
               v-if="filters.search"
-              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-800"
             >
               Search: {{ filters.search }}
               <button
                 @click="filters.search = ''"
-                class="ml-1.5 text-blue-600 hover:text-blue-800"
+                class="ml-1.5 text-brand-700 hover:text-brand-900"
               >
                 ×
               </button>
@@ -221,8 +221,8 @@
 
       <!-- Loading indicator -->
       <div v-if="isLoading" class="mt-4 text-center">
-        <div class="inline-flex items-center px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg border border-blue-200">
-          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <div class="inline-flex items-center px-4 py-2 text-sm text-brand-700 bg-brand-50 rounded-lg border border-brand-200">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-brand-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
@@ -278,7 +278,7 @@
         <div class="flex items-center gap-1">
           <template v-if="openRowId === item.id">
             <!-- Ikon aksi muncul di kiri -->
-            <Link :href="`/knowledge/${item?.id}`" :title="'Lihat'" class="p-2 rounded-md text-indigo-700 hover:bg-indigo-50">
+            <Link :href="`/knowledge/${item?.id}`" :title="'Lihat'" class="p-2 rounded-md text-brand-700 hover:bg-brand-50">
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7.305 4.5 3.274 7.334 1.5 12c1.774 4.666 5.805 7.5 10.5 7.5s8.726-2.834 10.5-7.5C20.726 7.334 16.695 4.5 12 4.5zm0 12a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/></svg>
             </Link>
             <Link :href="`/knowledge/${item?.id}/edit`" :title="'Edit'" class="p-2 rounded-md text-emerald-700 hover:bg-emerald-50">
