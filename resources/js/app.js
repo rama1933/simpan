@@ -2,6 +2,8 @@ import './bootstrap';
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import Vue3Toastify from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 createInertiaApp({
     title: (title) => `${title} - ${import.meta.env.VITE_APP_NAME || 'Laravel'}`,
@@ -9,6 +11,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(Vue3Toastify, { autoClose: 3000, position: 'top-right' })
             .mount(el);
     },
     progress: {

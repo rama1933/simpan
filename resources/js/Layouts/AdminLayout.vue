@@ -5,7 +5,7 @@
       <div class="flex items-center justify-center h-16 bg-blue-600">
         <h1 class="text-xl font-bold text-white">Admin Panel</h1>
       </div>
-      
+
       <nav class="mt-8">
         <div class="px-4 space-y-2">
           <Link
@@ -18,7 +18,7 @@
             </svg>
             Dashboard
           </Link>
-          
+
           <Link
             :href="route('knowledge.index')"
             class="flex items-center px-4 py-2 text-gray-700 rounded-md hover:bg-blue-50 hover:text-blue-700"
@@ -29,7 +29,7 @@
             </svg>
             Knowledge
           </Link>
-          
+
           <Link
             :href="route('users.index')"
             class="flex items-center px-4 py-2 text-gray-700 rounded-md hover:bg-blue-50 hover:text-blue-700"
@@ -40,7 +40,7 @@
             </svg>
             User Management
           </Link>
-          
+
           <Link
             :href="route('ai.index')"
             class="flex items-center px-4 py-2 text-gray-700 rounded-md hover:bg-blue-50 hover:text-blue-700"
@@ -63,7 +63,7 @@
           <div class="flex items-center space-x-4">
             <h2 class="text-xl font-semibold text-gray-900">{{ pageTitle }}</h2>
           </div>
-          
+
           <div class="flex items-center space-x-4">
             <span class="text-sm text-gray-600">{{ user?.name }}</span>
             <form :action="route('logout')" method="POST" class="inline">
@@ -89,6 +89,8 @@
 <script setup>
 import { route } from '@/core/helpers/route';
 import { Link, usePage } from '@inertiajs/vue3';
+import { onMounted, watch } from 'vue';
+import { toast } from 'vue3-toastify';
 
 defineProps({
   pageTitle: {
@@ -102,4 +104,32 @@ defineProps({
 });
 
 const page = usePage();
+
+function resolveFlashVal(val) {
+  return typeof val === 'function' ? val() : val;
+}
+
+onMounted(() => {
+  const flash = page.props?.flash || {};
+  const success = resolveFlashVal(flash.success);
+  const error = resolveFlashVal(flash.error);
+  const message = resolveFlashVal(flash.message);
+  if (success) toast.success(success);
+  if (error) toast.error(error);
+  if (message) toast.info(message);
+});
+
+watch(
+  () => page.props?.flash,
+  (flash) => {
+    if (!flash) return;
+    const success = resolveFlashVal(flash.success);
+    const error = resolveFlashVal(flash.error);
+    const message = resolveFlashVal(flash.message);
+    if (success) toast.success(success);
+    if (error) toast.error(error);
+    if (message) toast.info(message);
+  },
+  { deep: true }
+);
 </script>

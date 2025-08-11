@@ -2,234 +2,312 @@
   <AdminLayout page-title="Knowledge Management" :user="user">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900">Manajemen Pengetahuan</h1>
-            <p class="text-gray-600 mt-2">Kelola dan atur semua pengetahuan dalam sistem</p>
-          </div>
-          <Link
-            :href="route('knowledge.create')"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Manajemen Pengetahuan</h1>
+        <p class="text-gray-600 mt-2">Kelola dan atur semua pengetahuan dalam sistem</p>
+      </div>
+      <Link
+        href="/knowledge/create"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Tambah Pengetahuan
+      </Link>
+    </div>
+
+    <!-- Filter Data Section -->
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Filter Data</h3>
+          <p class="text-sm text-gray-500 mt-1">Saring data berdasarkan kriteria yang diinginkan</p>
+        </div>
+        <div class="flex space-x-3">
+          <button
+            @click="applyFiltersManually"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
           >
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"/>
             </svg>
-            Tambah Pengetahuan
-          </Link>
+            Terapkan Filter
+          </button>
+          <button
+            @click="clearFilters"
+            :disabled="!hasActiveFilters"
+            :class="[
+              'inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200',
+              hasActiveFilters
+                ? 'text-gray-600 bg-gray-50 border-gray-300 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500'
+                : 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
+            ]"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Clear Filters
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Search -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Cari</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <input
+              v-model="filters.search"
+              type="text"
+              placeholder="Cari judul atau konten..."
+              class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
+            />
+          </div>
         </div>
 
-        <!-- Filters -->
-        <div class="bg-white p-6 rounded-lg shadow mb-6">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Pencarian</label>
-              <input
-                v-model="filters.search"
-                type="text"
-                placeholder="Cari pengetahuan..."
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                @input="debounceSearch"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
-              <select
-                v-model="filters.category"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="">Semua Kategori</option>
-                <option value="Teknologi">Teknologi</option>
-                <option value="Bisnis">Bisnis</option>
-                <option value="Kesehatan">Kesehatan</option>
-                <option value="Pendidikan">Pendidikan</option>
-                <option value="Seni & Budaya">Seni & Budaya</option>
-                <option value="Olahraga">Olahraga</option>
-                <option value="Sains">Sains</option>
-                <option value="Lainnya">Lainnya</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-              <select
-                v-model="filters.status"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="">Semua Status</option>
-                <option value="draft">Draft</option>
-                <option value="published">Dipublikasi</option>
-                <option value="archived">Diarsipkan</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">SKPD</label>
-              <select
-                v-model="filters.skpd"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="">Semua SKPD</option>
-                <option v-for="skpd in skpds" :key="skpd.id" :value="skpd.id">
-                  {{ skpd.metadata?.skpd_code || 'N/A' }} - {{ skpd.name }}
-                </option>
-              </select>
-              <p class="mt-1 text-xs text-gray-500">
-                {{ getSelectedSKPDInfo() }}
-              </p>
-            </div>
-            <div class="flex items-end">
+        <!-- Category -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Kategori</label>
+          <VueSelect
+            v-model="filters.category_id"
+            :options="categoryOptions"
+            placeholder="Pilih Kategori..."
+          />
+        </div>
+
+        <!-- SKPD -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">SKPD</label>
+          <VueSelect
+            v-model="filters.skpd_id"
+            :options="skpdOptions"
+            placeholder="Pilih SKPD..."
+          />
+        </div>
+
+        <!-- Status -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Status</label>
+          <VueSelect
+            v-model="filters.status"
+            :options="statusOptions"
+            placeholder="Pilih Status..."
+          />
+        </div>
+      </div>
+
+      <!-- Active filters display -->
+      <div v-if="hasActiveFilters" class="mt-4 pt-4 border-t border-gray-100">
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-500">Filter aktif:</span>
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-if="filters.search"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+            >
+              Search: {{ filters.search }}
               <button
-                @click="applyFilters"
-                class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                @click="filters.search = ''"
+                class="ml-1.5 text-blue-600 hover:text-blue-800"
               >
-                Terapkan Filter
+                ×
               </button>
-            </div>
+            </span>
+            <span
+              v-if="filters.category_id"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+            >
+              Kategori: {{ getCategoryName(filters.category_id) }}
+              <button
+                @click="filters.category_id = ''"
+                class="ml-1.5 text-green-600 hover:text-green-800"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              v-if="filters.skpd_id"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+            >
+              SKPD: {{ getSKPDName(filters.skpd_id) }}
+              <button
+                @click="filters.skpd_id = ''"
+                class="ml-1.5 text-purple-600 hover:text-purple-800"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              v-if="filters.status"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+            >
+              Status: {{ getStatusLabel(filters.status) }}
+              <button
+                @click="filters.status = ''"
+                class="ml-1.5 text-yellow-600 hover:text-yellow-800"
+              >
+                ×
+              </button>
+            </span>
           </div>
         </div>
+      </div>
 
-        <!-- Knowledge Table -->
-        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Judul
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Kategori
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Penulis
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    SKPD
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tanggal
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody v-if="knowledge && knowledge.data && knowledge.data.length > 0" class="bg-white divide-y divide-gray-200">
-                <tr v-for="item in knowledge.data" :key="item.id" class="hover:bg-gray-50 transition-colors duration-150">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 h-10 w-10">
-                        <div class="h-10 w-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                          <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">{{ item.title }}</div>
-                        <div class="text-sm text-gray-500 truncate max-w-xs">{{ item.description }}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span v-if="item.category" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {{ item.category.name }}
-                    </span>
-                    <span v-else class="text-gray-400">-</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span :class="[
-                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                      item.status === 'published' ? 'bg-green-100 text-green-800' : '',
-                      item.status === 'draft' ? 'bg-yellow-100 text-yellow-800' : '',
-                      item.status === 'archived' ? 'bg-gray-100 text-gray-800' : ''
-                    ]">
-                      {{ item.status === 'published' ? 'Dipublikasi' : item.status === 'draft' ? 'Draft' : 'Diarsipkan' }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ item.author ? item.author.name : '-' }}
-                  </td>
-                              <td class="px-6 py-4 whitespace-nowrap">
-              <div v-if="item.skpd" class="flex flex-col">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 mb-1">
-                  {{ item.skpd.metadata?.skpd_code || 'N/A' }}
-                </span>
-                <span class="text-xs text-gray-600">{{ item.skpd.name }}</span>
-              </div>
-              <span v-else class="text-gray-400">-</span>
-            </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ formatDate(item.created_at) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex space-x-2">
-                      <Link :href="route('knowledge.show', item.id)" class="text-indigo-600 hover:text-indigo-900">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                      </Link>
-                      <Link :href="route('knowledge.edit', item.id)" class="text-yellow-600 hover:text-yellow-900">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </Link>
-                      <button
-                        @click="deleteKnowledge(item.id)"
-                        class="text-red-600 hover:text-red-900"
-                      >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <!-- Loading indicator -->
+      <div v-if="isLoading" class="mt-4 text-center">
+        <div class="inline-flex items-center px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg border border-blue-200">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Memuat data...
+        </div>
+      </div>
+    </div>
 
-          <!-- Empty State -->
-          <div v-if="!knowledge || !knowledge.data || knowledge.data.length === 0" class="px-6 py-12 text-center">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    <!-- Knowledge Table using VueTable component -->
+    <VueTable
+      :data="tableData"
+      :columns="tableColumns"
+      title="Daftar Pengetahuan"
+      :empty-message="hasActiveFilters ? 'Data tidak ditemukan' : 'Tidak ada data'"
+      :empty-description="hasActiveFilters ? 'Coba ubah filter atau hapus beberapa filter untuk melihat data yang tersedia.' : 'Belum ada pengetahuan yang ditambahkan.'"
+    >
+      <!-- Custom Title Column -->
+      <template #title="{ item }">
+        <div class="flex items-center">
+          <div class="h-8 w-8 text-gray-400 mr-3">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada pengetahuan</h3>
-            <p class="mt-1 text-sm text-gray-500">Mulai dengan menambahkan pengetahuan baru.</p>
+          </div>
+          <div>
+            <div class="text-sm font-medium text-gray-900">{{ item?.title || 'Judul tidak tersedia' }}</div>
+            <div class="text-sm text-gray-500">{{ formatDate(item?.created_at) || 'Tanggal tidak tersedia' }}</div>
           </div>
         </div>
+      </template>
 
-        <!-- Pagination -->
-        <div v-if="knowledge.links && knowledge.links.length > 1" class="mt-6">
-          <nav class="flex justify-center">
-            <div class="flex space-x-1">
-              <Link
-                v-for="(link, index) in knowledge.links"
-                :key="index"
-                :href="link.url || '#'"
-                :class="[
-                  'px-3 py-2 text-sm font-medium rounded-md',
-                  !link.url || link.url === '#'
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : link.active === true
-                    ? 'bg-indigo-600 text-white'
-                    : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
-                ]"
-                v-html="link.label || ''"
-              />
-            </div>
+      <!-- Custom Status Column -->
+      <template #status="{ item }">
+        <span :class="getStatusBadgeClass(item?.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+          {{ getStatusText(item?.status) || 'Status tidak tersedia' }}
+        </span>
+      </template>
+
+      <!-- Custom SKPD Column -->
+      <template #skpd.kode_skpd="{ item }">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+          {{ item?.skpd?.kode_skpd || 'SKPD tidak tersedia' }}
+          <br>
+          <span class="text-xs">{{ item?.skpd?.nama_skpd || '' }}</span>
+        </span>
+      </template>
+
+      <!-- Custom Actions Column -->
+      <template #actions="{ item }">
+        <div class="flex space-x-2">
+          <Link :href="`/knowledge/${item?.id}`" class="text-indigo-600 hover:text-indigo-900">Lihat</Link>
+          <Link :href="`/knowledge/${item?.id}/edit`" class="text-green-600 hover:text-green-900">Edit</Link>
+          <button @click="deleteKnowledge(item?.id)" class="text-red-600 hover:text-red-900">Hapus</button>
+        </div>
+      </template>
+
+      <!-- Empty Actions -->
+      <template #empty-actions>
+        <div v-if="hasActiveFilters" class="mt-4">
+          <button
+            @click="clearFilters"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Reset Filter
+          </button>
+        </div>
+      </template>
+    </VueTable>
+
+    <!-- Pagination -->
+    <div v-if="tableData.length > 0" class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+      <div class="flex-1 flex justify-between sm:hidden">
+        <button
+          v-if="pageMeta.prev_page_url"
+          @click="goToPage(pageMeta.current_page - 1)"
+          class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+        >Previous</button>
+        <button
+          v-if="pageMeta.next_page_url"
+          @click="goToPage(pageMeta.current_page + 1)"
+          class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+        >Next</button>
+      </div>
+      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Showing
+            <span class="font-medium">{{ pageMeta.from }}</span>
+            to
+            <span class="font-medium">{{ pageMeta.to }}</span>
+            of
+            <span class="font-medium">{{ pageMeta.total }}</span>
+            results
+          </p>
+        </div>
+        <div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <button
+              v-if="pageMeta.prev_page_url"
+              @click="goToPage(pageMeta.current_page - 1)"
+              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            >
+              <span class="sr-only">Previous</span>
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"/>
+              </svg>
+            </button>
+            <button
+              v-if="pageMeta.next_page_url"
+              @click="goToPage(pageMeta.current_page + 1)"
+              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            >
+              <span class="sr-only">Next</span>
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/>
+              </svg>
+            </button>
           </nav>
         </div>
-    </AdminLayout>
+      </div>
+    </div>
+  </AdminLayout>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
-import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { route } from '@/core/helpers/route';
-// import { debounce } from 'lodash';
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue'
+import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import VueSelect from '@/Components/VueSelect.vue'
+import VueTable from '@/Components/VueTable.vue'
+import axios from 'axios'
+import { toast } from 'vue3-toastify'
+
+// Configure axios with CSRF token
+axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+axios.defaults.withCredentials = true
+
+const page = usePage()
+
+function resolveFlashVal(val: any) {
+  return typeof val === 'function' ? val() : val
+}
 
 const props = defineProps({
   knowledge: {
@@ -251,36 +329,178 @@ const props = defineProps({
   skpds: {
     type: Array,
     default: () => []
+  },
+  categories: {
+    type: Array,
+    default: () => []
   }
 });
 
+// Knowledge data
+const knowledge = ref(props.knowledge || { data: [], links: [] })
+
+// Normalize data for table and pagination (supports paginator at root or nested under .data)
+const tableData = computed<any[]>(() => {
+  const k: any = knowledge.value
+  if (!k) return []
+  if (Array.isArray(k.data)) return k.data
+  if (k.data && Array.isArray(k.data.data)) return k.data.data
+  return []
+})
+
+const pageMeta = computed(() => {
+  const k: any = knowledge.value
+  const meta = Array.isArray(k?.data) ? k : k?.data
+  return {
+    from: meta?.from ?? 0,
+    to: meta?.to ?? 0,
+    total: meta?.total ?? 0,
+    prev_page_url: meta?.prev_page_url ?? null,
+    next_page_url: meta?.next_page_url ?? null,
+    current_page: meta?.current_page ?? 1,
+  }
+})
+
+// Table columns configuration
+const tableColumns = ref([
+  {
+    key: 'title',
+    label: 'JUDUL',
+    type: 'custom'
+  },
+  {
+    key: 'category.name',
+    label: 'KATEGORI',
+    type: 'badge'
+  },
+  {
+    key: 'status',
+    label: 'STATUS',
+    type: 'badge'
+  },
+  {
+    key: 'author.name',
+    label: 'PENULIS',
+    type: 'text'
+  },
+  {
+    key: 'skpd.kode_skpd',
+    label: 'SKPD',
+    type: 'custom'
+  },
+  {
+    key: 'actions',
+    label: 'AKSI',
+    type: 'custom'
+  }
+])
+
+// Filter state
 const filters = ref({
-  search: props.filters.search || '',
-  category: props.filters.category || '',
-  status: props.filters.status || '',
-  skpd: props.filters.skpd || ''
+    search: props.filters?.search || '',
+    category_id: props.filters?.category_id || '',
+    skpd_id: props.filters?.skpd_id || '',
+    status: props.filters?.status || ''
+})
+
+// Computed properties for filter options
+const categoryOptions = computed(() => {
+    return props.categories?.map((category: any) => ({
+        value: category.id,
+        label: category.name
+    })) || []
+})
+
+const statusOptions = computed(() => [
+  { value: '', label: 'Semua Status' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'published', label: 'Published' },
+  { value: 'archived', label: 'Archived' }
+])
+
+const skpdOptions = computed(() => {
+    return props.skpds?.map((skpd: any) => ({
+        value: skpd.id,
+        label: skpd.nama_skpd
+    })) || []
+})
+
+// Check if any filters are active
+const hasActiveFilters = computed(() => {
+  return Object.values(filters.value).some(value => value !== '');
 });
 
-const debounceSearch = (() => {
-  let timeout;
-  return () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      applyFilters();
-    }, 500);
-  };
-})();
+// Loading state
+const isLoading = ref(false)
 
-const applyFilters = () => {
-  router.get(route('knowledge.index'), filters.value, {
-    preserveState: true,
-    replace: true
-  });
-};
+// Apply filters via AJAX
+const applyFilters = async (filterData: any, page?: number) => {
+    isLoading.value = true
+
+    try {
+        const url = page ? `/api/knowledge/filter?page=${page}` : '/api/knowledge/filter'
+        const response = await axios.post(url, filterData)
+
+        if (response.data.knowledge && response.data.knowledge.success) {
+            knowledge.value = response.data.knowledge.data
+        } else {
+            knowledge.value = { data: [], links: [] }
+        }
+    } catch (error) {
+        toast.error('Terjadi kesalahan saat memfilter data. Silakan coba lagi.')
+    } finally {
+        isLoading.value = false
+    }
+}
+
+// Go to specific page using current filters
+const goToPage = (page: number) => {
+  if (!page || page < 1) return
+  applyFilters(filters.value, page)
+}
+
+// Load initial data when page loads
+const loadInitialData = async () => {
+    await applyFilters({
+        search: '',
+        category_id: '',
+        skpd_id: '',
+        status: ''
+    })
+}
+
+onMounted(() => {
+  const flash: any = (page.props as any)?.flash
+  const success = resolveFlashVal(flash?.success)
+  const error = resolveFlashVal(flash?.error)
+  const message = resolveFlashVal(flash?.message)
+  if (success) toast.success(success)
+  if (error) toast.error(error)
+  if (message) toast.info(message)
+  window.scrollTo({ top: 0, behavior: 'auto' })
+  loadInitialData()
+})
+
+// Apply filters manually
+const applyFiltersManually = () => {
+    applyFilters(filters.value, 1)
+}
+
+// Clear all filters
+const clearFilters = () => {
+    filters.value = {
+        search: '',
+        category_id: '',
+        skpd_id: '',
+        status: ''
+    }
+    // Apply empty filters to reset data
+    applyFilters(filters.value, 1)
+}
 
 const deleteKnowledge = (id) => {
   if (confirm('Apakah Anda yakin ingin menghapus pengetahuan ini?')) {
-    router.delete(route('knowledge.destroy', id));
+    router.delete(`/knowledge/${id}`);
   }
 };
 
@@ -296,8 +516,8 @@ const getStatusBadgeClass = (status) => {
 const getStatusText = (status) => {
   const texts = {
     draft: 'Draft',
-    published: 'Dipublikasi',
-    archived: 'Diarsipkan'
+    published: 'Published',
+    archived: 'Archived'
   };
   return texts[status] || 'Tidak Diketahui';
 };
@@ -312,15 +532,18 @@ const formatDate = (dateString) => {
   });
 };
 
-const getSelectedSKPDInfo = () => {
-  if (!filters.value.skpd) return 'Pilih SKPD untuk melihat informasi detail';
+const getCategoryName = (value) => {
+  const category = categoryOptions.value.find(opt => opt.value === value);
+  return category ? category.label : value;
+};
 
-  const selectedSKPD = props.skpds.find(skpd => skpd.id == filters.value.skpd);
-  if (!selectedSKPD) return '';
+const getSKPDName = (value) => {
+  const skpd = skpdOptions.value.find(opt => opt.value === value);
+  return skpd ? skpd.label : value;
+};
 
-  const metadata = selectedSKPD.metadata;
-  if (!metadata) return selectedSKPD.name;
-
-  return `${metadata.skpd_description || ''} | ${metadata.skpd_address || ''} | ${metadata.skpd_phone || ''}`;
+const getStatusLabel = (value) => {
+  const status = statusOptions.value.find(opt => opt.value === value);
+  return status ? status.label : value;
 };
 </script>
