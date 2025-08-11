@@ -1,19 +1,19 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-white to-blue-50 text-gray-900">
     <!-- Mobile top bar -->
-    <div class="md:hidden sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-blue-100">
-      <div class="flex items-center justify-between px-4 py-3">
-        <button @click="sidebarOpen = true" class="p-2 rounded-md text-blue-600 hover:bg-blue-50">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-        <div class="flex items-center gap-2">
-          <span class="text-base font-semibold">{{ pageTitle }}</span>
-        </div>
+    <Navbar class="md:hidden" fluid rounded>
+      <template #brand>
+        <span class="self-center whitespace-nowrap text-lg font-semibold">{{ pageTitle }}</span>
+      </template>
+      <template #default>
+        <NavbarToggle @click="sidebarOpen = true" />
+      </template>
+      <template #right-side>
         <form :action="route('logout')" method="POST">
           <button class="px-3 py-1.5 rounded-md text-sm text-blue-700 bg-blue-50 border border-blue-100">Logout</button>
         </form>
-      </div>
-    </div>
+      </template>
+    </Navbar>
 
     <!-- Shell -->
     <div class="flex">
@@ -65,23 +65,21 @@
       <!-- Content -->
       <div class="flex-1 min-w-0 md:ml-0">
         <!-- Topbar desktop -->
-        <header class="hidden md:block sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-blue-100">
-          <div class="flex items-center justify-between px-6 py-3">
-            <div class="flex items-center gap-3">
-              <h2 class="text-xl font-semibold">{{ pageTitle }}</h2>
-              <span class="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700 border border-blue-100">Admin</span>
+        <Navbar class="hidden md:flex sticky top-0 z-30" fluid rounded>
+          <template #brand>
+            <span class="self-center whitespace-nowrap text-xl font-semibold">{{ pageTitle }}</span>
+          </template>
+          <template #default>
+            <div class="hidden lg:block">
+              <input type="search" class="w-72 rounded-lg text-sm" placeholder="Cari..."/>
             </div>
-            <div class="flex items-center gap-3">
-              <div class="hidden lg:flex items-center bg-white border border-blue-100 rounded-lg px-3 py-1.5 shadow-sm">
-                <svg class="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
-                <input type="search" placeholder="Cari..." class="ml-2 w-56 text-sm bg-transparent outline-none placeholder:text-blue-300" />
-              </div>
-              <form :action="route('logout')" method="POST">
-                <button class="inline-flex items-center text-sm text-blue-700 hover:text-blue-800 px-3 py-1.5 bg-blue-50 rounded-md border border-blue-100">Logout</button>
-              </form>
-            </div>
-          </div>
-        </header>
+          </template>
+          <template #right-side>
+            <form :action="route('logout')" method="POST">
+              <button class="inline-flex items-center text-sm text-blue-700 hover:text-blue-800 px-3 py-1.5 bg-blue-50 rounded-md border border-blue-100">Logout</button>
+            </form>
+          </template>
+        </Navbar>
 
         <!-- Main -->
         <main class="p-4 md:p-6">
@@ -99,6 +97,7 @@ import { Link, usePage } from '@inertiajs/vue3'
 import { route } from '@/core/helpers/route'
 import { ref, computed, onMounted, watch } from 'vue'
 import { toast } from 'vue3-toastify'
+import { Navbar, NavbarToggle } from 'flowbite-vue'
 
 const props = defineProps({
   pageTitle: { type: String, default: 'Dashboard' },
