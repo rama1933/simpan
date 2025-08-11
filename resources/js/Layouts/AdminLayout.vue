@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-white to-blue-50 text-gray-900">
+  <div class="min-h-screen bg-gradient-to-b from-white to-brand-50 text-gray-900">
     <!-- Mobile top bar -->
     <div class="md:hidden sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-blue-100">
       <div class="flex items-center justify-between px-4 py-3">
@@ -10,7 +10,7 @@
           <span class="text-base font-semibold">{{ pageTitle }}</span>
         </div>
         <form :action="route('logout')" method="POST">
-          <button class="px-3 py-1.5 rounded-md text-sm text-white bg-blue-600 hover:bg-blue-700">Logout</button>
+          <button class="px-3 py-1.5 rounded-md text-sm text-white bg-brand-700 hover:bg-brand-800">Logout</button>
         </form>
       </div>
     </div>
@@ -32,9 +32,9 @@
 
     <div class="flex">
       <!-- Sidebar desktop -->
-      <div class="hidden md:block fixed inset-y-0 left-0 z-40 w-72 border-r border-blue-100 bg-white/85 backdrop-blur">
+      <div class="hidden md:block fixed inset-y-0 left-0 z-40 w-72 border-r border-brand-100 bg-white/85 backdrop-blur">
         <aside class="h-full flex flex-col">
-          <div class="h-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center px-5">
+          <div class="h-16 bg-gradient-to-r from-brand-700 to-brand-600 text-white flex items-center px-5">
             <div class="h-8 w-8 mr-3 rounded-lg bg-white/10 flex items-center justify-center">
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 4v6c0 5-7 8-7 8s-7-3-7-8V7l7-4z"/></svg>
             </div>
@@ -53,14 +53,14 @@
               </Link>
             </div>
           </nav>
-          <div class="px-4 py-3 border-t border-blue-100 bg-white/70">
+          <div class="px-4 py-3 border-t border-brand-100 bg-white/70">
             <div class="flex items-center gap-2">
-              <div class="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center text-sm font-semibold">
+              <div class="h-9 w-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center text-sm font-semibold">
                 {{ (user?.name || 'U').slice(0,1) }}
               </div>
               <div class="min-w-0">
                 <div class="text-sm font-semibold truncate">{{ user?.name || 'User' }}</div>
-                <div class="text-xs text-blue-600">Admin</div>
+                <div class="text-xs text-brand-700">Admin</div>
               </div>
             </div>
           </div>
@@ -70,10 +70,10 @@
       <!-- Content -->
       <div class="flex-1 min-w-0 md:ml-72">
         <!-- Desktop topbar -->
-        <div class="hidden md:flex items-center justify-between sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-blue-100 px-6 h-16">
+        <div class="hidden md:flex items-center justify-between sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-brand-100 px-6 h-16">
           <span class="text-xl font-semibold">{{ pageTitle }}</span>
           <form :action="route('logout')" method="POST">
-            <button class="px-3 py-1.5 rounded-md text-sm text-white bg-blue-600 hover:bg-blue-700">Logout</button>
+            <button class="px-3 py-1.5 rounded-md text-sm text-white bg-brand-700 hover:bg-brand-800">Logout</button>
           </form>
         </div>
 
