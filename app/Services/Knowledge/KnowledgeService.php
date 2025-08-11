@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use App\Models\Tag;
 use Illuminate\Support\Str;
 use App\Models\MasterTag;
+use App\Models\KnowledgeAttachment;
+use Illuminate\Support\Facades\Storage;
 
 class KnowledgeService
 {
@@ -270,6 +272,24 @@ class KnowledgeService
             if (is_array($dto->tags) && count($dto->tags) > 0) {
                 $tagIds = $this->upsertTagsAndGetIds($dto->tags);
                 $knowledge->tagsRelation()->sync($tagIds);
+            }
+
+            // Handle attachments if present
+            if (request()->hasFile('attachments')) {
+                $files = request()->file('attachments');
+                foreach ((array) $files as $file) {
+                    if (!$file->isValid())
+                        continue;
+                    $stored = $file->store('knowledge/attachments', 'public');
+                    KnowledgeAttachment::create([
+                        'knowledge_id' => $knowledge->id,
+                        'original_name' => $file->getClientOriginalName(),
+                        'path' => $stored,
+                        'mime_type' => $file->getClientMimeType(),
+                        'size_bytes' => $file->getSize(),
+                        'disk' => 'public',
+                    ]);
+                }
             }
 
             return [

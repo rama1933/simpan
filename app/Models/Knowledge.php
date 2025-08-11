@@ -79,6 +79,11 @@ class Knowledge extends Model
         return $this->belongsToMany(Tag::class, 'knowledge_tag');
     }
 
+    public function attachments()
+    {
+        return $this->hasMany(KnowledgeAttachment::class);
+    }
+
     /**
      * Scope a query to only include published knowledge.
      */

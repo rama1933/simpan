@@ -73,6 +73,35 @@
                       <ErrorMessage name="content" class="mt-1 text-sm text-red-600" />
                     </div>
 
+                    <!-- Attachments -->
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Lampiran</label>
+                      <div
+                        class="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer bg-white hover:bg-gray-50"
+                        :class="dragOver ? 'border-indigo-400 bg-indigo-50/30' : 'border-gray-300'"
+                        @dragover.prevent="onDragOver"
+                        @dragleave.prevent="onDragLeave"
+                        @drop.prevent="onDrop"
+                        @click="() => fileInput?.click()"
+                      >
+                        <input ref="fileInput" type="file" multiple class="hidden" @change="onFilesSelected" />
+                        <div class="flex flex-col items-center gap-1 text-sm text-gray-600">
+                          <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12l-2 2m0 0l-2-2m2 2V4"/></svg>
+                          <span><span class="font-medium text-indigo-600">Klik</span> atau seret file ke sini</span>
+                          <span class="text-xs text-gray-400">Dokumen (PDF, Office) atau Gambar (JPG/PNG). Total maks 5MB.</span>
+                        </div>
+                      </div>
+                      <ul v-if="attachments.length" class="mt-3 space-y-2">
+                        <li v-for="(f, i) in attachments" :key="i" class="flex items-center justify-between bg-white border rounded px-3 py-2 text-sm">
+                          <div class="truncate">
+                            <span class="font-medium">{{ f.name }}</span>
+                            <span class="ml-2 text-gray-500">({{ (f.size/1024/1024).toFixed(2) }} MB)</span>
+                          </div>
+                          <button type="button" @click="removeAttachment(i)" class="text-red-600 hover:text-red-700">Hapus</button>
+                        </li>
+                      </ul>
+                    </div>
+
                     <!-- Klasifikasi Section (Full Width) -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div>
@@ -180,8 +209,56 @@ const props = defineProps({
   user: { type: Object, default: null }
 })
 
+// reference to vee-validate helpers
+import { useForm } from 'vee-validate'
+const { setFieldValue, values } = useForm()
+
 const aiLoading = ref(false)
 const formRef = ref<any>(null)
+
+// attachments state
+const fileInput = ref<HTMLInputElement | null>(null)
+const attachments = ref<File[]>([])
+const dragOver = ref(false)
+const onFilesSelected = (e: Event) => {
+  const input = e.target as HTMLInputElement
+  const files = Array.from(input.files || [])
+  if (files.length) {
+    const allowed = files.filter((f) => /^(application\/(pdf|vnd\.openxmlformats-officedocument\.(wordprocessingml\.document|spreadsheetml\.sheet|presentationml\.presentation)|msword|vnd\.ms-excel|vnd\.ms-powerpoint)|image\/(jpeg|jpg|png))$/.test(f.type))
+    if (allowed.length !== files.length) {
+      toast.error('Hanya dokumen (PDF/Office) atau gambar (JPG/PNG) yang diizinkan')
+    }
+    const next = [...attachments.value, ...allowed]
+    const total = next.reduce((s, f) => s + (f?.size || 0), 0)
+    if (total > 5 * 1024 * 1024) {
+      toast.error('Total ukuran lampiran maksimal 5MB')
+    } else {
+      attachments.value = next
+    }
+  }
+  if (fileInput.value) fileInput.value.value = ''
+}
+const onDragOver = () => { dragOver.value = true }
+const onDragLeave = () => { dragOver.value = false }
+const onDrop = (e: DragEvent) => {
+  dragOver.value = false
+  const files = Array.from(e.dataTransfer?.files || [])
+  if (files.length) {
+    const allowed = files.filter((f) => /^(application\/(pdf|vnd\.openxmlformats-officedocument\.(wordprocessingml\.document|spreadsheetml\.sheet|presentationml\.presentation)|msword|vnd\.ms-excel|vnd\.ms-powerpoint)|image\/(jpeg|jpg|png))$/.test(f.type))
+    if (allowed.length !== files.length) {
+      toast.error('Hanya dokumen (PDF/Office) atau gambar (JPG/PNG) yang diizinkan')
+    }
+    const next = [...attachments.value, ...allowed]
+    const total = next.reduce((s, f) => s + (f?.size || 0), 0)
+    if (total > 5 * 1024 * 1024) {
+      toast.error('Total ukuran lampiran maksimal 5MB')
+    } else {
+      attachments.value = next
+    }
+  }
+}
+const removeAttachment = (idx: number) => { attachments.value.splice(idx, 1) }
+
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
 const submitting = ref(false)
 const titleMax = 255
@@ -374,8 +451,19 @@ const onSubmit = async (values) => {
       })
     tagsInput.value = ''
   }
-  const payload = { ...values, tags: tags.value }
-  router.post('/knowledge', payload, {
+  // Build FormData
+  const formData = new FormData()
+  formData.append('title', values.title || '')
+  formData.append('description', values.description || '')
+  formData.append('content', values.content || '')
+  formData.append('category_id', String(values.category_id || ''))
+  formData.append('skpd_id', String(values.skpd_id || ''))
+  formData.append('status', values.status || 'draft')
+  tags.value.forEach((t) => formData.append('tags[]', t))
+  attachments.value.forEach((f) => formData.append('attachments[]', f))
+
+  router.post('/knowledge', formData, {
+    forceFormData: true,
     onSuccess: () => {
       toast.success('Pengetahuan berhasil disimpan')
       window.scrollTo({ top: 0, behavior: 'auto' })
