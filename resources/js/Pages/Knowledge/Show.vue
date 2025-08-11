@@ -71,10 +71,11 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Link, usePage, router } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { marked } from 'marked'
 import { toast } from 'vue3-toastify'
+import axios from 'axios'
 
 const props = defineProps<{ knowledge: any, user?: any, canVerify?: boolean }>()
 const knowledge = props.knowledge
@@ -97,8 +98,9 @@ const verify = async (act: 'approve'|'reject') => {
   loading.value = true
   action.value = act
   try {
-    await router.post(`/knowledge/${knowledge.id}/verify`, { action: act, note: verifyNote.value }, { preserveScroll: true })
-    toast.success('Verifikasi tersimpan')
+    const res = await axios.post(`/knowledge/${knowledge.id}/verify`, { action: act, note: verifyNote.value })
+    if (res?.data?.success) toast.success('Verifikasi tersimpan')
+    else toast.info(res?.data?.message || 'Verifikasi diproses')
     setTimeout(() => window.location.reload(), 300)
   } catch (e) {
     toast.error('Gagal menyimpan verifikasi')

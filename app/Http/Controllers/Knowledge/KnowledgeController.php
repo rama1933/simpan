@@ -207,9 +207,15 @@ class KnowledgeController extends Controller
         $result = $this->knowledgeService->verifyKnowledge($id, $request->action, $request->note);
 
         if (!$result['success']) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $result['message']], 422);
+            }
             return back()->withErrors(['error' => $result['message']]);
         }
 
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => $result['message']]);
+        }
         return back()->with('success', $result['message']);
     }
 
