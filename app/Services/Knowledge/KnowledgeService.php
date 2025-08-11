@@ -213,6 +213,16 @@ class KnowledgeService
             $query->where('verification_status', $filters['verification_status']);
         }
 
+        // Apply tags filter (expects array of tag IDs)
+        if (!empty($filters['tags'])) {
+            $tagIds = is_array($filters['tags']) ? array_filter($filters['tags']) : explode(',', (string) $filters['tags']);
+            if (!empty($tagIds)) {
+                $query->whereHas('tagsRelation', function ($q) use ($tagIds) {
+                    $q->whereIn('tags.id', $tagIds);
+                });
+            }
+        }
+
         return [
             'success' => true,
             'data' => $query->paginate($perPage)

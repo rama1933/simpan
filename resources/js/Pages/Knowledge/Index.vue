@@ -110,6 +110,39 @@
             placeholder="Pilih Status Verifikasi..."
           />
         </div>
+
+        <!-- Tags -->
+        <div class="space-y-2 md:col-span-2 lg:col-span-2">
+          <label class="block text-sm font-medium text-gray-700">Tags</label>
+          <div class="flex gap-2">
+            <input
+              v-model="tagsQuery"
+              @input="searchTags"
+              type="text"
+              placeholder="Cari tag..."
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
+            />
+            <button @click="applyFiltersManually" class="px-3 py-2.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100">Terapkan</button>
+          </div>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button
+              v-for="tag in tagOptions"
+              :key="tag.id"
+              type="button"
+              @click="toggleTag(tag)"
+              :class="selectedTagIds.includes(tag.id) ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+              class="px-2.5 py-1.5 text-xs rounded-md border border-gray-200"
+            >
+              {{ tag.name }}
+            </button>
+          </div>
+          <div v-if="selectedTagIds.length" class="mt-2 flex flex-wrap gap-2">
+            <span v-for="id in selectedTagIds" :key="`sel-${id}`" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-indigo-100 text-indigo-800">
+              {{ tagNameById(id) }}
+              <button class="ml-1 text-indigo-700" @click="removeTag(id)">×</button>
+            </span>
+          </div>
+        </div>
       </div>
 
       <!-- Active filters display -->
@@ -177,6 +210,14 @@
                 ×
               </button>
             </span>
+            <span
+              v-for="id in selectedTagIds"
+              :key="`chip-${id}`"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+            >
+              Tag: {{ tagNameById(id) }}
+              <button @click="removeTag(id)" class="ml-1.5 text-indigo-700">×</button>
+            </span>
           </div>
         </div>
       </div>
@@ -232,19 +273,29 @@
 
       <!-- Custom SKPD Column -->
       <template #skpd.kode_skpd="{ item }">
-        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-          {{ item?.skpd?.kode_skpd || 'SKPD tidak tersedia' }}
-          <br>
-          <span class="text-xs">{{ item?.skpd?.nama_skpd || '' }}</span>
-        </span>
+        <span class="text-sm text-gray-800">{{ item?.skpd?.nama_skpd || '-' }}</span>
       </template>
 
       <!-- Custom Actions Column -->
       <template #actions="{ item }">
-        <div class="flex space-x-2">
-          <Link :href="`/knowledge/${item?.id}`" class="text-indigo-600 hover:text-indigo-900">Lihat</Link>
-          <Link :href="`/knowledge/${item?.id}/edit`" class="text-green-600 hover:text-green-900">Edit</Link>
-          <button @click="deleteKnowledge(item?.id)" class="text-red-600 hover:text-red-900">Hapus</button>
+        <div class="relative inline-block text-left">
+          <button @click="toggleRowActions(item.id)" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+            <svg class="w-5 h-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </button>
+          <div v-if="openRowId === item.id" class="absolute z-10 mt-2 -left-24 bg-white border border-gray-200 rounded-md shadow-lg px-2 py-2 flex items-center gap-1">
+            <Link :href="`/knowledge/${item?.id}`" class="inline-flex items-center gap-1 px-2 py-1.5 text-xs rounded-md text-indigo-700 bg-indigo-50 hover:bg-indigo-100">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7.305 4.5 3.274 7.334 1.5 12c1.774 4.666 5.805 7.5 10.5 7.5s8.726-2.834 10.5-7.5C20.726 7.334 16.695 4.5 12 4.5zm0 12a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/></svg>
+              Lihat
+            </Link>
+            <Link :href="`/knowledge/${item?.id}/edit`" class="inline-flex items-center gap-1 px-2 py-1.5 text-xs rounded-md text-emerald-700 bg-emerald-50 hover:bg-emerald-100">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
+              Edit
+            </Link>
+            <button @click="deleteKnowledge(item?.id)" class="inline-flex items-center gap-1 px-2 py-1.5 text-xs rounded-md text-rose-700 bg-rose-50 hover:bg-rose-100">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 12a2 2 0 01-2 2H9a2 2 0 01-2-2L6 7zm3-3h6a1 1 0 011 1v1H8V5a1 1 0 011-1z"/></svg>
+              Hapus
+            </button>
+          </div>
         </div>
       </template>
 
@@ -438,6 +489,36 @@ const filters = ref({
     verification_status: props.filters?.verification_status || ''
 })
 
+// Tags state
+const tagsQuery = ref('')
+const tagOptions = ref<any[]>([])
+const selectedTagIds = ref<number[]>(Array.isArray((props as any)?.filters?.tags) ? (props as any)?.filters?.tags : [])
+
+const searchTags = async () => {
+  try {
+    const res = await axios.get('/api/knowledge/tags', { params: { q: tagsQuery.value } })
+    tagOptions.value = res?.data?.data || []
+  } catch (_) { /* ignore */ }
+}
+
+const toggleTag = (tag: any) => {
+  const id = Number(tag.id)
+  if (selectedTagIds.value.includes(id)) {
+    selectedTagIds.value = selectedTagIds.value.filter(t => t !== id)
+  } else {
+    selectedTagIds.value = [...selectedTagIds.value, id]
+  }
+  // sinkronkan ke filters untuk apply
+  ;(filters.value as any).tags = [...selectedTagIds.value]
+}
+
+const removeTag = (id: number) => {
+  selectedTagIds.value = selectedTagIds.value.filter(t => t !== id)
+  ;(filters.value as any).tags = [...selectedTagIds.value]
+}
+
+const tagNameById = (id: number) => tagOptions.value.find(t => t.id === id)?.name || `#${id}`
+
 // Computed properties for filter options
 const categoryOptions = computed(() => {
     return props.categories?.map((category: any) => ({
@@ -508,7 +589,8 @@ const loadInitialData = async () => {
         category_id: '',
         skpd_id: '',
         status: '',
-        verification_status: ''
+        verification_status: '',
+        tags: selectedTagIds.value
     })
 }
 
@@ -526,6 +608,7 @@ onMounted(() => {
 
 // Apply filters manually
 const applyFiltersManually = () => {
+    ;(filters.value as any).tags = selectedTagIds.value
     applyFilters(filters.value, 1)
 }
 
@@ -536,8 +619,10 @@ const clearFilters = () => {
         category_id: '',
         skpd_id: '',
         status: '',
-        verification_status: ''
+        verification_status: '',
+        tags: []
     }
+    selectedTagIds.value = []
     // Apply empty filters to reset data
     applyFilters(filters.value, 1)
 }
@@ -601,4 +686,10 @@ const getStatusLabel = (value) => {
   const status = statusOptions.value.find(opt => opt.value === value);
   return status ? status.label : value;
 };
+
+// Row actions toggle
+const openRowId = ref<number|null>(null)
+const toggleRowActions = (id: number) => {
+  openRowId.value = openRowId.value === id ? null : id
+}
 </script>
