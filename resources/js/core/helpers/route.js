@@ -9,6 +9,7 @@ export function route(name, params = {}) {
     'knowledge.edit': (id) => `/knowledge/${id}/edit`,
     'knowledge.store': '/knowledge',
     'knowledge.update': (id) => `/knowledge/${id}`,
+    'knowledge.delete': (id) => `/knowledge/${id}`,
     'knowledge.destroy': (id) => `/knowledge/${id}`,
     'knowledge.search': '/knowledge/search',
     'knowledge.export': '/knowledge/export',

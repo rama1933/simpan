@@ -383,6 +383,7 @@ import axios from 'axios'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
+import { route as r } from '@/core/helpers/route'
 
 // Configure axios with CSRF token
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
@@ -645,7 +646,7 @@ const confirmDelete = async (item: any) => {
     cancelButtonColor: '#6b7280'
   })
   if (!result.isConfirmed) return
-  router.delete(`/knowledge/${item.id}`, {
+  router.delete(r('knowledge.delete', item.id), {
     preserveScroll: true,
     onSuccess: () => toast.success('Pengetahuan berhasil dihapus'),
     onError: () => toast.error('Gagal menghapus pengetahuan'),
