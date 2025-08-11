@@ -381,6 +381,8 @@ import VueSelect from '@/Components/VueSelect.vue'
 import VueTable from '@/Components/VueTable.vue'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
+import Swal from 'sweetalert2'
+import 'sweetalert2/dist/sweetalert2.min.css'
 
 // Configure axios with CSRF token
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
@@ -630,11 +632,19 @@ const clearFilters = () => {
     applyFilters(filters.value, 1)
 }
 
-const confirmDelete = (item: any) => {
+const confirmDelete = async (item: any) => {
   if (!item?.id) return
-  const title = item?.title ? `\n\nJudul: ${item.title}` : ''
-  const ok = confirm(`Apakah Anda yakin ingin menghapus pengetahuan ini?${title}\n\nTindakan ini tidak dapat dibatalkan.`)
-  if (!ok) return
+  const result = await Swal.fire({
+    title: 'Hapus pengetahuan?',
+    text: item?.title ? `Judul: ${item.title}` : 'Tindakan ini tidak dapat dibatalkan.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, hapus',
+    cancelButtonText: 'Batal',
+    confirmButtonColor: '#dc2626',
+    cancelButtonColor: '#6b7280'
+  })
+  if (!result.isConfirmed) return
   router.delete(`/knowledge/${item.id}`, {
     preserveScroll: true,
     onSuccess: () => toast.success('Pengetahuan berhasil dihapus'),
