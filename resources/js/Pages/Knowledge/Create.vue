@@ -27,7 +27,7 @@
           </div>
 
           <!-- Form Full Width -->
-          <Form :validation-schema="schema" @submit="onSubmit" v-slot="{ meta, values }" class="space-y-6">
+          <Form ref="formRef" :validation-schema="schema" @submit="onSubmit" v-slot="{ meta, values }" class="space-y-6">
             <div class="grid grid-cols-1 gap-6">
               <!-- Konten Utama -->
               <div class="space-y-6">
@@ -41,7 +41,7 @@
                           <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h3l2 2h3a2 2 0 012 2v2H4V4zM4 9h12v5a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>
                           </div>
-                          <input v-bind="field" id="title" type="text" class="w-full pl-10 pr-24 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan judul pengetahuan" @input="onTitleInput(field.value)" @blur="() => onTitleReady(field.value)" />
+                          <input v-bind="field" id="title" type="text" class="w-full pl-10 pr-24 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border transition-colors" :class="meta.touched && meta.invalid ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'" placeholder="Masukkan judul pengetahuan" />
                           <button type="button" @click="() => onTitleReady(field.value)" :disabled="aiLoading" class="absolute inset-y-0 right-2 my-1 px-3 inline-flex items-center gap-2 rounded-md text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:from-indigo-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
                             <span v-if="aiLoading" class="inline-block w-4 h-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin"></span>
                             <span>{{ aiLoading ? 'Memproses…' : 'Bantu AI' }}</span>
@@ -180,12 +180,8 @@ const props = defineProps({
   user: { type: Object, default: null }
 })
 
-// reference to vee-validate helpers
-import { useForm } from 'vee-validate'
-const { setFieldValue, values } = useForm()
-
 const aiLoading = ref(false)
-let aiDebounceTimer: any = null
+const formRef = ref<any>(null)
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
 const submitting = ref(false)
 const titleMax = 255
@@ -281,8 +277,8 @@ const onTitleReady = async (title: string) => {
     aiLoading.value = true
     const res = await axios.post('/api/ai/draft-from-title', { title: t })
     const data = res.data?.data || {}
-    if (data.description) setFieldValue('description', data.description)
-    if (data.content) setFieldValue('content', data.content)
+    if (data.description) formRef.value?.setFieldValue('description', data.description)
+    if (data.content) formRef.value?.setFieldValue('content', data.content)
     if (Array.isArray(data.tags)) {
       for (const tg of data.tags) {
         if (tg && !tags.value.includes(tg)) tags.value.push(String(tg))
@@ -296,14 +292,7 @@ const onTitleReady = async (title: string) => {
   }
 }
 
-const onTitleInput = (title: string) => {
-  if (aiDebounceTimer) clearTimeout(aiDebounceTimer)
-  const t = (title || '').trim()
-  if (t.length < 5) return
-  aiDebounceTimer = setTimeout(() => {
-    if (!aiLoading.value) onTitleReady(t)
-  }, 800)
-}
+// Auto-run dihapus; hanya berjalan saat tombol diklik
 
 // Disable submit helper
 const shouldDisableSubmit = (values, isValid) => {
