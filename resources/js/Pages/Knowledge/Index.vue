@@ -292,7 +292,9 @@
             </button>
             <!-- Toggle menjadi ikon X di kanan -->
             <button @click="openRowId = null" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none" :title="'Tutup'">
-              <svg class="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18L18 6M6 6l12 12"/></svg>
+              <svg class="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </template>
           <template v-else>
