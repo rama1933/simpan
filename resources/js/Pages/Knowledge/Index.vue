@@ -1,14 +1,14 @@
 <template>
   <AdminLayout page-title="Knowledge Management" :user="user">
     <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between items-center mb-8">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900">Manajemen Pengetahuan</h1>
-        <p class="text-gray-600 mt-2">Kelola dan atur semua pengetahuan dalam sistem</p>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Pengetahuan</h1>
+        <p class="text-gray-600 mt-1">Kelola dan atur semua pengetahuan dalam sistem</p>
       </div>
       <Link
         href="/knowledge/create"
-        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm"
       >
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Filter Data Section -->
-    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+    <div class="bg-white p-6 rounded-xl shadow-md ring-1 ring-gray-100 mb-8">
       <div class="flex items-center justify-between mb-6">
         <div>
           <h3 class="text-lg font-semibold text-gray-900">Filter Data</h3>
@@ -27,7 +27,7 @@
         <div class="flex space-x-3">
           <button
             @click="applyFiltersManually"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+            class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-sm"
           >
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"/>
@@ -40,7 +40,7 @@
             :class="[
               'inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200',
               hasActiveFilters
-                ? 'text-gray-600 bg-gray-50 border-gray-300 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500'
+                ? 'text-gray-600 bg-gray-50 border-gray-300 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 shadow-sm'
                 : 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
             ]"
           >
@@ -52,7 +52,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <!-- Search -->
         <div class="space-y-2">
           <label class="block text-sm font-medium text-gray-700">Cari</label>
@@ -319,7 +319,7 @@
     </VueTable>
 
     <!-- Pagination -->
-    <div v-if="tableData.length > 0" class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+    <div v-if="tableData.length > 0" class="bg-white/80 backdrop-blur px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-b-xl">
       <div class="flex-1 flex justify-between sm:hidden">
         <button
           v-if="pageMeta.prev_page_url"
