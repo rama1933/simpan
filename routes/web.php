@@ -8,6 +8,7 @@ use App\Http\Controllers\Knowledge\KnowledgeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\AI\AIController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\ChangeLog\ChangeLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,18 @@ Route::middleware(['auth'])->group(function () {
         Route::post('ai/analyze', [AIController::class, 'analyze'])->name('ai.analyze');
         Route::post('ai/suggest-tags', [AIController::class, 'suggestTags'])->name('ai.suggest-tags');
         Route::post('ai/generate', [AIController::class, 'generate'])->name('ai.generate');
+        
+        // Change Log Module Routes
+        Route::prefix('change-logs')->as('change-logs.')->group(function () {
+            Route::get('/', [ChangeLogController::class, 'index'])->name('index');
+            Route::get('/knowledge/{knowledge}', [ChangeLogController::class, 'showKnowledgeChanges'])->name('knowledge');
+            Route::get('/statistics', [ChangeLogController::class, 'getStatistics'])->name('statistics');
+            Route::get('/trends', [ChangeLogController::class, 'getDailyTrends'])->name('trends');
+            Route::get('/recent', [ChangeLogController::class, 'getRecentChanges'])->name('recent');
+            Route::get('/user/{userId}', [ChangeLogController::class, 'getUserChanges'])->name('user');
+            Route::post('/export', [ChangeLogController::class, 'export'])->name('export');
+            Route::delete('/clean', [ChangeLogController::class, 'cleanOldLogs'])->name('clean');
+        });
     });
 
     // Legacy routes for backward compatibility

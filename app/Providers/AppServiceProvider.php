@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Knowledge;
 use App\Observers\KnowledgeObserver;
+use App\Observers\KnowledgeChangeObserver;
+use App\Services\ChangeLog\ChangeLogService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register ChangeLogService as singleton
+        $this->app->singleton(ChangeLogService::class, function ($app) {
+            return new ChangeLogService();
+        });
     }
 
     /**
@@ -21,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register observers
         Knowledge::observe(KnowledgeObserver::class);
+        Knowledge::observe(KnowledgeChangeObserver::class);
     }
 }
