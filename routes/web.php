@@ -48,6 +48,7 @@ Route::prefix('knowledge')->name('knowledge.')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/skpd', [DashboardController::class, 'skpd'])->name('dashboard.skpd');
 
     // Test route for Select2
     Route::get('/test/select2', function () {

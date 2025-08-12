@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Services\Knowledge\KnowledgeService;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 
 class DashboardController extends Controller
 {
@@ -39,5 +40,13 @@ class DashboardController extends Controller
             'topCategories' => $topCategories,
             'recentActivities' => $recentActivities,
         ]);
+    }
+
+    // Redirect Dashboard SKPD ke halaman Knowledge dengan filter skpd_id milik user
+    public function skpd(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $skpdId = $user?->skpd_id;
+        return redirect()->route('knowledge.index', ['skpd_id' => $skpdId]);
     }
 }

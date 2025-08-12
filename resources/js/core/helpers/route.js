@@ -3,6 +3,7 @@ export function route(name, params = {}) {
   const routes = {
     'login': '/login',
     'dashboard': '/dashboard',
+    'dashboard.skpd': '/dashboard/skpd',
     'knowledge.index': '/knowledge',
     'knowledge.create': '/knowledge/create',
     'knowledge.show': (id) => `/knowledge/${id}`,

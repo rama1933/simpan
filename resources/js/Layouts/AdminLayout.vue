@@ -58,7 +58,7 @@
               </div>
               <div class="min-w-0 text-left flex-1">
                 <div class="text-sm font-semibold truncate">{{ user?.name || 'User' }}</div>
-                <div class="text-xs text-brand-700">Admin</div>
+                <div class="text-xs text-brand-700">{{ (user?.roles || []).join(', ') || 'User' }}</div>
               </div>
               <svg class="w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.14l3.71-3.91a.75.75 0 111.08 1.04l-4.24 4.46a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"/></svg>
             </button>
@@ -128,6 +128,19 @@ onBeforeUnmount(() => {
 
 const navItems = computed(() => {
   const url = page.url || ''
+  const roleNames = props.user?.roles || []
+  const isSkpd = roleNames.includes('User SKPD')
+  const isAdmin = roleNames.includes('Admin')
+  
+  if (isSkpd && !isAdmin) {
+    return [
+      { label: 'Dashboard SKPD', href: route('dashboard.skpd'), active: url === route('dashboard.skpd'), icon: 'dashboard' },
+      { label: 'Knowledge', href: route('knowledge.index'), active: String(url).startsWith('/knowledge'), icon: 'doc' },
+      { label: 'AI Assistant', href: route('ai.index'), active: String(url).startsWith('/ai'), icon: 'ai' },
+    ]
+  }
+  
+  // Admin menu (default)
   return [
     { label: 'Dashboard', href: route('dashboard'), active: url === route('dashboard'), icon: 'dashboard' },
     { label: 'Knowledge', href: route('knowledge.index'), active: String(url).startsWith('/knowledge'), icon: 'doc' },
