@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Knowledge;
 use App\Models\KnowledgeVersion;
+use App\Models\KnowledgeVersionAttachment;
 use App\Models\Category;
 use App\Models\MasterSkpd;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class KnowledgeVersionController extends Controller
@@ -69,6 +71,17 @@ class KnowledgeVersionController extends Controller
             'knowledges' => Knowledge::select('id', 'title')->get(),
             'categories' => Category::select('id', 'name')->get(),
             'skpds' => MasterSkpd::select('id', 'nama_skpd as name')->get(),
+            'statuses' => [
+                ['value' => 'draft', 'label' => 'Draft'],
+                ['value' => 'published', 'label' => 'Published'],
+                ['value' => 'archived', 'label' => 'Archived'],
+                ['value' => 'withdrawn', 'label' => 'Withdrawn']
+            ],
+            'verification_statuses' => [
+                ['value' => 'pending', 'label' => 'Pending'],
+                ['value' => 'verified', 'label' => 'Verified'],
+                ['value' => 'rejected', 'label' => 'Rejected']
+            ]
         ];
 
         return Inertia::render('Admin/KnowledgeVersion/Index', [
@@ -91,9 +104,10 @@ class KnowledgeVersionController extends Controller
 
         return Inertia::render('Admin/KnowledgeVersion/Create', [
             'knowledge' => $knowledge,
+            'knowledgeList' => Knowledge::select('id', 'title')->get(),
             'categories' => Category::select('id', 'name')->get(),
             'skpds' => MasterSkpd::select('id', 'nama_skpd as name')->get(),
-            'tags' => Tag::select('id', 'name')->get(),
+            'tagList' => Tag::select('id', 'name')->get(),
             'user' => Auth::user(),
         ]);
     }
@@ -116,6 +130,8 @@ class KnowledgeVersionController extends Controller
             'expiry_date' => 'nullable|date|after:effective_date',
             'tags' => 'array',
             'tags.*' => 'exists:tags,id',
+            'attachments' => 'array',
+            'attachments.*' => 'file|max:5120|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -144,6 +160,26 @@ class KnowledgeVersionController extends Controller
             // Attach tags
             if ($request->tags) {
                 $version->tags()->attach($request->tags);
+            }
+
+            // Handle file attachments
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $filePath = $file->storeAs('knowledge-versions/' . $version->id, $filename, 'private');
+
+                    KnowledgeVersionAttachment::create([
+                        'knowledge_version_id' => $version->id,
+                        'filename' => $filename,
+                        'original_filename' => $file->getClientOriginalName(),
+                        'file_path' => $filePath,
+                        'file_type' => $file->getClientOriginalExtension(),
+                        'file_size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                        'attachment_type' => str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'document',
+                        'uploaded_by' => Auth::id(),
+                    ]);
+                }
             }
         });
 
@@ -183,9 +219,10 @@ class KnowledgeVersionController extends Controller
 
         return Inertia::render('Admin/KnowledgeVersion/Edit', [
             'version' => $knowledgeVersion,
+            'knowledgeList' => Knowledge::select('id', 'title')->get(),
             'categories' => Category::select('id', 'name')->get(),
             'skpds' => MasterSkpd::select('id', 'nama_skpd as name')->get(),
-            'tags' => Tag::select('id', 'name')->get(),
+            'tagList' => Tag::select('id', 'name')->get(),
             'user' => Auth::user(),
         ]);
     }
@@ -206,6 +243,10 @@ class KnowledgeVersionController extends Controller
             'expiry_date' => 'nullable|date|after:effective_date',
             'tags' => 'array',
             'tags.*' => 'exists:tags,id',
+            'attachments' => 'array',
+            'attachments.*' => 'file|max:5120|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+            'remove_attachment_ids' => 'array',
+            'remove_attachment_ids.*' => 'exists:knowledge_version_attachments,id',
         ]);
 
         DB::transaction(function () use ($request, $knowledgeVersion) {
@@ -224,6 +265,38 @@ class KnowledgeVersionController extends Controller
             $knowledgeVersion->tags()->detach();
             if (!empty($request->tags)) {
                 $knowledgeVersion->tags()->attach($request->tags);
+            }
+
+            // Handle attachment removal
+            if ($request->remove_attachment_ids) {
+                $attachmentsToRemove = $knowledgeVersion->attachments()
+                    ->whereIn('id', $request->remove_attachment_ids)
+                    ->get();
+
+                foreach ($attachmentsToRemove as $attachment) {
+                    Storage::disk('private')->delete($attachment->file_path);
+                    $attachment->delete();
+                }
+            }
+
+            // Handle new file attachments
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $filePath = $file->storeAs('knowledge-versions/' . $knowledgeVersion->id, $filename, 'private');
+
+                    KnowledgeVersionAttachment::create([
+                        'knowledge_version_id' => $knowledgeVersion->id,
+                        'filename' => $filename,
+                        'original_filename' => $file->getClientOriginalName(),
+                        'file_path' => $filePath,
+                        'file_type' => $file->getClientOriginalExtension(),
+                        'file_size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                        'attachment_type' => str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'document',
+                        'uploaded_by' => Auth::id(),
+                    ]);
+                }
             }
         });
 
@@ -304,5 +377,61 @@ class KnowledgeVersionController extends Controller
         ]);
 
         return back()->with('success', 'Versi berhasil ditolak.');
+    }
+
+    /**
+     * Update status of a version
+     */
+    public function updateStatus(Request $request, KnowledgeVersion $knowledgeVersion)
+    {
+        $request->validate([
+            'status' => 'required|in:draft,published,archived,withdrawn',
+            'verification_status' => 'nullable|in:pending,verified,rejected',
+            'rejection_reason' => 'required_if:verification_status,rejected|string',
+        ]);
+
+        DB::transaction(function () use ($request, $knowledgeVersion) {
+            $updateData = [
+                'status' => $request->status,
+            ];
+
+            if ($request->verification_status) {
+                $updateData['verification_status'] = $request->verification_status;
+                $updateData['verified_by'] = Auth::id();
+                $updateData['verified_at'] = now();
+
+                if ($request->verification_status === 'rejected') {
+                    $updateData['rejection_reason'] = $request->rejection_reason;
+                }
+            }
+
+            // If publishing, set as current version
+            if ($request->status === 'published') {
+                KnowledgeVersion::where('knowledge_id', $knowledgeVersion->knowledge_id)
+                    ->where('is_current', true)
+                    ->update(['is_current' => false]);
+                $updateData['is_current'] = true;
+            }
+
+            $knowledgeVersion->update($updateData);
+        });
+
+        return back()->with('success', 'Status versi berhasil diperbarui.');
+    }
+
+    /**
+     * Download attachment
+     */
+    public function downloadAttachment(KnowledgeVersion $knowledgeVersion, $attachmentId)
+    {
+        $attachment = $knowledgeVersion->attachments()->findOrFail($attachmentId);
+        
+        $filePath = storage_path('app/' . $attachment->file_path);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        return response()->download($filePath, $attachment->original_filename);
     }
 }
