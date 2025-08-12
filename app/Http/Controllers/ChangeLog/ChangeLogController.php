@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class ChangeLogController extends Controller
 {
@@ -60,12 +61,16 @@ class ChangeLogController extends Controller
         $changeLogs = $query->paginate(20);
         $statistics = $this->changeLogService->getChangeStatistics();
 
+        $user = Auth::user();
+        $userWithRoles = \App\Models\User::with('roles')->find($user->id);
+
         return Inertia::render('ChangeLog/Index', [
             'changeLogs' => $changeLogs,
             'statistics' => $statistics,
             'filters' => $filters,
             'entityTypes' => $this->getEntityTypes(),
-            'actions' => $this->getActions()
+            'actions' => $this->getActions(),
+            'user' => $userWithRoles
         ]);
     }
 
