@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Knowledge\KnowledgeController;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\AI\AIController;
 
 /*
@@ -24,6 +25,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/knowledge/filter', [KnowledgeController::class, 'filter']);
 Route::post('/knowledge/categories/quick-create', [KnowledgeController::class, 'quickCreateCategory']);
 Route::get('/knowledge/tags', [KnowledgeController::class, 'tags']);
+
+// User API routes  
+Route::post('/users/filter', [UserController::class, 'filter']);
 
 // AI API routes
 Route::post('/ai/suggest-tags', [AIController::class, 'suggestTags']);

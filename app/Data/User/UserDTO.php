@@ -12,7 +12,8 @@ class UserDTO extends BaseDTO
         public ?string $password = null,
         public ?array $roles = null,
         public ?int $skpd_id = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel($model): static
     {

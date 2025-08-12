@@ -11,37 +11,50 @@ class UserService extends BaseService
 {
     public function __construct(
         private UserRepositoryInterface $userRepository
-    ) {}
+    ) {
+    }
 
     public function createUser(UserDTO $data)
     {
         $userData = $data->toArray();
         $userData['password'] = Hash::make($data->password);
-        
+        // Pastikan tidak mengirim key 'roles' ke repository/model
+        unset($userData['roles']);
+
         $user = $this->userRepository->create($userData);
-        
-        if ($data->roles) {
+
+        // Selalu sync roles, meskipun array kosong
+        if (isset($data->roles)) {
             $user->syncRoles($data->roles);
         }
-        
+
         return $this->success('User berhasil dibuat', $user);
     }
 
     public function updateUser(int $id, UserDTO $data)
     {
         $userData = $data->toArray();
-        
-        if (isset($userData['password'])) {
-            $userData['password'] = Hash::make($data->password);
+
+        // Jika password kosong/null, jangan update kolom password
+        if (array_key_exists('password', $userData)) {
+            if ($userData['password'] === null || $userData['password'] === '') {
+                unset($userData['password']);
+            } else {
+                $userData['password'] = Hash::make($data->password);
+            }
         }
-        
+
+        // Hindari mengirim key 'roles' ke repository/model
+        unset($userData['roles']);
+
         $updated = $this->userRepository->update($id, $userData);
         $user = $this->userRepository->find($id);
-        
-        if ($data->roles) {
+
+        // Selalu sync roles, meskipun array kosong
+        if (isset($data->roles)) {
             $user->syncRoles($data->roles);
         }
-        
+
         return $this->success('User berhasil diupdate', $user);
     }
 
