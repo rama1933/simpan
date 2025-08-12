@@ -59,10 +59,12 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin/knowledge-versions')->a
     Route::get('/{knowledgeVersion}/edit', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'edit'])->name('edit');
     Route::put('/{knowledgeVersion}', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'update'])->name('update');
     Route::delete('/{knowledgeVersion}', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'destroy'])->name('destroy');
+    Route::patch('/{knowledgeVersion}/status', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'updateStatus'])->name('update-status');
     Route::post('/{knowledgeVersion}/publish', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'publish'])->name('publish');
     Route::post('/{knowledgeVersion}/archive', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'archive'])->name('archive');
     Route::post('/{knowledgeVersion}/verify', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'verify'])->name('verify');
     Route::post('/{knowledgeVersion}/reject', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'reject'])->name('reject');
+    Route::get('/attachments/{attachment}/download', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'downloadAttachment'])->name('download-attachment');
 });
 
 // Knowledge routes - SKPD User
