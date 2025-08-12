@@ -74,6 +74,23 @@ export function route(name, params = {}, routePrefix = null) {
     'skpd.knowledge.search': '/skpd/knowledge/search',
   };
 
+  // Admin knowledge version routes
+  const adminKnowledgeVersionRoutes = {
+    'admin.knowledge-versions.index': '/admin/knowledge-versions',
+    'admin.knowledge-versions.create': '/admin/knowledge-versions/create',
+    'admin.knowledge-versions.show': (id) => `/admin/knowledge-versions/${id}`,
+    'admin.knowledge-versions.edit': (id) => `/admin/knowledge-versions/${id}/edit`,
+    'admin.knowledge-versions.store': '/admin/knowledge-versions',
+    'admin.knowledge-versions.update': (id) => `/admin/knowledge-versions/${id}`,
+    'admin.knowledge-versions.destroy': (id) => `/admin/knowledge-versions/${id}`,
+    'admin.knowledge-versions.update-status': (id) => `/admin/knowledge-versions/${id}/status`,
+    'admin.knowledge-versions.publish': (id) => `/admin/knowledge-versions/${id}/publish`,
+    'admin.knowledge-versions.archive': (id) => `/admin/knowledge-versions/${id}/archive`,
+    'admin.knowledge-versions.verify': (id) => `/admin/knowledge-versions/${id}/verify`,
+    'admin.knowledge-versions.reject': (id) => `/admin/knowledge-versions/${id}/reject`,
+    'admin.knowledge-versions.download-attachment': (id) => `/admin/knowledge-versions/attachments/${id}/download`,
+  };
+
   // Change Log routes
   const changeLogRoutes = {
     'admin.change-logs.index': '/admin/change-logs',
@@ -90,6 +107,7 @@ export function route(name, params = {}, routePrefix = null) {
     ...baseRoutes,
     ...knowledgeRoutes,
     ...adminKnowledgeRoutes,
+    ...adminKnowledgeVersionRoutes,
     ...skpdKnowledgeRoutes,
     ...changeLogRoutes
   };
