@@ -50,6 +50,21 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin/knowledge')->as('admin.
     Route::post('/filter', [\App\Http\Controllers\Admin\KnowledgeController::class, 'filter'])->name('filter');
 });
 
+// Knowledge Version routes - Admin
+Route::middleware(['auth', 'role:Admin'])->prefix('admin/knowledge-versions')->as('admin.knowledge-versions.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'store'])->name('store');
+    Route::get('/{knowledgeVersion}', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'show'])->name('show');
+    Route::get('/{knowledgeVersion}/edit', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'edit'])->name('edit');
+    Route::put('/{knowledgeVersion}', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'update'])->name('update');
+    Route::delete('/{knowledgeVersion}', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'destroy'])->name('destroy');
+    Route::post('/{knowledgeVersion}/publish', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'publish'])->name('publish');
+    Route::post('/{knowledgeVersion}/archive', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'archive'])->name('archive');
+    Route::post('/{knowledgeVersion}/verify', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'verify'])->name('verify');
+    Route::post('/{knowledgeVersion}/reject', [\App\Http\Controllers\Admin\KnowledgeVersionController::class, 'reject'])->name('reject');
+});
+
 // Knowledge routes - SKPD User
 Route::middleware(['auth', 'role:User SKPD'])->prefix('skpd/knowledge')->as('skpd.knowledge.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Knowledge\SkpdKnowledgeController::class, 'index'])->name('index');
