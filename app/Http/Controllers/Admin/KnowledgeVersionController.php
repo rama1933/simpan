@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Knowledge;
 use App\Models\KnowledgeVersion;
 use App\Models\Category;
-use App\Models\Skpd;
+use App\Models\MasterSkpd;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,14 +68,14 @@ class KnowledgeVersionController extends Controller
         $filters = [
             'knowledges' => Knowledge::select('id', 'title')->get(),
             'categories' => Category::select('id', 'name')->get(),
-            'skpds' => Skpd::select('id', 'name')->get(),
+            'skpds' => MasterSkpd::select('id', 'name')->get(),
         ];
 
         return Inertia::render('Admin/KnowledgeVersion/Index', [
             'versions' => $versions,
             'statistics' => $statistics,
             'filters' => $filters,
-            'user' => Auth::user()->load('roles'),
+            'user' => Auth::user(),
         ]);
     }
 
@@ -92,9 +92,9 @@ class KnowledgeVersionController extends Controller
         return Inertia::render('Admin/KnowledgeVersion/Create', [
             'knowledge' => $knowledge,
             'categories' => Category::select('id', 'name')->get(),
-            'skpds' => Skpd::select('id', 'name')->get(),
+            'skpds' => MasterSkpd::select('id', 'name')->get(),
             'tags' => Tag::select('id', 'name')->get(),
-            'user' => Auth::user()->load('roles'),
+            'user' => Auth::user(),
         ]);
     }
 
@@ -143,7 +143,7 @@ class KnowledgeVersionController extends Controller
 
             // Attach tags
             if ($request->tags) {
-                $version->tags()->attach($request->tags);
+                $version->tags()->sync($request->tags);
             }
         });
 
@@ -170,7 +170,7 @@ class KnowledgeVersionController extends Controller
 
         return Inertia::render('Admin/KnowledgeVersion/Show', [
             'version' => $knowledgeVersion,
-            'user' => Auth::user()->load('roles'),
+            'user' => Auth::user(),
         ]);
     }
 
@@ -184,9 +184,9 @@ class KnowledgeVersionController extends Controller
         return Inertia::render('Admin/KnowledgeVersion/Edit', [
             'version' => $knowledgeVersion,
             'categories' => Category::select('id', 'name')->get(),
-            'skpds' => Skpd::select('id', 'name')->get(),
+            'skpds' => MasterSkpd::select('id', 'name')->get(),
             'tags' => Tag::select('id', 'name')->get(),
-            'user' => Auth::user()->load('roles'),
+            'user' => Auth::user(),
         ]);
     }
 
