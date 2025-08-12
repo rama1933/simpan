@@ -29,26 +29,26 @@ class ChangeLogController extends Controller
             ->orderBy('changed_at', 'desc');
 
         // Apply filters
-        if ($filters['entity_type']) {
+        if ($filters['entity_type'] ?? null) {
             $query->forEntity($filters['entity_type']);
         }
 
-        if ($filters['action']) {
+        if ($filters['action'] ?? null) {
             $query->byAction($filters['action']);
         }
 
-        if ($filters['user_id']) {
+        if ($filters['user_id'] ?? null) {
             $query->byUser($filters['user_id']);
         }
 
-        if ($filters['date_from'] && $filters['date_to']) {
+        if (($filters['date_from'] ?? null) && ($filters['date_to'] ?? null)) {
             $query->inDateRange(
                 Carbon::parse($filters['date_from']),
                 Carbon::parse($filters['date_to'])
             );
         }
 
-        if ($filters['search']) {
+        if ($filters['search'] ?? null) {
             $query->where(function ($q) use ($filters) {
                 $q->where('description', 'like', '%' . $filters['search'] . '%')
                   ->orWhere('field_name', 'like', '%' . $filters['search'] . '%')
