@@ -74,11 +74,24 @@ export function route(name, params = {}, routePrefix = null) {
     'skpd.knowledge.search': '/skpd/knowledge/search',
   };
 
+  // Change Log routes
+  const changeLogRoutes = {
+    'admin.change-logs.index': '/admin/change-logs',
+    'admin.change-logs.knowledge': (id) => `/admin/change-logs/knowledge/${id}`,
+    'admin.change-logs.statistics': '/admin/change-logs/statistics',
+    'admin.change-logs.trends': '/admin/change-logs/trends',
+    'admin.change-logs.recent': '/admin/change-logs/recent',
+    'admin.change-logs.user': (userId) => `/admin/change-logs/user/${userId}`,
+    'admin.change-logs.export': '/admin/change-logs/export',
+    'admin.change-logs.clean': '/admin/change-logs/clean',
+  };
+
   const allRoutes = {
     ...baseRoutes,
     ...knowledgeRoutes,
     ...adminKnowledgeRoutes,
-    ...skpdKnowledgeRoutes
+    ...skpdKnowledgeRoutes,
+    ...changeLogRoutes
   };
 
   // Auto-redirect knowledge routes based on route prefix
