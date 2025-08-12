@@ -127,8 +127,8 @@ onBeforeUnmount(() => {
 })
 
 const navItems = computed(() => {
-  const url = page.url || ''
-  const user = props.user || page.props?.auth?.user
+  const url = page?.url || ''
+  const user = props.user || page?.props?.auth?.user
   
   // Mengecek role dari berbagai sumber data
   const userRoles = user?.roles || []

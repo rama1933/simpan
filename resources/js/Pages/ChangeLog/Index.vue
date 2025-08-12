@@ -321,14 +321,33 @@ import { ref, reactive, computed } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { debounce } from 'lodash'
+import { route } from '@/core/helpers/route'
 
 const props = defineProps({
-  user: Object,
-  changeLogs: Object,
-  statistics: Object,
-  filters: Object,
-  entityTypes: Object,
-  actions: Object
+  user: {
+    type: Object,
+    default: () => ({})
+  },
+  changeLogs: {
+    type: Object,
+    default: () => ({ data: [], links: {}, meta: {} })
+  },
+  statistics: {
+    type: Object,
+    default: () => ({})
+  },
+  filters: {
+    type: Object,
+    default: () => ({})
+  },
+  entityTypes: {
+    type: Object,
+    default: () => ({})
+  },
+  actions: {
+    type: Object,
+    default: () => ({})
+  }
 })
 
 const selectedLog = ref(null)
@@ -378,8 +397,9 @@ const exportLogs = () => {
 const cleanLogs = async () => {
   if (confirm(`Apakah Anda yakin ingin menghapus log yang lebih lama dari ${cleanDays.value} hari?`)) {
     try {
-      await router.delete(route('admin.change-logs.clean'), {
-        data: { days_to_keep: cleanDays.value }
+      await router.post(route('admin.change-logs.clean'), {
+        days_to_keep: cleanDays.value,
+        _method: 'DELETE'
       })
       showCleanDialog.value = false
     } catch (error) {
