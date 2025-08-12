@@ -35,16 +35,31 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $routePrefix = null;
+        
+        if ($user) {
+            $roles = $user->getRoleNames()->toArray();
+            if (in_array('Admin', $roles)) {
+                $routePrefix = 'admin';
+            } elseif (in_array('User SKPD', $roles)) {
+                $routePrefix = 'skpd';
+            }
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user() ? [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'email' => $request->user()->email,
-                    'skpd_id' => $request->user()->skpd_id,
-                    'roles' => $request->user()->getRoleNames()->toArray(),
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'skpd_id' => $user->skpd_id,
+                    'roles' => $user->getRoleNames()->toArray(),
                 ] : null,
+            ],
+            'route' => [
+                'prefix' => $routePrefix,
             ],
             'flash' => [
                 'message' => fn() => $request->session()->get('message'),

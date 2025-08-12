@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Knowledge;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Services\Knowledge\KnowledgeService;
 use App\Http\Requests\Knowledge\StoreKnowledgeRequest;
 use App\Http\Requests\Knowledge\UpdateKnowledgeRequest;
 use App\Data\Knowledge\KnowledgeDTO;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Tag;
 use App\Models\MasterTag;
+use App\Models\User;
 
-class KnowledgeController extends Controller
+class KnowledgeController extends BaseController
 {
     public function __construct(private KnowledgeService $knowledgeService)
     {
@@ -36,7 +38,7 @@ class KnowledgeController extends Controller
             'filters' => $filters,
             'categories' => $categories,
             'skpds' => $skpds,
-            'user' => auth()->user()
+            'user' => Auth::user()
         ]);
     }
 
@@ -46,6 +48,15 @@ class KnowledgeController extends Controller
     public function filter(Request $request)
     {
         $filters = $request->only(['search', 'category_id', 'skpd_id', 'status', 'verification_status', 'tags']);
+        
+        // If user is SKPD, force their skpd_id filter
+        $user = Auth::user();
+        if ($user instanceof User) {
+            if ($user->hasRole('User SKPD') && $user->skpd_id) {
+                $filters['skpd_id'] = $user->skpd_id;
+            }
+        }
+        
         $knowledge = $this->knowledgeService->getAllKnowledge($filters);
 
         // Return JSON response for API
@@ -105,7 +116,7 @@ class KnowledgeController extends Controller
         return Inertia::render('Knowledge/Create', [
             'categories' => $categories,
             'skpds' => $skpds,
-            'user' => auth()->user()
+            'user' => Auth::user()
         ]);
     }
 
@@ -137,17 +148,22 @@ class KnowledgeController extends Controller
             ], $result['message']);
         }
 
+        $user = Auth::user();
+        $canVerify = false;
+        if ($user instanceof User) {
+            $canVerify = $user->hasRole('Admin');
+        }
         return Inertia::render('Knowledge/Show', [
             'knowledge' => $result['data'],
-            'user' => auth()->user(),
-            'canVerify' => auth()->check() && auth()->user()->hasRole('Admin')
+            'user' => $user,
+            'canVerify' => $canVerify
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id): Response
+    public function edit(int $id)
     {
         $result = $this->knowledgeService->getKnowledgeById($id);
 
@@ -214,9 +230,10 @@ class KnowledgeController extends Controller
         }
 
         if ($request->expectsJson()) {
-            return response()->json(['success' => true, 'message' => $result['message']]);
+            return response()->json(['success' => true, 'message' => $result['message'], 'data' => $result['data']]);
         }
-        return back()->with('success', $result['message']);
+
+        return redirect()->route('knowledge.show', $id)->with('success', $result['message']);
     }
 
     /**
@@ -238,9 +255,10 @@ class KnowledgeController extends Controller
         }
 
         if ($request->expectsJson()) {
-            return response()->json(['success' => true, 'message' => $result['message']]);
+            return response()->json(['success' => true, 'message' => $result['message'], 'data' => $result['data']]);
         }
-        return back()->with('success', $result['message']);
+
+        return redirect()->route('knowledge.show', $id)->with('success', $result['message']);
     }
 
     /**
@@ -248,12 +266,7 @@ class KnowledgeController extends Controller
      */
     public function search(Request $request)
     {
-        $query = $request->get('q');
-
-        if (empty($query)) {
-            return back()->withErrors(['error' => 'Query pencarian tidak boleh kosong']);
-        }
-
+        $query = $request->input('q', '');
         $result = $this->knowledgeService->searchKnowledge($query);
 
         if (!$result['success']) {
@@ -267,7 +280,7 @@ class KnowledgeController extends Controller
     }
 
     /**
-     * Change knowledge status (admin only)
+     * Change status
      */
     public function changeStatus(Request $request, int $id)
     {
@@ -285,39 +298,41 @@ class KnowledgeController extends Controller
     }
 
     /**
-     * Export knowledge data
+     * Export knowledge
      */
     public function export(Request $request)
     {
-        $filters = $request->only(['search', 'category_id', 'skpd_id', 'status']);
+        $filters = $request->only(['search', 'category_id', 'status', 'skpd_id']);
         $result = $this->knowledgeService->exportKnowledge($filters);
 
         if (!$result['success']) {
             return back()->withErrors(['error' => $result['message']]);
         }
 
-        return $result['data'];
+        return Inertia::render('Knowledge/Export', [
+            'data' => $result['data']
+        ]);
     }
 
     /**
-     * Get knowledge statistics
+     * Statistics dashboard
      */
-    public function statistics(): Response
+    public function statistics()
     {
         $stats = $this->knowledgeService->getKnowledgeStatistics();
         $categoryDistribution = $this->knowledgeService->getCategoryDistribution();
         $statusDistribution = $this->knowledgeService->getStatusDistribution();
-        $authorStatistics = $this->knowledgeService->getAuthorStatistics();
+        $authorStats = $this->knowledgeService->getAuthorStatistics();
         $monthlyTrends = $this->knowledgeService->getMonthlyTrends();
-        $recentActivities = $this->knowledgeService->getRecentActivities();
+        $recentActivities = $this->knowledgeService->getRecentActivities(10);
 
         return Inertia::render('Knowledge/Statistics', [
             'stats' => $stats,
             'categoryDistribution' => $categoryDistribution,
             'statusDistribution' => $statusDistribution,
-            'authorStatistics' => $authorStatistics,
+            'authorStats' => $authorStats,
             'monthlyTrends' => $monthlyTrends,
-            'recentActivities' => $recentActivities
+            'recentActivities' => $recentActivities,
         ]);
     }
 }

@@ -68,24 +68,26 @@
               </li>
             </ListboxOption>
 
-            <!-- No results -->
-            <div
-              v-if="filteredOptions.length === 0"
-              class="px-3 py-2 text-sm text-gray-500 text-center"
-            >
+            <!-- No results / Add new option -->
+            <div v-if="filteredOptions.length === 0 && searchQuery.trim()" class="border-t border-gray-100">
+              <button
+                type="button"
+                @click="addNewOption"
+                class="w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 focus:outline-none focus:bg-blue-50 transition-colors"
+              >
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                  </svg>
+                  Tambah "{{ searchQuery.trim() }}"
+                </span>
+              </button>
+            </div>
+            <div v-else-if="filteredOptions.length === 0" class="px-3 py-2 text-sm text-gray-500 text-center">
               Tidak ada hasil
             </div>
 
-            <!-- Footer action -->
-            <div class="border-t border-gray-100 px-2 py-2">
-              <button
-                type="button"
-                class="w-full inline-flex items-center justify-center rounded-md bg-indigo-50 text-indigo-700 px-3 py-2 text-sm font-medium hover:bg-indigo-100"
-                @click.stop="emitAdd(searchQuery)"
-              >
-                Tambah "{{ searchQuery }}"
-              </button>
-            </div>
+
           </ListboxOptions>
         </transition>
       </div>
@@ -131,8 +133,10 @@ watch(() => props.modelValue, (newValue) => {
 
 // Watch for internal changes
 watch(selectedValue, (newValue) => {
-  emit('update:modelValue', newValue)
-  emit('change', newValue)
+  if (newValue !== undefined) {
+    emit('update:modelValue', newValue)
+    emit('change', newValue)
+  }
 })
 
 // Filter options based on search
@@ -161,9 +165,14 @@ const handleChange = (value: string | number) => {
   searchQuery.value = ''
 }
 
-const emitAdd = (label: string) => {
-  const v = (label || '').trim()
-  if (!v) return
-  emit('add', v)
+// Handle adding new option
+const addNewOption = () => {
+  const label = searchQuery.value.trim()
+  if (label) {
+    emit('add', label)
+    searchQuery.value = ''
+  }
 }
+
+
 </script>

@@ -5,6 +5,8 @@ namespace App\Http\Requests\Knowledge;
 use App\Data\Knowledge\KnowledgeDTO;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class UpdateKnowledgeRequest extends BaseFormRequest
 {
@@ -13,7 +15,21 @@ class UpdateKnowledgeRequest extends BaseFormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        return Auth::check();
+    }
+
+    protected function prepareForValidation()
+    {
+        $user = Auth::user();
+        
+        // If user is SKPD (not Admin), force their skpd_id
+        if ($user instanceof User) {
+            if ($user->hasRole('User SKPD') && $user->skpd_id) {
+                $this->merge([
+                    'skpd_id' => $user->skpd_id
+                ]);
+            }
+        }
     }
 
     /**

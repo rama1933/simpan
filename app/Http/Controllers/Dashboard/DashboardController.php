@@ -20,6 +20,7 @@ class DashboardController extends Controller
     public function index(Request $request): Response
     {
         $user = auth()->user();
+        $userWithRoles = \App\Models\User::with('roles')->find($user->id);
 
         $stats = [
             'knowledge' => Knowledge::count(),
@@ -33,7 +34,7 @@ class DashboardController extends Controller
         $recentActivities = $this->knowledgeService->getRecentActivities(8);
 
         return Inertia::render('Dashboard/Index', [
-            'user' => $user,
+            'user' => $userWithRoles,
             'stats' => $stats,
             'statusDistribution' => $statusDistribution,
             'monthlyTrends' => $monthlyTrends,

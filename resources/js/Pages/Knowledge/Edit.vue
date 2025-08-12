@@ -5,7 +5,7 @@
         <div class="px-0">
           <!-- Header -->
           <div class="mb-6 flex items-center justify-between">
-            <Link :href="`/knowledge/${knowledge.id}`" class="text-brand-700 hover:text-brand-800 mr-4">
+            <Link :href="route('knowledge.show', knowledge.id)" class="text-brand-700 hover:text-brand-800 mr-4">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
               </svg>
@@ -173,7 +173,7 @@
 
             <!-- Sticky Action Bar -->
             <div class="sticky bottom-0 inset-x-0 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-t border-gray-200 px-6 py-4 flex justify-end gap-3 shadow-lg">
-              <Link :href="`/knowledge/${knowledge.id}`" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">Batal</Link>
+              <Link :href="route('knowledge.show', knowledge.id)" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">Batal</Link>
               <button type="submit" :disabled="shouldDisableSubmit(values, meta.valid)" class="px-5 py-2.5 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-brand-700 hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span v-if="submitting">Menyimpan...</span>
                 <span v-else>Simpan Perubahan</span>

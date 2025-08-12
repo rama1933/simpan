@@ -45,7 +45,7 @@
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
                     :class="item.active ? 'bg-brand-50 text-brand-700 border border-brand-100' : 'text-gray-700 hover:bg-brand-50 hover:text-brand-700'">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" :d="iconPaths[item.icon]" />
+                  <path stroke-linecap="round" stroke-linejoin="round" :d="iconPaths[item.icon] || iconPaths.dashboard" />
                 </svg>
                 <span class="font-medium">{{ item.label }}</span>
               </Link>
@@ -128,25 +128,32 @@ onBeforeUnmount(() => {
 
 const navItems = computed(() => {
   const url = page.url || ''
-  const roleNames = props.user?.roles || []
-  const isSkpd = roleNames.includes('User SKPD')
-  const isAdmin = roleNames.includes('Admin')
+  const user = props.user || page.props?.auth?.user
   
-  if (isSkpd && !isAdmin) {
+  // Mengecek role dari berbagai sumber data
+  const userRoles = user?.roles || []
+  const roleNames = userRoles.map(role => typeof role === 'string' ? role : role.name)
+  
+  const isAdmin = roleNames.includes('Admin')
+  const isUserSKPD = roleNames.includes('User SKPD')
+  
+  // Menu berdasarkan role
+  if (isAdmin) {
     return [
-      { label: 'Dashboard SKPD', href: route('dashboard.skpd'), active: url === route('dashboard.skpd'), icon: 'dashboard' },
-      { label: 'Knowledge', href: route('knowledge.index'), active: String(url).startsWith('/knowledge'), icon: 'doc' },
+      { label: 'Dashboard', href: route('admin.dashboard'), active: String(url).startsWith('/admin') && (url === route('admin.dashboard') || url === '/admin/dashboard'), icon: 'dashboard' },
+      { label: 'Knowledge Management', href: route('admin.knowledge.index'), active: String(url).startsWith('/admin/knowledge'), icon: 'doc' },
+      { label: 'User Management', href: route('admin.users.index'), active: String(url).startsWith('/admin/users'), icon: 'users' },
+      { label: 'AI Assistant', href: route('admin.ai.index'), active: String(url).startsWith('/admin/ai'), icon: 'ai' },
+    ]
+  } else if (isUserSKPD) {
+    return [
+      { label: 'Dashboard', href: route('dashboard.skpd'), active: url === route('dashboard.skpd') || String(url).startsWith('/dashboard/skpd'), icon: 'dashboard' },
+      { label: 'Knowledge SKPD', href: route('skpd.knowledge.index'), active: String(url).startsWith('/skpd/knowledge'), icon: 'doc' },
       { label: 'AI Assistant', href: route('ai.index'), active: String(url).startsWith('/ai'), icon: 'ai' },
     ]
   }
   
-  // Admin menu (default)
-  return [
-    { label: 'Dashboard', href: route('dashboard'), active: url === route('dashboard'), icon: 'dashboard' },
-    { label: 'Knowledge', href: route('knowledge.index'), active: String(url).startsWith('/knowledge'), icon: 'doc' },
-    { label: 'User Management', href: route('users.index'), active: String(url).startsWith('/users'), icon: 'users' },
-    { label: 'AI Assistant', href: route('ai.index'), active: String(url).startsWith('/ai'), icon: 'ai' },
-  ]
+  return []
 })
 
 const iconPaths = {

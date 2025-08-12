@@ -7,7 +7,8 @@
         <p class="text-gray-600 mt-1">Kelola dan atur semua pengetahuan dalam sistem</p>
       </div>
       <Link
-        href="/knowledge/create"
+-        href="/knowledge/create"
++        :href="route('knowledge.create')"
         class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-brand-700 hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 shadow-sm"
       >
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,10 +279,10 @@
         <div class="flex items-center gap-1">
           <template v-if="openRowId === item.id">
             <!-- Ikon aksi muncul di kiri -->
-            <Link :href="`/knowledge/${item?.id}`" :title="'Lihat'" class="p-2 rounded-md text-brand-700 hover:bg-brand-50">
+            <Link :href="r('knowledge.show', item?.id)" :title="'Lihat'" class="p-2 rounded-md text-brand-700 hover:bg-brand-50">
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7.305 4.5 3.274 7.334 1.5 12c1.774 4.666 5.805 7.5 10.5 7.5s8.726-2.834 10.5-7.5C20.726 7.334 16.695 4.5 12 4.5zm0 12a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/></svg>
             </Link>
-            <Link :href="`/knowledge/${item?.id}/edit`" :title="'Edit'" class="p-2 rounded-md text-emerald-700 hover:bg-emerald-50">
+            <Link :href="r('knowledge.edit', item?.id)" :title="'Edit'" class="p-2 rounded-md text-emerald-700 hover:bg-emerald-50">
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
             </Link>
             <button :title="'Hapus'" @click="confirmDelete(item)" class="p-2 rounded-md text-rose-700 hover:bg-rose-50">
@@ -647,7 +648,7 @@ const confirmDelete = async (item: any) => {
   })
   if (!result.isConfirmed) return
   try {
-    const url = r('knowledge.delete', item.id) || `/knowledge/${item.id}`
+    const url = r('knowledge.delete', item.id)
     await axios.post(url, { _method: 'DELETE' })
     toast.success('Pengetahuan berhasil dihapus')
     // refresh data

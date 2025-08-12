@@ -8,6 +8,22 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property int|null $skpd_id
+ * @property-read array $metadata
+ * @property-read \Illuminate\Support\Collection $roles
+ *
+ * @method bool hasRole(string|array|\Spatie\Permission\Contracts\Role $roles, ?string $guard = null)
+ * @method bool hasAnyRole(array|string ...$roles)
+ * @method bool hasAllRoles(array|string $roles)
+ * @method \Illuminate\Support\Collection getRoleNames()
+ * @method \Illuminate\Support\Collection getPermissionNames()
+ * @method bool hasPermissionTo(string|int|\Spatie\Permission\Contracts\Permission $permission, ?string $guardName = null)
+ * @mixin \Spatie\Permission\Traits\HasRoles
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -49,6 +65,8 @@ class User extends Authenticatable
             'metadata' => 'array',
         ];
     }
+
+
 
     public function getMetadataAttribute($value)
     {

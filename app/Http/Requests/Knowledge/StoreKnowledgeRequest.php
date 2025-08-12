@@ -4,12 +4,28 @@ namespace App\Http\Requests\Knowledge;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class StoreKnowledgeRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation()
+    {
+        $user = Auth::user();
+        
+        // If user is SKPD (not Admin), force their skpd_id
+        if ($user instanceof User) {
+            if ($user->hasRole('User SKPD') && $user->skpd_id) {
+                $this->merge([
+                    'skpd_id' => $user->skpd_id
+                ]);
+            }
+        }
     }
 
     public function rules(): array

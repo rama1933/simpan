@@ -1,77 +1,124 @@
 <template>
   <AdminLayout page-title="Detail Pengetahuan" :user="user">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">{{ knowledge.title }}</h1>
-        <p class="text-sm text-gray-500">Dibuat: {{ formatDate(knowledge.created_at) }} • Oleh: {{ knowledge.author?.name || '-' }}</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <Link :href="`/knowledge/${knowledge.id}/edit`" class="px-3 py-2 rounded-md bg-brand-700 text-white hover:bg-brand-800">Edit</Link>
-        <Link href="/knowledge" class="px-3 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">Kembali</Link>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-2 space-y-6">
-        <div class="bg-white rounded-lg border p-6 space-y-3">
-          <h2 class="text-lg font-semibold text-gray-900">Deskripsi</h2>
-          <p class="text-gray-700 whitespace-pre-wrap">{{ knowledge.description || '-' }}</p>
+    <div class="max-w-4xl mx-auto space-y-6">
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">{{ knowledge?.title }}</h1>
+          <p class="text-gray-600 mt-1">{{ knowledge?.description }}</p>
         </div>
-        <div class="bg-white rounded-lg border p-6 space-y-3">
-          <h2 class="text-lg font-semibold text-gray-900">Konten</h2>
-          <div class="prose max-w-none" v-html="renderMarkdown(knowledge.content)"></div>
+        <div class="flex items-center space-x-3">
+          <Link :href="route('knowledge.index')" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Kembali
+          </Link>
+          <Link :href="route('knowledge.edit', knowledge?.id)" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Edit
+          </Link>
         </div>
       </div>
 
-      <div class="space-y-6">
-        <div class="bg-white rounded-lg border p-6 space-y-4">
-          <h3 class="text-lg font-semibold text-gray-900">Info</h3>
-          <div class="text-sm text-gray-600 space-y-2">
-            <div><span class="font-medium">Kategori:</span> {{ knowledge.category?.name || '-' }}</div>
-            <div><span class="font-medium">SKPD:</span> {{ knowledge.skpd?.nama_skpd || '-' }}</div>
-            <div><span class="font-medium">Status:</span>
-              <span :class="statusBadge(knowledge.status)" class="px-2 py-0.5 rounded text-xs">{{ statusText(knowledge.status) }}</span>
-            </div>
-            <div><span class="font-medium">Verifikasi:</span>
-              <span :class="verifyBadge(knowledge.verification_status)" class="px-2 py-0.5 rounded text-xs">{{ verifyText(knowledge.verification_status) }}</span>
-            </div>
+      <!-- Knowledge Info -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Kategori</label>
+            <p class="text-gray-900">{{ knowledge?.category?.name }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Penulis</label>
+            <p class="text-gray-900">{{ knowledge?.author?.name }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">SKPD</label>
+            <p class="text-gray-900">{{ knowledge?.skpd?.nama_skpd }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Tanggal Dibuat</label>
+            <p class="text-gray-900">{{ formatDate(knowledge?.created_at) }}</p>
           </div>
         </div>
 
-        <div v-if="(knowledge.attachments || []).length" class="bg-white rounded-lg border p-6 space-y-3">
-          <h3 class="text-lg font-semibold text-gray-900">Lampiran</h3>
-          <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
-            <li v-for="att in knowledge.attachments" :key="att.id">
-              <a :href="`/storage/${att.path}`" target="_blank" class="text-brand-700 hover:text-brand-900">
-                {{ att.original_name }}
-              </a>
-              <span class="text-gray-500">• {{ (att.size_bytes/1024).toFixed(1) }} KB</span>
-            </li>
-          </ul>
-        </div>
-
-        <div v-if="knowledge.verification_status === 'pending' && isAdmin" class="bg-white rounded-lg border p-6 space-y-4">
-          <h3 class="text-lg font-semibold text-gray-900">Verifikasi (Admin)</h3>
-          <textarea v-model="verifyNote" rows="3" class="w-full border rounded-md px-3 py-2" placeholder="Catatan verifikasi (opsional)"></textarea>
-          <div class="flex gap-2">
-            <button :disabled="loading" @click="verify('approve')" class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50">
-              <span v-if="loading && action==='approve'" class="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
-              Setujui
-            </button>
-            <button :disabled="loading" @click="verify('reject')" class="px-3 py-2 rounded-md bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50">
-              <span v-if="loading && action==='reject'" class="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
-              Tolak
-            </button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Status</label>
+            <span :class="getStatusClass(knowledge?.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+              {{ getStatusText(knowledge?.status) }}
+            </span>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Status Verifikasi</label>
+            <div class="flex items-center space-x-2">
+              <span :class="getVerificationClass(knowledge?.verification_status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                {{ getVerificationText(knowledge?.verification_status) }}
+              </span>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Tags</label>
+            <div class="flex flex-wrap gap-1">
+              <span
+                v-for="tag in knowledge?.tags"
+                :key="tag"
+                class="inline-flex px-2 py-1 text-xs font-medium bg-brand-100 text-brand-800 rounded-full"
+              >
+                {{ tag }}
+              </span>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div v-else-if="isAdmin && ['approved','rejected'].includes(knowledge.verification_status)" class="bg-white rounded-lg border p-6 space-y-3">
-          <h3 class="text-lg font-semibold text-gray-900">Aksi Verifikasi</h3>
-          <p class="text-sm text-gray-600">Status saat ini: <span :class="verifyBadge(knowledge.verification_status)" class="px-2 py-0.5 rounded text-xs">{{ verifyText(knowledge.verification_status) }}</span></p>
-          <textarea v-model="verifyNote" rows="2" class="w-full border rounded-md px-3 py-2" placeholder="Catatan pembatalan (opsional)"></textarea>
-          <button :disabled="loading" @click="unverify()" class="px-3 py-2 rounded-md bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50">
-            <span v-if="loading && action==='unverify'" class="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
-            Batalkan Verifikasi (Kembali ke Pending)
+      <!-- Content -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Konten</h3>
+        <div class="prose max-w-none" v-html="renderedContent"></div>
+      </div>
+
+      <!-- Attachments -->
+      <div v-if="knowledge?.attachments?.length" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Lampiran</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            v-for="attachment in knowledge.attachments"
+            :key="attachment.id"
+            class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
+          >
+            <svg class="w-8 h-8 text-gray-400 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-gray-900">{{ attachment.original_name }}</p>
+              <p class="text-xs text-gray-500">{{ formatFileSize(attachment.size_bytes) }}</p>
+            </div>
+            <a
+              :href="`/storage/${attachment.path}`"
+              target="_blank"
+              class="text-brand-600 hover:text-brand-800 text-sm font-medium"
+            >
+              Download
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Section for Admin -->
+      <div v-if="knowledge?.verification_status === 'pending' && isAdmin" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Verifikasi (Admin)</h3>
+        <textarea v-model="verifyNote" rows="3" class="w-full border rounded-md px-3 py-2 mb-4" placeholder="Catatan verifikasi (opsional)"></textarea>
+        <div class="flex gap-2">
+          <button :disabled="loading" @click="verify('approve')" class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50">
+            <span v-if="loading && action==='approve'" class="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+            Setujui
+          </button>
+          <button :disabled="loading" @click="verify('reject')" class="px-3 py-2 rounded-md bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50">
+            <span v-if="loading && action==='reject'" class="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+            Tolak
           </button>
         </div>
       </div>
@@ -82,7 +129,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
-import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { marked } from 'marked'
 import { toast } from 'vue3-toastify'
 import axios from 'axios'
@@ -104,11 +150,14 @@ const verifyBadge = (v?: string) => ({ pending: 'bg-amber-100 text-amber-800', a
 const renderMarkdown = (md?: string) => md ? marked.parse(md) as string : ''
 const formatDate = (d?: string) => d ? new Date(d).toLocaleString('id-ID') : '-'
 
-const verify = async (act: 'approve'|'reject') => {
+const verify = async (type: 'approve'|'reject') => {
   loading.value = true
-  action.value = act
+  action.value = type
   try {
-    const res = await axios.post(`/knowledge/${knowledge.id}/verify`, { action: act, note: verifyNote.value })
+    const res = await axios.post(`/admin/knowledge/${knowledge.id}/verify`, { 
+      type: type, 
+      note: verifyNote.value 
+    })
     if (res?.data?.success) toast.success('Verifikasi tersimpan')
     else toast.info(res?.data?.message || 'Verifikasi diproses')
     setTimeout(() => window.location.reload(), 300)
@@ -120,20 +169,12 @@ const verify = async (act: 'approve'|'reject') => {
   }
 }
 
-const unverify = async () => {
-  loading.value = true
-  action.value = 'unverify'
-  try {
-    const res = await axios.post(`/knowledge/${knowledge.id}/unverify`, { note: verifyNote.value })
-    if (res?.data?.success) toast.success('Verifikasi dibatalkan')
-    else toast.info(res?.data?.message || 'Pembatalan diproses')
-    setTimeout(() => window.location.reload(), 300)
-  } catch (e) {
-    toast.error('Gagal membatalkan verifikasi')
-  } finally {
-    loading.value = false
-    action.value = null
-  }
+const formatFileSize = (bytes: number) => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 </script>
 

@@ -224,7 +224,7 @@ class Knowledge extends Model
      */
     public function canEdit(User $user): bool
     {
-        return $user->id === $this->author_id || $user->hasRole('admin');
+        return $user->id === $this->author_id || $user->hasRole('Admin');
     }
 
     /**
@@ -232,6 +232,6 @@ class Knowledge extends Model
      */
     public function canDelete(User $user): bool
     {
-        return $user->id === $this->author_id || $user->hasRole('admin');
+        return $user->id === $this->author_id || $user->hasRole('Admin');
     }
 }

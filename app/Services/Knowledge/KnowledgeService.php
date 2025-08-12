@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\Models\MasterTag;
 use App\Models\KnowledgeAttachment;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class KnowledgeService
 {
@@ -203,9 +204,17 @@ class KnowledgeService
             $query->where('status', $filters['status']);
         }
 
-        // Apply SKPD filter
+        // Apply SKPD filter from request
         if (!empty($filters['skpd_id'])) {
             $query->where('skpd_id', $filters['skpd_id']);
+        }
+
+        // Enforce SKPD restriction for non-admin (User SKPD)
+        $user = Auth::user();
+        if ($user instanceof User) {
+            if ($user->hasRole('User SKPD') && $user->skpd_id) {
+                $query->where('skpd_id', $user->skpd_id);
+            }
         }
 
         // Apply verification status filter
@@ -259,6 +268,19 @@ class KnowledgeService
             ];
         }
 
+        // Restrict SKPD access for non-admin
+        $user = Auth::user();
+        if ($user instanceof User) {
+            if ($user->hasRole('User SKPD')) {
+                if ((int) $knowledge->skpd_id !== (int) $user->skpd_id) {
+                    return [
+                        'success' => false,
+                        'message' => 'Anda tidak memiliki akses ke data ini'
+                    ];
+                }
+            }
+        }
+
         return [
             'success' => true,
             'data' => $knowledge
@@ -271,15 +293,24 @@ class KnowledgeService
     public function createKnowledge($dto)
     {
         try {
+            // Determine SKPD ID: force for User SKPD
+            $skpdId = $dto->skpd_id;
+            $user = Auth::user();
+            if ($user instanceof User) {
+                if ($user->hasRole('User SKPD') && $user->skpd_id) {
+                    $skpdId = $user->skpd_id;
+                }
+            }
+
             $knowledge = Knowledge::create([
                 'title' => $dto->title,
                 'content' => $dto->content,
                 'description' => $dto->description,
                 'tags' => $dto->tags,
                 'status' => $dto->status ?? 'draft',
-                'author_id' => auth()->id(),
+                'author_id' => Auth::id(),
                 'category_id' => $dto->category_id,
-                'skpd_id' => $dto->skpd_id,
+                'skpd_id' => $skpdId,
                 'verification_status' => 'pending',
                 'published_at' => $dto->status === 'published' ? now() : null
             ]);
@@ -336,6 +367,21 @@ class KnowledgeService
                 ];
             }
 
+            // Restrict SKPD access for non-admin
+            $user = Auth::user();
+            if ($user instanceof User) {
+                if ($user->hasRole('User SKPD')) {
+                    if ((int) $knowledge->skpd_id !== (int) $user->skpd_id) {
+                        return [
+                            'success' => false,
+                            'message' => 'Anda tidak memiliki izin untuk mengubah data ini'
+                        ];
+                    }
+                    // Prevent SKPD user from changing skpd_id
+                    $dto->skpd_id = $knowledge->skpd_id;
+                }
+            }
+
             $knowledge->update([
                 'title' => $dto->title,
                 'content' => $dto->content,
@@ -363,13 +409,12 @@ class KnowledgeService
                 }
             }
 
-            // Add new attachments
+            // Handle new attachments if present
             if (request()->hasFile('attachments')) {
                 $files = request()->file('attachments');
                 foreach ((array) $files as $file) {
-                    if (!$file->isValid()) {
+                    if (!$file->isValid())
                         continue;
-                    }
                     $stored = $file->store('knowledge/attachments', 'public');
                     KnowledgeAttachment::create([
                         'knowledge_id' => $knowledge->id,
@@ -384,13 +429,13 @@ class KnowledgeService
 
             return [
                 'success' => true,
-                'message' => 'Knowledge berhasil diupdate',
+                'message' => 'Knowledge berhasil diperbarui',
                 'data' => $knowledge
             ];
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Gagal mengupdate knowledge: ' . $e->getMessage()
+                'message' => 'Gagal memperbarui knowledge: ' . $e->getMessage()
             ];
         }
     }
@@ -408,6 +453,19 @@ class KnowledgeService
                     'success' => false,
                     'message' => 'Knowledge tidak ditemukan'
                 ];
+            }
+
+            // Restrict SKPD access for non-admin
+            $user = Auth::user();
+            if ($user instanceof User) {
+                if ($user->hasRole('User SKPD')) {
+                    if ((int) $knowledge->skpd_id !== (int) $user->skpd_id) {
+                        return [
+                            'success' => false,
+                            'message' => 'Anda tidak memiliki izin untuk menghapus data ini'
+                        ];
+                    }
+                }
             }
 
             $knowledge->delete();
@@ -430,11 +488,22 @@ class KnowledgeService
     public function searchKnowledge($query)
     {
         try {
-            $results = Knowledge::with(['category', 'author', 'skpd'])
-                ->where('title', 'like', '%' . $query . '%')
-                ->orWhere('description', 'like', '%' . $query . '%')
-                ->orWhere('content', 'like', '%' . $query . '%')
-                ->get();
+            $q = Knowledge::with(['category', 'author', 'skpd'])
+                ->where(function ($w) use ($query) {
+                    $w->where('title', 'like', '%' . $query . '%')
+                        ->orWhere('description', 'like', '%' . $query . '%')
+                        ->orWhere('content', 'like', '%' . $query . '%');
+                });
+
+            // Restrict SKPD for non-admin
+            $user = Auth::user();
+            if ($user instanceof User) {
+                if ($user->hasRole('User SKPD') && $user->skpd_id) {
+                    $q->where('skpd_id', $user->skpd_id);
+                }
+            }
+
+            $results = $q->get();
 
             return [
                 'success' => true,
@@ -543,14 +612,10 @@ class KnowledgeService
 
             $updates = [
                 'verification_status' => $action === 'approve' ? 'approved' : 'rejected',
-                'verified_by' => auth()->id(),
+                'verified_by' => Auth::id(),
                 'verified_at' => now(),
                 'verification_note' => $note,
             ];
-            if ($action === 'approve') {
-                $updates['status'] = 'published';
-                $updates['published_at'] = now();
-            }
             $knowledge->update($updates);
 
             return ['success' => true, 'message' => 'Verifikasi berhasil disimpan', 'data' => $knowledge];
@@ -622,8 +687,11 @@ class KnowledgeService
 
         return [
             'success' => true,
-            'data' => $category,
-            'message' => 'Kategori berhasil dibuat',
+            'data' => [
+                'id' => $category->id,
+                'name' => $category->name,
+            ],
+            'message' => 'Kategori siap digunakan',
         ];
     }
 }
