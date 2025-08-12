@@ -143,7 +143,7 @@ class KnowledgeVersionController extends Controller
 
             // Attach tags
             if ($request->tags) {
-                $version->tags()->sync($request->tags);
+                $version->tags()->attach($request->tags);
             }
         });
 
@@ -221,7 +221,10 @@ class KnowledgeVersionController extends Controller
             ]);
 
             // Sync tags
-            $knowledgeVersion->tags()->sync($request->tags ?? []);
+            $knowledgeVersion->tags()->detach();
+            if (!empty($request->tags)) {
+                $knowledgeVersion->tags()->attach($request->tags);
+            }
         });
 
         return redirect()->route('admin.knowledge-versions.index')
