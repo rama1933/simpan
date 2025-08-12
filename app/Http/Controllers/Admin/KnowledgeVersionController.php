@@ -68,7 +68,7 @@ class KnowledgeVersionController extends Controller
         $filters = [
             'knowledges' => Knowledge::select('id', 'title')->get(),
             'categories' => Category::select('id', 'name')->get(),
-            'skpds' => MasterSkpd::select('id', 'name')->get(),
+            'skpds' => MasterSkpd::select('id', 'nama_skpd as name')->get(),
         ];
 
         return Inertia::render('Admin/KnowledgeVersion/Index', [
@@ -92,7 +92,7 @@ class KnowledgeVersionController extends Controller
         return Inertia::render('Admin/KnowledgeVersion/Create', [
             'knowledge' => $knowledge,
             'categories' => Category::select('id', 'name')->get(),
-            'skpds' => MasterSkpd::select('id', 'name')->get(),
+            'skpds' => MasterSkpd::select('id', 'nama_skpd as name')->get(),
             'tags' => Tag::select('id', 'name')->get(),
             'user' => Auth::user(),
         ]);
@@ -184,7 +184,7 @@ class KnowledgeVersionController extends Controller
         return Inertia::render('Admin/KnowledgeVersion/Edit', [
             'version' => $knowledgeVersion,
             'categories' => Category::select('id', 'name')->get(),
-            'skpds' => MasterSkpd::select('id', 'name')->get(),
+            'skpds' => MasterSkpd::select('id', 'nama_skpd as name')->get(),
             'tags' => Tag::select('id', 'name')->get(),
             'user' => Auth::user(),
         ]);
