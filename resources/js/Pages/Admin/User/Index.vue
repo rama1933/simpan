@@ -210,21 +210,7 @@
       </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Konfirmasi Hapus</h3>
-        <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus user <strong>{{ userToDelete?.name }}</strong>? Tindakan ini tidak dapat dibatalkan.</p>
-        <div class="flex justify-end gap-3">
-          <button @click="showDeleteModal = false" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
-            Batal
-          </button>
-          <button @click="deleteUser" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-            Hapus
-          </button>
-        </div>
-      </div>
-    </div>
+
   </AdminLayout>
 </template>
 
@@ -233,6 +219,9 @@ import { Link, router } from '@inertiajs/vue3'
 import { route } from '@/core/helpers/route'
 import { ref, computed } from 'vue'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import Swal from 'sweetalert2'
+import 'sweetalert2/dist/sweetalert2.min.css'
+import { toast } from 'vue3-toastify'
 
 const props = defineProps({
   users: { type: Object, default: () => ({}) },
@@ -247,8 +236,7 @@ const filters = ref({
   skpd: props.filters.skpd || ''
 })
 
-const showDeleteModal = ref(false)
-const userToDelete = ref(null)
+
 
 const paginationPages = computed(() => {
   const pages = []
@@ -269,16 +257,36 @@ function applyFilters() {
   })
 }
 
-function confirmDelete(user) {
-  userToDelete.value = user
-  showDeleteModal.value = true
+async function confirmDelete(user) {
+  const result = await Swal.fire({
+    title: 'Hapus User?',
+    text: `Apakah Anda yakin ingin menghapus user "${user.name}"? Tindakan ini tidak dapat dibatalkan.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, Hapus!',
+    cancelButtonText: 'Batal',
+    confirmButtonColor: '#dc2626',
+    cancelButtonColor: '#6b7280',
+    reverseButtons: true
+  })
+
+  if (result.isConfirmed) {
+    deleteUser(user.id)
+  }
 }
 
-function deleteUser() {
-  router.delete(route('users.destroy', userToDelete.value.id), {
+function deleteUser(userId) {
+  router.delete(route('users.destroy', userId), {
     onSuccess: () => {
-      showDeleteModal.value = false
-      userToDelete.value = null
+      toast.success('User berhasil dihapus!')
+    },
+    onError: (errors) => {
+      console.error('Delete error:', errors)
+      if (errors.message) {
+        toast.error(errors.message)
+      } else {
+        toast.error('Gagal menghapus user. Silakan coba lagi.')
+      }
     }
   })
 }

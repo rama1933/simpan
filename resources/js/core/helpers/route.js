@@ -30,6 +30,8 @@ export function route(name, params = {}, routePrefix = null) {
   // Knowledge routes with prefix support
   const knowledgeRoutes = {
     'knowledge.index': '/knowledge',
+    'knowledge.public': '/knowledge/public',
+    'knowledge.public.show': (id) => `/knowledge/public/${id}`,
     'knowledge.create': '/knowledge/create',
     'knowledge.show': (id) => `/knowledge/${id}`,
     'knowledge.edit': (id) => `/knowledge/${id}/edit`,

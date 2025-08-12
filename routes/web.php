@@ -61,7 +61,13 @@ Route::middleware(['auth', 'role:User SKPD'])->prefix('skpd/knowledge')->as('skp
     Route::get('/search', [\App\Http\Controllers\Knowledge\SkpdKnowledgeController::class, 'search'])->name('search');
 });
 
-// Knowledge routes - Public/General
+// Knowledge routes - Public (No Auth Required)
+Route::prefix('knowledge')->as('knowledge.')->group(function () {
+    Route::get('/public', [KnowledgeController::class, 'publicIndex'])->name('public');
+    Route::get('/public/{knowledge}', [KnowledgeController::class, 'publicShow'])->name('public.show');
+});
+
+// Knowledge routes - Authenticated
 Route::middleware(['auth'])->prefix('knowledge')->as('knowledge.')->group(function () {
     Route::get('/', [KnowledgeController::class, 'index'])->name('index');
     Route::get('/create', [KnowledgeController::class, 'create'])->name('create');

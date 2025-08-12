@@ -136,6 +136,14 @@ class KnowledgeController extends BaseController
     public function destroy(int $id)
     {
         $result = $this->knowledgeService->deleteKnowledge($id);
+        
+        if (request()->expectsJson()) {
+            if (!$result['success']) {
+                return response()->json(['success' => false, 'message' => $result['message']], 422);
+            }
+            return response()->json(['success' => true, 'message' => $result['message']]);
+        }
+        
         if (!$result['success']) {
             return back()->withErrors(['error' => $result['message']]);
         }

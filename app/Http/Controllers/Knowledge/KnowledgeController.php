@@ -22,6 +22,56 @@ class KnowledgeController extends BaseController
     }
 
     /**
+     * Display public knowledge (verified and published)
+     */
+    public function publicIndex(Request $request): Response
+    {
+        $filters = $request->only(['search', 'category_id', 'skpd_id', 'tags']);
+        
+        // Force filter for public knowledge - only show published and approved
+        $filters['status'] = 'published';
+        $filters['verification_status'] = 'approved';
+        
+        $result = $this->knowledgeService->getAllKnowledge($filters);
+
+        // Get categories and SKPDs for filters
+        $categories = $this->knowledgeService->getCategories();
+        $skpds = $this->knowledgeService->getSKPDs();
+
+        return Inertia::render('Knowledge/Public', [
+            'knowledge' => $result['data'],
+            'filters' => $filters,
+            'categories' => $categories,
+            'skpds' => $skpds
+        ]);
+    }
+
+    /**
+     * Display public knowledge detail (verified and published only)
+     */
+    public function publicShow(int $id): Response
+    {
+        $result = $this->knowledgeService->getKnowledgeById($id);
+
+        if (!$result['success']) {
+            return $this->renderPageWithError('Knowledge/PublicDetail', [
+                'knowledge' => null
+            ], $result['message']);
+        }
+
+        $knowledge = $result['data'];
+        
+        // Check if knowledge is published and approved for public access
+        if ($knowledge->status !== 'published' || $knowledge->verification_status !== 'approved') {
+            abort(404, 'Pengetahuan tidak ditemukan atau belum dipublikasikan.');
+        }
+
+        return Inertia::render('Knowledge/PublicDetail', [
+            'knowledge' => $knowledge
+        ]);
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response

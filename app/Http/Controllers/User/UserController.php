@@ -12,6 +12,7 @@ use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use App\Models\MasterSKPD;
 use App\Models\User; // added for query builder
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -166,8 +167,37 @@ class UserController extends Controller
 
     public function destroy(Request $request, int $id)
     {
-        $this->userRepository->delete($id);
-        return response()->json(['success' => true]);
+        try {
+            // Prevent self-deletion
+            if ($id == Auth::id()) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Anda tidak dapat menghapus akun sendiri'
+                    ], 403);
+                }
+                return back()->withErrors(['error' => 'Anda tidak dapat menghapus akun sendiri']);
+            }
+
+            $this->userRepository->delete($id);
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User berhasil dihapus'
+                ]);
+            }
+            
+            return redirect()->route('users.index')->with('success', 'User berhasil dihapus');
+        } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghapus user: ' . $e->getMessage()
+                ], 500);
+            }
+            return back()->withErrors(['error' => 'Gagal menghapus user: ' . $e->getMessage()]);
+        }
     }
 
     public function getByRole(Request $request, string $role)

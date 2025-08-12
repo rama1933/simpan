@@ -409,6 +409,8 @@ import VueTable from '@/Components/VueTable.vue'
 import VueSelect from '@/Components/VueSelect.vue'
 import { route } from '@/core/helpers/route'
 import axios from 'axios'
+import Swal from 'sweetalert2'
+import { toast } from 'vue3-toastify'
 
 const props = defineProps({
   knowledge: Object,
@@ -757,8 +759,20 @@ const unverifyKnowledge = async (id) => {
   }
 }
 
-const confirmDelete = (item) => {
-  if (confirm('Apakah Anda yakin ingin menghapus knowledge ini?')) {
+const confirmDelete = async (item) => {
+  const result = await Swal.fire({
+    title: 'Hapus Pengetahuan?',
+    text: `Apakah Anda yakin ingin menghapus "${item.title}"? Tindakan ini tidak dapat dibatalkan.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, Hapus!',
+    cancelButtonText: 'Batal',
+    confirmButtonColor: '#dc2626',
+    cancelButtonColor: '#6b7280',
+    reverseButtons: true
+  })
+
+  if (result.isConfirmed) {
     deleteKnowledge(item.id)
   }
 }
@@ -766,10 +780,12 @@ const confirmDelete = (item) => {
 const deleteKnowledge = async (id) => {
   try {
     await axios.delete(`/admin/knowledge/${id}`)
-    // Refresh data
-    router.reload()
+    toast.success('Pengetahuan berhasil dihapus!')
+    // Refresh data dengan reload halaman
+    await applyFilters()
   } catch (error) {
     console.error('Error deleting knowledge:', error)
+    toast.error('Gagal menghapus pengetahuan. Silakan coba lagi.')
   }
 }
 
