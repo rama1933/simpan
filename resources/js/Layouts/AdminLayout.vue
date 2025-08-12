@@ -9,9 +9,7 @@
         <div class="flex items-center gap-2">
           <span class="text-base font-semibold">{{ pageTitle }}</span>
         </div>
-        <form :action="route('logout')" method="POST">
-          <button class="px-3 py-1.5 rounded-md text-sm text-white bg-brand-700 hover:bg-brand-800">Logout</button>
-        </form>
+        <Link :href="route('logout')" method="post" as="button" class="px-3 py-1.5 rounded-md text-sm text-white bg-brand-700 hover:bg-brand-800">Logout</Link>
       </div>
     </div>
 
@@ -69,12 +67,10 @@
                 <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8a4 4 0 100 8 4 4 0 000-8z"/><path stroke-linecap="round" stroke-linejoin="round" d="M4.93 4.93l2.12 2.12M16.95 4.93l-2.12 2.12M4.93 19.07l2.12-2.12M16.95 19.07l-2.12-2.12M3 12h3M18 12h3M12 3v3M12 18v3"/></svg>
                 <span>Setting</span>
               </Link>
-              <form :action="route('logout')" method="POST">
-                <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-700 hover:bg-rose-50">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m12 0l-4-4m4 4l-4 4m6-9V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                  <span>Logout</span>
-                </button>
-              </form>
+              <Link :href="route('logout')" method="post" as="button" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-700 hover:bg-rose-50">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m12 0l-4-4m4 4l-4 4m6-9V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
+                <span>Logout</span>
+              </Link>
             </div>
           </div>
         </aside>
