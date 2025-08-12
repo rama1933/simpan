@@ -207,12 +207,14 @@
               <Link 
                 v-for="link in changeLogs.links" 
                 :key="link.label"
-                :href="link.url"
+                :href="link.url || '#'"
+                method="get"
                 :class="[
                   'px-3 py-2 text-sm rounded-lg border',
                   link.active 
                     ? 'bg-brand-600 text-white border-brand-600' 
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50',
+                  !link.url ? 'opacity-50 cursor-not-allowed' : ''
                 ]"
                 :disabled="!link.url"
                 v-html="link.label"
@@ -320,8 +322,8 @@
 import { ref, reactive, computed } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
-import { debounce } from 'lodash'
-import { route } from '@/core/helpers/route'
+import debounce from 'lodash/debounce'
+import { route } from '@/core/helpers/route.js'
 
 const props = defineProps({
   user: {
@@ -397,9 +399,10 @@ const exportLogs = () => {
 const cleanLogs = async () => {
   if (confirm(`Apakah Anda yakin ingin menghapus log yang lebih lama dari ${cleanDays.value} hari?`)) {
     try {
-      await router.post(route('admin.change-logs.clean'), {
-        days_to_keep: cleanDays.value,
-        _method: 'DELETE'
+      await router.delete(route('admin.change-logs.clean'), {
+        data: {
+          days_to_keep: cleanDays.value
+        }
       })
       showCleanDialog.value = false
     } catch (error) {

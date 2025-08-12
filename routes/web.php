@@ -109,6 +109,7 @@ Route::middleware(['auth'])->group(function () {
         // Change Log Module Routes
         Route::prefix('change-logs')->as('change-logs.')->group(function () {
             Route::get('/', [ChangeLogController::class, 'index'])->name('index');
+
             Route::get('/knowledge/{knowledge}', [ChangeLogController::class, 'showKnowledgeChanges'])->name('knowledge');
             Route::get('/statistics', [ChangeLogController::class, 'getStatistics'])->name('statistics');
             Route::get('/trends', [ChangeLogController::class, 'getDailyTrends'])->name('trends');
