@@ -147,11 +147,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('users/role/{role}', [UserController::class, 'getByRole'])->name('users.by-role');
     });
 
-    // AI Module Routes
-    Route::get('ai', [AIController::class, 'index'])->name('ai.index');
-    Route::post('ai/analyze', [AIController::class, 'analyze'])->name('ai.analyze');
-    Route::post('ai/suggest-tags', [AIController::class, 'suggestTags'])->name('ai.suggest-tags');
-    Route::post('ai/generate', [AIController::class, 'generate'])->name('ai.generate');
+    // AI Module Routes - moved to inside auth middleware above
 });
 
 require __DIR__ . '/auth.php';
