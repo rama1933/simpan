@@ -34,6 +34,7 @@ Route::post('/users/filter', [UserController::class, 'filter']);
 // AI API routes
 Route::post('/ai/suggest-tags', [AIController::class, 'suggestTags']);
 Route::post('/ai/analyze', [AIController::class, 'analyze']);
+Route::post('/ai/generate', [AIController::class, 'generate']);
 
 // Gemini AI API routes (public access)
 Route::post('/ai/gemini/chat', [GeminiController::class, 'chat']);

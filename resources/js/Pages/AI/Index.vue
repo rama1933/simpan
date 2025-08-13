@@ -122,6 +122,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import { toast } from 'vue3-toastify'
 
 interface Props {
   user?: any
@@ -156,11 +157,18 @@ const analyzeContent = async () => {
     const response = await axios.post('/api/ai/analyze', analysisForm.value)
     if (response.data.success) {
       analysisResult.value = response.data.data.content
+      toast.success('Analisis konten berhasil!')
     } else {
-      alert('Error: ' + response.data.message)
+      toast.error('Error: ' + response.data.message)
     }
-  } catch (error) {
-    alert('Terjadi kesalahan saat menganalisis konten')
+  } catch (error: any) {
+    if (error.response?.status === 422) {
+      const errors = error.response.data.errors
+      const errorMessage = Object.values(errors).flat().join(', ')
+      toast.error('Validasi gagal: ' + errorMessage)
+    } else {
+      toast.error('Terjadi kesalahan saat menganalisis konten')
+    }
   } finally {
     analyzing.value = false
   }
@@ -172,11 +180,18 @@ const suggestTags = async () => {
     const response = await axios.post('/api/ai/suggest-tags', tagForm.value)
     if (response.data.success) {
       tagResult.value = response.data.data.content
+      toast.success('Saran tag berhasil dibuat!')
     } else {
-      alert('Error: ' + response.data.message)
+      toast.error('Error: ' + response.data.message)
     }
-  } catch (error) {
-    alert('Terjadi kesalahan saat mendapatkan saran tag')
+  } catch (error: any) {
+    if (error.response?.status === 422) {
+      const errors = error.response.data.errors
+      const errorMessage = Object.values(errors).flat().join(', ')
+      toast.error('Validasi gagal: ' + errorMessage)
+    } else {
+      toast.error('Terjadi kesalahan saat mendapatkan saran tag')
+    }
   } finally {
     suggesting.value = false
   }
@@ -193,11 +208,18 @@ const generateContent = async () => {
     })
     if (response.data.success) {
       generationResult.value = response.data.data.content
+      toast.success('Konten berhasil dibuat!')
     } else {
-      alert('Error: ' + response.data.message)
+      toast.error('Error: ' + response.data.message)
     }
-  } catch (error) {
-    alert('Terjadi kesalahan saat generate konten')
+  } catch (error: any) {
+    if (error.response?.status === 422) {
+      const errors = error.response.data.errors
+      const errorMessage = Object.values(errors).flat().join(', ')
+      toast.error('Validasi gagal: ' + errorMessage)
+    } else {
+      toast.error('Terjadi kesalahan saat generate konten')
+    }
   } finally {
     generating.value = false
   }
