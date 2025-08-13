@@ -62,14 +62,23 @@
                     <!-- Title -->
                     <div>
                       <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Judul <span class="text-red-500">*</span></label>
-                      <input
-                        v-model="form.title"
-                        id="title"
-                        type="text"
-                        class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 border transition-colors"
-                        :class="errors.title ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'"
-                        placeholder="Masukkan judul versi pengetahuan"
-                      />
+                      <div class="relative">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                          <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h3l2 2h3a2 2 0 012 2v2H4V4zM4 9h12v5a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>
+                        </div>
+                        <input
+                          v-model="form.title"
+                          id="title"
+                          type="text"
+                          class="w-full pl-10 pr-24 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 border transition-colors"
+                          :class="errors.title ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'"
+                          placeholder="Masukkan judul versi pengetahuan"
+                        />
+                        <button type="button" @click="() => onTitleReady(form.title)" :disabled="aiLoading" class="absolute inset-y-0 right-2 my-1 px-3 inline-flex items-center gap-2 rounded-md text-sm font-medium text-white bg-gradient-to-r from-brand-700 to-brand-500 shadow hover:from-brand-600 hover:to-brand-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50">
+                          <span v-if="aiLoading" class="inline-block w-4 h-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin"></span>
+                          <span>{{ aiLoading ? 'Memproses…' : 'Bantu AI' }}</span>
+                        </button>
+                      </div>
                       <div v-if="errors.title" class="mt-1 text-sm text-red-600">{{ errors.title }}</div>
                     </div>
 
@@ -135,13 +144,30 @@
                     <!-- Tags -->
                     <div>
                       <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
-                      <VueSelect
-                        v-model="form.tags"
-                        :options="tagOptions"
-                        placeholder="Pilih Tags..."
-                        multiple
-                        :class="errors.tags ? 'border-red-500' : 'border-gray-300'"
-                      />
+                      <div class="space-y-2">
+                        <div class="flex gap-2">
+                          <input v-model="tagsInput" id="tags" type="text" class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 border transition-colors hover:border-gray-400" placeholder="Ketik tag lalu Enter, atau klik saran di bawah" @focus="loadInitialTags" @input="onTagInput" @keydown.enter.prevent="addTag" />
+                        </div>
+                        <div v-if="tagSuggestions.length > 0" class="bg-white border border-gray-200 rounded-md shadow-sm divide-y z-10 max-h-56 overflow-auto">
+                          <button
+                            v-for="s in tagSuggestions"
+                            :key="s.id || s.name"
+                            type="button"
+                            class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50"
+                            @click="addTagFromSuggestion(s.name)"
+                          >
+                            {{ s.name }}
+                          </button>
+                        </div>
+                        <div v-if="form.tags.length > 0" class="flex flex-wrap gap-2">
+                          <span v-for="(tag, index) in form.tags" :key="index" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand-100 text-brand-800">
+                            {{ tag }}
+                            <button type="button" @click="removeTag(index)" class="ml-2 text-brand-700 hover:text-brand-900">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                          </span>
+                        </div>
+                      </div>
                       <div v-if="errors.tags" class="mt-1 text-sm text-red-600">{{ errors.tags }}</div>
                     </div>
 
@@ -221,6 +247,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import VueSelect from '@/Components/VueSelect.vue'
 import { route } from '@/core/helpers/route'
 import { toast } from 'vue3-toastify'
+import axios from 'axios'
 
 const props = defineProps({
   knowledgeList: { type: Array, default: () => [] },
@@ -245,6 +272,7 @@ const processing = ref(false)
 const attachments = ref([])
 const dragOver = ref(false)
 const fileInput = ref(null)
+const aiLoading = ref(false)
 
 const knowledgeOptions = computed(() => 
   props.knowledgeList.map(knowledge => ({
@@ -259,6 +287,62 @@ const tagOptions = computed(() =>
     label: tag.name
   }))
 )
+
+// Tags functionality
+const tagsInput = ref('')
+const tagSuggestions = ref([])
+let tagFetchTimer = null
+
+const loadInitialTags = async () => {
+  if (tagsInput.value.trim().length > 0) return
+  try {
+    const res = await axios.get('/api/knowledge/tags')
+    tagSuggestions.value = res.data?.data || []
+  } catch {
+    tagSuggestions.value = []
+  }
+}
+
+const addTag = () => {
+  const raw = tagsInput.value.trim()
+  if (!raw) return
+  raw
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .forEach((tag) => {
+      if (!form.value.tags.includes(tag)) form.value.tags.push(tag)
+    })
+  tagsInput.value = ''
+}
+
+const removeTag = (idx) => {
+  form.value.tags.splice(idx, 1)
+}
+
+const onTagInput = async () => {
+  const q = tagsInput.value.trim()
+  if (tagFetchTimer) clearTimeout(tagFetchTimer)
+  tagFetchTimer = setTimeout(async () => {
+    if (q.length === 0) {
+      tagSuggestions.value = []
+      return
+    }
+    try {
+      const res = await axios.get('/api/knowledge/tags', { params: { q } })
+      tagSuggestions.value = res.data?.data || []
+    } catch {
+      tagSuggestions.value = []
+    }
+  }, 250)
+}
+
+const addTagFromSuggestion = (name) => {
+  if (!name) return
+  if (!form.value.tags.includes(name)) form.value.tags.push(name)
+  tagsInput.value = ''
+  tagSuggestions.value = []
+}
 
 function onDragOver() {
   dragOver.value = true
@@ -310,9 +394,35 @@ function removeAttachment(index) {
   attachments.value.splice(index, 1)
 }
 
+const onTitleReady = async (title) => {
+  const t = (title || '').trim()
+  if (t.length < 5) return
+  try {
+    aiLoading.value = true
+    const res = await axios.post('/api/ai/draft-from-title', { title: t })
+    const data = res.data?.data || {}
+    if (data.description) form.value.description = data.description
+    if (data.content) form.value.content = data.content
+    if (Array.isArray(data.tags)) {
+      for (const tg of data.tags) {
+        if (tg && !form.value.tags.includes(tg)) form.value.tags.push(String(tg))
+      }
+    }
+    toast.success('Draft diisi otomatis oleh AI')
+  } catch (e) {
+    toast.error(e?.response?.data?.message || 'Gagal membuat draft dari judul')
+  } finally {
+    aiLoading.value = false
+  }
+}
+
 function onSubmit() {
   processing.value = true
   errors.value = {}
+  
+  // Debug: Log form data before sending
+  console.log('Form data before submit:', form.value)
+  console.log('Attachments:', attachments.value)
 
   const formData = new FormData()
   
@@ -335,6 +445,7 @@ function onSubmit() {
   router.post(route('admin.knowledge-versions.store'), formData, {
     onSuccess: () => {
       toast.success('Versi pengetahuan berhasil dibuat!')
+      router.visit(route('admin.knowledge-versions.index'))
     },
     onError: (error) => {
       errors.value = error

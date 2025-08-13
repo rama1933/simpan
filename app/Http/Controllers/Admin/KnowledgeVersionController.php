@@ -12,7 +12,9 @@ use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class KnowledgeVersionController extends Controller
@@ -25,11 +27,11 @@ class KnowledgeVersionController extends Controller
         $query = KnowledgeVersion::with([
             'knowledge:id,title',
             'category:id,name',
-            'skpd:id,name',
+            'skpd:id,nama_skpd',
             'creator:id,name',
             'verifier:id,name'
         ]);
-
+        
         // Filter by knowledge
         if ($request->knowledge_id) {
             $query->where('knowledge_id', $request->knowledge_id);
@@ -117,74 +119,97 @@ class KnowledgeVersionController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'knowledge_id' => 'required|exists:knowledges,id',
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'summary' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
-            'skpd_id' => 'required|exists:skpds,id',
-            'change_type' => 'required|in:create,update,status_change,delete',
-            'change_reason' => 'required|string',
-            'effective_date' => 'nullable|date',
-            'expiry_date' => 'nullable|date|after:effective_date',
-            'tags' => 'array',
-            'tags.*' => 'exists:tags,id',
-            'attachments' => 'array',
-            'attachments.*' => 'file|max:5120|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
-        ]);
-
-        DB::transaction(function () use ($request) {
-            // Get latest version number
-            $latestVersion = KnowledgeVersion::where('knowledge_id', $request->knowledge_id)
-                ->max('version_number') ?? 0;
-
-            // Create new version
-            $version = KnowledgeVersion::create([
-                'knowledge_id' => $request->knowledge_id,
-                'version_number' => $latestVersion + 1,
-                'title' => $request->title,
-                'content' => $request->content,
-                'summary' => $request->summary,
-                'category_id' => $request->category_id,
-                'skpd_id' => $request->skpd_id,
-                'status' => 'draft',
-                'verification_status' => 'pending',
-                'change_type' => $request->change_type,
-                'change_reason' => $request->change_reason,
-                'effective_date' => $request->effective_date,
-                'expiry_date' => $request->expiry_date,
-                'created_by' => Auth::id(),
+        Log::info('KnowledgeVersion store method called');
+        
+        try {
+            // Debug: Log incoming request data
+            Log::info('KnowledgeVersion Store Request:', [
+                'all_data' => $request->all(),
+                'files' => $request->allFiles()
             ]);
+            
+            $request->validate([
+                'knowledge_id' => 'required|exists:knowledge,id',
+                'version_number' => 'required|string|max:50',
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+                'description' => 'nullable|string',
+                'effective_date' => 'nullable|date',
+                'expiry_date' => 'nullable|date|after:effective_date',
+                'change_notes' => 'nullable|string',
+                'tags' => 'array',
+                'tags.*' => 'string|max:255',
+                'attachments' => 'array',
+                'attachments.*' => 'file|max:5120|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+            ]);
+            
+            Log::info('Validation passed, starting transaction');
 
-            // Attach tags
-            if ($request->tags) {
-                $version->tags()->attach($request->tags);
-            }
+            DB::transaction(function () use ($request) {
+                Log::info('Inside transaction, creating version');
+                // Get latest version number
+                $latestVersion = KnowledgeVersion::where('knowledge_id', $request->knowledge_id)
+                    ->max('version_number') ?? 0;
 
-            // Handle file attachments
-            if ($request->hasFile('attachments')) {
-                foreach ($request->file('attachments') as $file) {
-                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                    $filePath = $file->storeAs('knowledge-versions/' . $version->id, $filename, 'private');
+                // Create new version
+                $version = KnowledgeVersion::create([
+                    'knowledge_id' => $request->knowledge_id,
+                    'version_number' => $request->version_number,
+                    'title' => $request->title,
+                    'content' => $request->input('content'),
+                    'description' => $request->description,
+                    'status' => 'draft',
+                    'verification_status' => 'pending',
+                    'effective_date' => $request->effective_date,
+                    'expiry_date' => $request->expiry_date,
+                    'change_notes' => $request->change_notes,
+                    'created_by' => Auth::id(),
+                ]);
+                
+                Log::info('Version created successfully', ['version_id' => $version->id]);
 
-                    KnowledgeVersionAttachment::create([
-                        'knowledge_version_id' => $version->id,
-                        'filename' => $filename,
-                        'original_filename' => $file->getClientOriginalName(),
-                        'file_path' => $filePath,
-                        'file_type' => $file->getClientOriginalExtension(),
-                        'file_size' => $file->getSize(),
-                        'mime_type' => $file->getMimeType(),
-                        'attachment_type' => str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'document',
-                        'uploaded_by' => Auth::id(),
-                    ]);
+                // Attach tags
+                if ($request->tags) {
+                    $tagIds = [];
+                    foreach ($request->tags as $tagName) {
+                        // Find existing tag or create new one
+                        $tag = Tag::firstOrCreate(
+                            ['name' => $tagName],
+                            ['slug' => Str::slug($tagName)]
+                        );
+                        $tagIds[] = $tag->id;
+                    }
+                    $version->tags()->attach($tagIds);
                 }
-            }
-        });
 
-        return redirect()->route('admin.knowledge-versions.index')
-            ->with('success', 'Versi pengetahuan berhasil dibuat.');
+                // Handle file attachments
+                if ($request->hasFile('attachments')) {
+                    foreach ($request->file('attachments') as $file) {
+                        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                        $filePath = $file->storeAs('knowledge-versions/' . $version->id, $filename, 'private');
+
+                        KnowledgeVersionAttachment::create([
+                            'knowledge_version_id' => $version->id,
+                            'filename' => $filename,
+                            'original_filename' => $file->getClientOriginalName(),
+                            'file_path' => $filePath,
+                            'file_type' => $file->getClientOriginalExtension(),
+                            'file_size' => $file->getSize(),
+                            'mime_type' => $file->getMimeType(),
+                            'attachment_type' => str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'document',
+                            'uploaded_by' => Auth::id(),
+                        ]);
+                    }
+                }
+            });
+
+            return redirect()->route('admin.knowledge-versions.index')
+                ->with('success', 'Versi pengetahuan berhasil dibuat.');
+        
+        } catch (\Exception $e) {
+            Log::error('Error creating knowledge version: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -233,16 +258,15 @@ class KnowledgeVersionController extends Controller
     public function update(Request $request, KnowledgeVersion $knowledgeVersion)
     {
         $request->validate([
+            'version_number' => 'required|string|max:50',
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'summary' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
-            'skpd_id' => 'required|exists:skpds,id',
-            'change_reason' => 'required|string',
+            'description' => 'nullable|string',
             'effective_date' => 'nullable|date',
             'expiry_date' => 'nullable|date|after:effective_date',
+            'change_notes' => 'nullable|string',
             'tags' => 'array',
-            'tags.*' => 'exists:tags,id',
+            'tags.*' => 'string|max:255',
             'attachments' => 'array',
             'attachments.*' => 'file|max:5120|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
             'remove_attachment_ids' => 'array',
@@ -251,20 +275,25 @@ class KnowledgeVersionController extends Controller
 
         DB::transaction(function () use ($request, $knowledgeVersion) {
             $knowledgeVersion->update([
+                'version_number' => $request->version_number,
                 'title' => $request->title,
-                'content' => $request->content,
-                'summary' => $request->summary,
-                'category_id' => $request->category_id,
-                'skpd_id' => $request->skpd_id,
-                'change_reason' => $request->change_reason,
+                'content' => $request->input('content'),
+                'description' => $request->description,
                 'effective_date' => $request->effective_date,
                 'expiry_date' => $request->expiry_date,
+                'change_notes' => $request->change_notes,
             ]);
 
             // Sync tags
             $knowledgeVersion->tags()->detach();
-            if (!empty($request->tags)) {
-                $knowledgeVersion->tags()->attach($request->tags);
+            if ($request->tags) {
+                $tagIds = [];
+                foreach ($request->tags as $tagName) {
+                    // Find existing tag or create new one
+                    $tag = Tag::firstOrCreate(['name' => $tagName]);
+                    $tagIds[] = $tag->id;
+                }
+                $knowledgeVersion->tags()->attach($tagIds);
             }
 
             // Handle attachment removal
