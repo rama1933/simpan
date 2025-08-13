@@ -121,7 +121,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
-import AdminLayout from '@/Layouts/AdminLayout.vue'
+// import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 interface Props {
   user?: any
@@ -188,7 +188,7 @@ const generateContent = async () => {
     const response = await axios.post('/ai/generate', {
       prompt: generationForm.value.prompt,
       options: {
-        temperature: parseFloat(generationForm.value.temperature)
+        temperature: generationForm.value.temperature.toString()
       }
     })
     if (response.data.success) {

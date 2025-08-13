@@ -10,9 +10,14 @@
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
             </div>
-            <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              SIMPAN
-            </span>
+            <div class="flex flex-col">
+              <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                SIMPAN
+              </span>
+              <span class="text-xs text-gray-600">
+                Kab. Hulu Sungai Selatan
+              </span>
+            </div>
           </div>
           <div class="flex items-center space-x-4">
             <Link
@@ -20,12 +25,6 @@
               class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Temukan Pengetahuan
-            </Link>
-            <Link
-              :href="route('login')"
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Masuk
             </Link>
             <Link
               :href="route('login')"

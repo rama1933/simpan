@@ -8,7 +8,10 @@
                             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <span class="text-xl font-bold">SIMPAN</span>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold">SIMPAN</span>
+                        <span class="text-xs text-gray-400">Kab. Hulu Sungai Selatan</span>
+                    </div>
                 </div>
                 <div class="text-gray-400 text-sm">
                     © 2025 Kabupaten Hulu Sungai Selatan. Semua hak dilindungi.

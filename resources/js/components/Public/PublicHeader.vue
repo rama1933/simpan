@@ -36,7 +36,7 @@
                         href="/login"
                         class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
-                        Masuk Sistem
+                        Akses Sistem SIMPAN
                     </Link>
                 </div>
             </div>
