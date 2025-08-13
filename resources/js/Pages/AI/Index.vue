@@ -121,7 +121,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
-// import AdminLayout from '@/Layouts/AdminLayout.vue'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 interface Props {
   user?: any
