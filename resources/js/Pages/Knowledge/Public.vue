@@ -594,7 +594,7 @@ const toggleAIAssistant = () => {
     if (chatMessages.value.length === 0) {
         chatMessages.value.push({
             role: 'assistant',
-            content: 'Halo! Saya AI Assistant untuk sistem manajemen pengetahuan. Saya dapat membantu Anda dengan informasi tentang pengetahuan yang tersedia, cara menggunakan sistem, dan pertanyaan umum lainnya. Ada yang bisa saya bantu?'
+            content: 'Halo! Saya adalah AI Assistant yang akan membantu Anda menjelajahi dan memahami seluruh pengetahuan yang tersedia di sistem manajemen pengetahuan ini.\n\nSaya dapat membantu Anda dengan:\n- Mencari informasi tentang dokumen pengetahuan yang tersedia\n- Menjelaskan konsep atau topik dari berbagai dokumen\n- Memberikan ringkasan dari pengetahuan yang ada\n- Menjawab pertanyaan umum tentang sistem\n\nAda yang ingin Anda ketahui tentang pengetahuan di sistem ini?'
         })
     }
 }
@@ -629,8 +629,8 @@ const sendMessage = async () => {
                 message: message,
                 context: {
                     knowledge_title: 'Sistem Manajemen Pengetahuan',
-                    knowledge_content: 'Daftar pengetahuan publik',
-                    knowledge_description: 'Halaman daftar pengetahuan publik'
+                    knowledge_content: 'Seluruh pengetahuan yang tersedia di aplikasi',
+                    knowledge_description: 'AI Assistant untuk membantu menjawab pertanyaan tentang seluruh pengetahuan yang ada di sistem manajemen pengetahuan ini, termasuk dokumen, konsep, dan informasi yang tersimpan'
                 }
             })
         })
