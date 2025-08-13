@@ -15,7 +15,7 @@
                 @keydown="handleKeydown"
                 type="text"
                 placeholder="Cari pengetahuan, topik, atau kata kunci..."
-                class="w-full pl-12 pr-12 py-4 text-lg border-2 border-gray-300 rounded-full focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 shadow-lg hover:shadow-xl"
+                class="w-full h-[42px] pl-12 pr-12 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all duration-200 hover:border-gray-400"
             />
             <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
                 <button

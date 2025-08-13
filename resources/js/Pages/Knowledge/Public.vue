@@ -50,24 +50,22 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4">
-                    <!-- Google-like Search -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Pencarian Cerdas</label>
-                        <GoogleLikeSearch
-                            :initial-value="searchForm.search"
-                            @search="handleSearch"
-                            @select="handleSelectKnowledge"
-                        />
-                    </div>
-                </div>
-
-                <!-- Advanced Filters (Collapsible) -->
-                <div v-if="showAdvancedFilters" class="mt-6 pt-6 border-t border-gray-200">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="space-y-4">
+                    <!-- Single Row Layout -->
+                    <div class="grid grid-cols-1 lg:grid-cols-6 gap-4 items-start">
+                        <!-- Google-like Search -->
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pencarian Cerdas</label>
+                            <GoogleLikeSearch
+                                :initial-value="searchForm.search"
+                                @search="handleSearch"
+                                @select="handleSelectKnowledge"
+                            />
+                        </div>
+                        
                         <!-- Category -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-medium text-gray-700">Kategori</label>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
                             <VueSelect
                                 v-model="searchForm.category_id"
                                 :options="categoryOptions"
@@ -76,8 +74,8 @@
                         </div>
                         
                         <!-- SKPD -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-medium text-gray-700">SKPD</label>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">SKPD</label>
                             <VueSelect
                                 v-model="searchForm.skpd_id"
                                 :options="skpdOptions"
@@ -86,16 +84,37 @@
                         </div>
 
                         <!-- Tags -->
-                        <div class="space-y-2 md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700">Tags</label>
-                            <input
-                                v-model="tagsQuery"
-                                @input="debouncedSearchTags"
-                                type="text"
-                                placeholder="Cari tag..."
-                                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
-                            />
-                        <div v-if="tagOptions.length > 0" class="mt-2">
+                        <div class="lg:col-span-2 relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                            <div class="relative">
+                                <input
+                                    v-model="tagsQuery"
+                                    @input="debouncedSearchTags"
+                                    @focus="showTagOptions = true"
+                                    type="text"
+                                    placeholder="Cari tag..."
+                                    class="w-full h-[42px] px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
+                                />
+                                
+                                <!-- Tag Options Dropdown -->
+                                <div v-if="showTagOptions && tagOptions.length > 0" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                    <div
+                                        v-for="tag in tagOptions"
+                                        :key="tag.id"
+                                        @click="toggleTag(tag)"
+                                        class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center justify-between"
+                                    >
+                                        <span>{{ tag.name }}</span>
+                                        <span v-if="selectedTagIds.includes(tag.id)" class="text-blue-500">✓</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tag Options and Selected Tags (Below main row) -->
+                    <div v-if="tagOptions.length > 0 || selectedTagIds.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div v-if="tagOptions.length > 0">
                             <div class="text-xs text-gray-500 mb-2">Pilih tag:</div>
                             <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
                                 <button
@@ -111,7 +130,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div v-if="selectedTagIds.length" class="mt-3">
+                        <div v-if="selectedTagIds.length">
                             <div class="text-xs text-gray-500 mb-2">Tag terpilih ({{ selectedTagIds.length }}):</div>
                             <div class="flex flex-wrap gap-2">
                                 <span v-for="id in selectedTagIds" :key="`sel-${id}`" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-indigo-100 text-indigo-800">
@@ -121,24 +140,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Toggle Advanced Filters Button -->
-                <div class="mt-4 text-center">
-                    <button
-                        @click="showAdvancedFilters = !showAdvancedFilters"
-                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-all duration-200"
-                    >
-                        <svg 
-                            :class="['w-4 h-4 mr-2 transition-transform duration-200', showAdvancedFilters ? 'rotate-180' : '']"
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                        >
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                        {{ showAdvancedFilters ? 'Sembunyikan' : 'Tampilkan' }} Filter Lanjutan
-                    </button>
                 </div>
 
                 <!-- Active filters display -->
@@ -342,7 +343,6 @@
                     </div>
                 </nav>
             </div>
-        </div>
 
         <!-- AI Assistant Modal -->
         <div v-if="showAIModal" class="fixed inset-0 z-50 overflow-y-auto" @click="closeAIModal">
@@ -424,7 +424,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, nextTick } from 'vue'
+import { ref, reactive, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import VueSelect from '@/Components/VueSelect.vue'
 import GoogleLikeSearch from '@/components/GoogleLikeSearch.vue'
@@ -487,6 +487,7 @@ const tagsQuery = ref('')
 const selectedTagIds = ref(Array.isArray(props.filters?.tags) ? props.filters.tags : [])
 const tagOptions = ref([])
 const selectedTags = ref([]) // Cache untuk menyimpan data tag yang dipilih
+const showTagOptions = ref(false)
 
 // Methods
 const search = () => {
@@ -548,6 +549,9 @@ const toggleTag = (tag) => {
         }
         search()
     }
+    // Tutup dropdown setelah memilih tag
+    showTagOptions.value = false
+    tagsQuery.value = ''
 }
 
 const searchTags = async () => {
@@ -575,6 +579,22 @@ const debouncedSearchTags = () => {
         searchTags()
     }, 300)
 }
+
+// Close dropdown when clicking outside
+const handleClickOutside = (event) => {
+    const tagContainer = event.target.closest('.relative')
+    if (!tagContainer || !tagContainer.querySelector('input[placeholder="Cari tag..."]')) {
+        showTagOptions.value = false
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
+})
 
 const viewKnowledge = (id) => {
     router.visit(route('knowledge.public.show', id))
