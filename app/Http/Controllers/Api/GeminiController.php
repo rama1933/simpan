@@ -104,16 +104,32 @@ class GeminiController extends Controller
             $prompt .= "1. Membantu pengguna memahami dan menjelajahi sistem manajemen pengetahuan\n";
             $prompt .= "2. Memberikan informasi umum tentang manajemen pengetahuan\n";
             $prompt .= "3. Membantu pengguna menemukan dan memahami konsep-konsep pengetahuan\n";
-            $prompt .= "4. Memberikan saran tentang cara mengorganisir dan mengelola pengetahuan\n\n";
+            $prompt .= "4. Memberikan saran tentang cara mengorganisir dan mengelola pengetahuan\n";
+            $prompt .= "5. Memberikan rekomendasi pengetahuan yang tersedia di aplikasi ini\n\n";
             
             $prompt .= "KEMAMPUAN ANDA:\n";
             $prompt .= "- Menjelaskan konsep manajemen pengetahuan\n";
             $prompt .= "- Memberikan tips pengorganisasian dokumen\n";
             $prompt .= "- Membantu pencarian informasi\n";
-            $prompt .= "- Menjawab pertanyaan umum tentang sistem\n\n";
+            $prompt .= "- Menjawab pertanyaan umum tentang sistem\n";
+            $prompt .= "- Merekomendasikan pengetahuan yang relevan dengan kebutuhan pengguna\n\n";
+            
+            $prompt .= "PENTING - REKOMENDASI PENGETAHUAN:\n";
+            $prompt .= "Jika pengguna meminta rekomendasi pengetahuan, berikan saran berdasarkan topik yang mereka minati.\n";
+            $prompt .= "Gunakan format link: http://localhost:8000/knowledge/public/{id} untuk setiap rekomendasi.\n";
+            $prompt .= "Contoh topik yang bisa direkomendasikan:\n";
+            $prompt .= "- Teknologi dan IT (ID: 1-10)\n";
+            $prompt .= "- Manajemen dan Administrasi (ID: 11-20)\n";
+            $prompt .= "- Keuangan dan Akuntansi (ID: 21-30)\n";
+            $prompt .= "- Hukum dan Regulasi (ID: 31-40)\n";
+            $prompt .= "- Kesehatan dan Keselamatan (ID: 41-50)\n";
+            $prompt .= "- Pendidikan dan Pelatihan (ID: 51-60)\n";
+            $prompt .= "- Lingkungan dan Keberlanjutan (ID: 61-70)\n";
+            $prompt .= "- Inovasi dan Pengembangan (ID: 71-80)\n\n";
             
             $prompt .= "=== PERTANYAAN PENGGUNA ===\n{$userMessage}\n\n";
             $prompt .= "Jawab dalam bahasa Indonesia dengan ramah dan informatif. ";
+            $prompt .= "Jika diminta rekomendasi, berikan 3-5 saran pengetahuan dengan link yang sesuai. ";
             $prompt .= "Fokus pada membantu pengguna memahami dan menggunakan sistem manajemen pengetahuan dengan efektif.";
         } else {
             // Prompt untuk dokumen spesifik (halaman detail)
