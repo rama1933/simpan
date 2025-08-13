@@ -15,6 +15,15 @@
                     </div>
                     <div class="flex space-x-3">
                         <button
+                            @click="toggleAIAssistant"
+                            class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-sm"
+                        >
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            🤖 AI Assistant
+                        </button>
+                        <button
                             @click="search"
                             class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-sm"
                         >
@@ -319,6 +328,79 @@
                     </div>
                 </nav>
             </div>
+
+        <!-- AI Assistant Modal -->
+        <div v-if="showAIModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeAIModal"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <span class="text-2xl">🤖</span>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900">AI Assistant - Gemini</h3>
+                                    <p class="text-sm text-gray-500">Tanyakan tentang sistem manajemen pengetahuan</p>
+                                </div>
+                            </div>
+                            <button @click="closeAIModal" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Chat Messages -->
+                        <div class="h-64 overflow-y-auto border rounded-lg p-3 mb-4 bg-gray-50">
+                            <div v-for="(message, index) in chatMessages" :key="index" class="mb-3">
+                                <div v-if="message.type === 'user'" class="flex justify-end">
+                                    <div class="bg-blue-500 text-white px-3 py-2 rounded-lg max-w-xs">
+                                        {{ message.content }}
+                                    </div>
+                                </div>
+                                <div v-else class="flex justify-start">
+                                    <div class="bg-white border px-3 py-2 rounded-lg max-w-xs">
+                                        {{ message.content }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="aiLoading" class="flex justify-start">
+                                <div class="bg-white border px-3 py-2 rounded-lg">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                                        <span class="text-sm text-gray-500">AI sedang mengetik...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Input -->
+                        <div class="flex space-x-2">
+                            <input
+                                v-model="currentMessage"
+                                @keyup.enter="sendMessage"
+                                type="text"
+                                placeholder="Tanyakan tentang sistem manajemen pengetahuan..."
+                                class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                :disabled="aiLoading"
+                            />
+                            <button
+                                @click="sendMessage"
+                                :disabled="!currentMessage.trim() || aiLoading"
+                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </PublicLayout>
 </template>
 
@@ -347,6 +429,12 @@ const searchForm = reactive({
     category_id: props.filters?.category_id || '',
     skpd_id: props.filters?.skpd_id || ''
 })
+
+// AI Assistant state
+const showAIModal = ref(false)
+const chatMessages = ref([])
+const currentMessage = ref('')
+const aiLoading = ref(false)
 
 // Options for VueSelect components
 const categoryOptions = computed(() => {
@@ -494,6 +582,54 @@ const getCategoryName = (id) => {
 const getSKPDName = (id) => {
     const skpd = props.skpds?.find(s => s.id == id)
     return skpd?.nama_skpd || 'Unknown'
+}
+
+// AI Assistant functions
+const toggleAIAssistant = () => {
+    showAIModal.value = true
+    if (chatMessages.value.length === 0) {
+        chatMessages.value.push({
+            type: 'assistant',
+            content: 'Halo! Saya AI Assistant untuk sistem manajemen pengetahuan. Saya dapat membantu Anda dengan informasi tentang pengetahuan yang tersedia, cara menggunakan sistem, dan pertanyaan umum lainnya. Ada yang bisa saya bantu?'
+        })
+    }
+}
+
+const closeAIModal = () => {
+    showAIModal.value = false
+}
+
+const sendMessage = async () => {
+    if (!currentMessage.value.trim() || aiLoading.value) return
+    
+    const userMessage = currentMessage.value.trim()
+    chatMessages.value.push({
+        type: 'user',
+        content: userMessage
+    })
+    
+    currentMessage.value = ''
+    aiLoading.value = true
+    
+    try {
+        const response = await axios.post('/api/ai/chat', {
+            message: userMessage,
+            context: 'public_knowledge_list'
+        })
+        
+        chatMessages.value.push({
+            type: 'assistant',
+            content: response.data.response
+        })
+    } catch (error) {
+        console.error('Error:', error)
+        chatMessages.value.push({
+            type: 'assistant',
+            content: 'Maaf, terjadi kesalahan. Silakan coba lagi nanti.'
+        })
+    } finally {
+        aiLoading.value = false
+    }
 }
 </script>
 

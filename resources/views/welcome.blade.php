@@ -3,8 +3,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Laravel</title>
+        <title>Sistem Manajemen Pengetahuan - Kabupaten Hulu Sungai Selatan</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -115,6 +116,16 @@
                             <a href="https://cloud.laravel.com" target="_blank" class="inline-block dark:bg-[#eeeeec] dark:border-[#eeeeec] dark:text-[#1C1C1A] dark:hover:bg-white dark:hover:border-white hover:bg-black hover:border-black px-5 py-1.5 bg-[#1b1b18] rounded-sm border border-black text-white text-sm leading-normal">
                                 Deploy now
                             </a>
+                        </li>
+                        <li>
+                            <a href="/knowledge/public" class="inline-block dark:bg-[#2563eb] dark:border-[#2563eb] dark:text-white dark:hover:bg-[#1d4ed8] dark:hover:border-[#1d4ed8] hover:bg-[#2563eb] hover:border-[#2563eb] px-5 py-1.5 bg-white rounded-sm border border-gray-300 text-[#1b1b18] text-sm leading-normal transition-colors duration-200">
+                                🧠 Jelajahi Pengetahuan
+                            </a>
+                        </li>
+                        <li>
+                            <button onclick="openAIAssistant()" class="inline-block dark:bg-[#059669] dark:border-[#059669] dark:text-white dark:hover:bg-[#047857] dark:hover:border-[#047857] hover:bg-[#059669] hover:border-[#059669] px-5 py-1.5 bg-white rounded-sm border border-gray-300 text-[#1b1b18] text-sm leading-normal transition-colors duration-200">
+                                🤖 AI Assistant
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -273,5 +284,200 @@
         @if (Route::has('login'))
             <div class="h-14.5 hidden lg:block"></div>
         @endif
+
+        <!-- AI Assistant Modal -->
+        <div id="aiModal" class="fixed inset-0 z-50 overflow-y-auto hidden" onclick="closeAIModal()">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full" onclick="event.stopPropagation()">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900">AI Assistant - Gemini</h3>
+                                    <p class="text-sm text-gray-500">Tanyakan apa saja tentang sistem manajemen pengetahuan</p>
+                                </div>
+                            </div>
+                            <button onclick="closeAIModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <div id="chatMessages" class="space-y-4 max-h-96 overflow-y-auto">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex-shrink-0">
+                                        <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                            <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="bg-white rounded-lg p-3 shadow-sm">
+                                            <p class="text-sm text-gray-700">Halo! Saya AI Assistant yang siap membantu Anda memahami sistem manajemen pengetahuan. Anda dapat bertanya tentang fitur-fitur sistem, cara menggunakan platform, atau hal lain yang berkaitan dengan manajemen pengetahuan.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <input 
+                                id="messageInput" 
+                                type="text" 
+                                placeholder="Tanyakan tentang sistem manajemen pengetahuan..."
+                                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                onkeypress="if(event.key==='Enter') sendMessage()"
+                            />
+                            <button 
+                                onclick="sendMessage()" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
+                            >
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function openAIAssistant() {
+                document.getElementById('aiModal').classList.remove('hidden');
+                document.getElementById('messageInput').focus();
+            }
+
+            function closeAIModal() {
+                document.getElementById('aiModal').classList.add('hidden');
+            }
+
+            async function sendMessage() {
+                const input = document.getElementById('messageInput');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                // Add user message to chat
+                addMessageToChat(message, 'user');
+                input.value = '';
+                
+                // Add loading indicator
+                const loadingId = addLoadingMessage();
+                
+                try {
+                    const response = await fetch('/api/ai/gemini/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            context: 'Sistem Manajemen Pengetahuan Pemerintah Kabupaten Hulu Sungai Selatan. Platform ini digunakan untuk mengelola, menyimpan, dan berbagi pengetahuan antar SKPD.'
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // Remove loading indicator
+                    removeLoadingMessage(loadingId);
+                    
+                    if (data.success) {
+                        addMessageToChat(data.response, 'ai');
+                    } else {
+                        addMessageToChat('Maaf, terjadi kesalahan. Silakan coba lagi.', 'ai');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    removeLoadingMessage(loadingId);
+                    addMessageToChat('Maaf, layanan AI sedang tidak tersedia. Silakan coba lagi nanti.', 'ai');
+                }
+            }
+            
+            function addMessageToChat(message, sender) {
+                const chatMessages = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex items-start space-x-3';
+                
+                if (sender === 'user') {
+                    messageDiv.innerHTML = `
+                        <div class="flex-1"></div>
+                        <div class="flex-shrink-0">
+                            <div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                <svg class="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-blue-600 text-white rounded-lg p-3 shadow-sm">
+                                <p class="text-sm">${message}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="flex-shrink-0">
+                            <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <p class="text-sm text-gray-700">${message}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function addLoadingMessage() {
+                const chatMessages = document.getElementById('chatMessages');
+                const loadingDiv = document.createElement('div');
+                const loadingId = 'loading-' + Date.now();
+                loadingDiv.id = loadingId;
+                loadingDiv.className = 'flex items-start space-x-3';
+                loadingDiv.innerHTML = `
+                    <div class="flex-shrink-0">
+                        <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            <svg class="h-4 w-4 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="bg-white rounded-lg p-3 shadow-sm">
+                            <p class="text-sm text-gray-700">AI sedang mengetik...</p>
+                        </div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(loadingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return loadingId;
+            }
+            
+            function removeLoadingMessage(loadingId) {
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) {
+                    loadingElement.remove();
+                }
+            }
+        </script>
     </body>
 </html>
