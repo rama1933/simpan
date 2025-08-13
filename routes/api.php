@@ -6,6 +6,7 @@ use App\Http\Controllers\Knowledge\KnowledgeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\AI\AIController;
 use App\Http\Controllers\Api\GeminiController;
+use App\Http\Controllers\Api\KnowledgeSearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,3 +38,9 @@ Route::post('/ai/analyze', [AIController::class, 'analyze']);
 // Gemini AI API routes (public access)
 Route::post('/ai/gemini/chat', [GeminiController::class, 'chat']);
 Route::post('/ai/draft-from-title', [AIController::class, 'draftFromTitle']);
+
+// Knowledge Search API routes (public access)
+Route::get('/knowledge/search-suggestions', [KnowledgeSearchController::class, 'searchSuggestions']);
+Route::get('/knowledge/recommendations', [KnowledgeSearchController::class, 'recommendations']);
+Route::get('/knowledge/advanced-search', [KnowledgeSearchController::class, 'advancedSearch']);
+Route::get('/knowledge/trending-searches', [KnowledgeSearchController::class, 'trendingSearches']);

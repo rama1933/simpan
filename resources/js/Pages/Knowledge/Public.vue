@@ -6,8 +6,8 @@
             description="Jelajahi koleksi pengetahuan yang telah terverifikasi dari Pemerintah Kabupaten Hulu Sungai Selatan"
         />
 
-            <!-- Filter Section -->
-            <div class="bg-white p-6 rounded-xl shadow-md ring-1 ring-gray-100 mb-8">
+        <!-- Filter Section -->
+        <div class="bg-white p-6 rounded-xl shadow-md ring-1 ring-gray-100 mb-8">
                 <div class="flex items-center justify-between mb-6">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">Filter Data</h3>
@@ -50,55 +50,51 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <!-- Search -->
+                <div class="grid grid-cols-1 gap-4">
+                    <!-- Google-like Search -->
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Cari</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </div>
-                            <input
-                                v-model="searchForm.search"
-                                type="text"
-                                placeholder="Cari judul atau konten..."
-                                class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
+                        <label class="block text-sm font-medium text-gray-700">Pencarian Cerdas</label>
+                        <GoogleLikeSearch
+                            :initial-value="searchForm.search"
+                            @search="handleSearch"
+                            @select="handleSelectKnowledge"
+                        />
+                    </div>
+                </div>
+
+                <!-- Advanced Filters (Collapsible) -->
+                <div v-if="showAdvancedFilters" class="mt-6 pt-6 border-t border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Category -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Kategori</label>
+                            <VueSelect
+                                v-model="searchForm.category_id"
+                                :options="categoryOptions"
+                                placeholder="Pilih Kategori..."
                             />
                         </div>
-                    </div>
-                    
-                    <!-- Category -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Kategori</label>
-                        <VueSelect
-                            v-model="searchForm.category_id"
-                            :options="categoryOptions"
-                            placeholder="Pilih Kategori..."
-                        />
-                    </div>
-                    
-                    <!-- SKPD -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">SKPD</label>
-                        <VueSelect
-                            v-model="searchForm.skpd_id"
-                            :options="skpdOptions"
-                            placeholder="Pilih SKPD..."
-                        />
-                    </div>
+                        
+                        <!-- SKPD -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">SKPD</label>
+                            <VueSelect
+                                v-model="searchForm.skpd_id"
+                                :options="skpdOptions"
+                                placeholder="Pilih SKPD..."
+                            />
+                        </div>
 
-                    <!-- Tags -->
-                    <div class="space-y-2 md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Tags</label>
-                        <input
-                            v-model="tagsQuery"
-                            @input="debouncedSearchTags"
-                            type="text"
-                            placeholder="Cari tag..."
-                            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
-                        />
+                        <!-- Tags -->
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Tags</label>
+                            <input
+                                v-model="tagsQuery"
+                                @input="debouncedSearchTags"
+                                type="text"
+                                placeholder="Cari tag..."
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
+                            />
                         <div v-if="tagOptions.length > 0" class="mt-2">
                             <div class="text-xs text-gray-500 mb-2">Pilih tag:</div>
                             <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
@@ -125,6 +121,24 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Toggle Advanced Filters Button -->
+                <div class="mt-4 text-center">
+                    <button
+                        @click="showAdvancedFilters = !showAdvancedFilters"
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-all duration-200"
+                    >
+                        <svg 
+                            :class="['w-4 h-4 mr-2 transition-transform duration-200', showAdvancedFilters ? 'rotate-180' : '']"
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                        {{ showAdvancedFilters ? 'Sembunyikan' : 'Tampilkan' }} Filter Lanjutan
+                    </button>
                 </div>
 
                 <!-- Active filters display -->
@@ -328,6 +342,7 @@
                     </div>
                 </nav>
             </div>
+        </div>
 
         <!-- AI Assistant Modal -->
         <div v-if="showAIModal" class="fixed inset-0 z-50 overflow-y-auto" @click="closeAIModal">
@@ -409,9 +424,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, nextTick } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import VueSelect from '@/Components/VueSelect.vue'
+import GoogleLikeSearch from '@/components/GoogleLikeSearch.vue'
 import axios from 'axios'
 import PublicLayout from '@/Layouts/PublicLayout.vue'
 import PublicPageHeader from '@/Components/Public/PublicPageHeader.vue'
@@ -439,6 +455,9 @@ const showAIModal = ref(false)
 const chatMessages = ref([])
 const currentMessage = ref('')
 const aiLoading = ref(false)
+
+// Advanced filters state
+const showAdvancedFilters = ref(false)
 
 // Options for VueSelect components
 const categoryOptions = computed(() => {
@@ -586,6 +605,16 @@ const getCategoryName = (id) => {
 const getSKPDName = (id) => {
     const skpd = props.skpds?.find(s => s.id == id)
     return skpd?.nama_skpd || 'Unknown'
+}
+
+// Google-like search handlers
+const handleSearch = (query) => {
+    searchForm.search = query
+    search()
+}
+
+const handleSelectKnowledge = (knowledge) => {
+    router.visit(`/knowledge/public/${knowledge.id}`)
 }
 
 // AI Assistant functions
