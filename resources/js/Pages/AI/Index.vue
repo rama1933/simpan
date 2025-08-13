@@ -2,7 +2,7 @@
   <AdminLayout page-title="AI Assistant" :user="user">
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">AI Assistant</h1>
-        <p class="mt-2 text-gray-600">Gunakan Gemini AI untuk menganalisis dan menghasilkan konten</p>
+        <p class="mt-2 text-gray-600">Gunakan AI untuk menganalisis dan menghasilkan konten</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">

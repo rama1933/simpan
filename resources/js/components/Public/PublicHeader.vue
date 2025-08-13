@@ -9,9 +9,14 @@
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                            SIMPAN
-                        </span>
+                        <div class="flex flex-col">
+                            <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                SIMPAN
+                            </span>
+                            <span class="text-xs text-gray-600 -mt-1">
+                                Kab. Hulu Sungai Selatan
+                            </span>
+                        </div>
                     </Link>
                 </div>
                 <div class="flex items-center space-x-4">
