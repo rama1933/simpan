@@ -83,6 +83,8 @@ Route::middleware(['auth', 'role:User SKPD'])->prefix('skpd/knowledge')->as('skp
 Route::prefix('knowledge')->as('knowledge.')->group(function () {
     Route::get('/public', [KnowledgeController::class, 'publicIndex'])->name('public');
     Route::get('/public/{knowledge}', [KnowledgeController::class, 'publicShow'])->name('public.show');
+    Route::get('/public/{knowledge}/version/{version}', [KnowledgeController::class, 'publicShowVersion'])->name('public.show.version');
+    Route::get('/public/{knowledge}/compare/{version1}/{version2}', [KnowledgeController::class, 'publicCompareVersions'])->name('public.compare.versions');
 });
 
 // Knowledge routes - Authenticated

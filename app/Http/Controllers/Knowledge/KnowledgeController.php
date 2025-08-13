@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Knowledge;
 use App\Models\Tag;
 use App\Models\MasterTag;
 use App\Models\User;
@@ -66,8 +67,104 @@ class KnowledgeController extends BaseController
             abort(404, 'Pengetahuan tidak ditemukan atau belum dipublikasikan.');
         }
 
+        // Load versions history for public view (only published versions)
+        $knowledge->load([
+            'versions' => function($query) {
+                $query->where('status', 'published')
+                      ->where('verification_status', 'verified')
+                      ->with(['creator:id,name', 'verifier:id,name'])
+                      ->orderBy('version_number', 'desc');
+            },
+            'currentVersion.attachments',
+            'currentVersion.tags'
+        ]);
+
         return Inertia::render('Knowledge/PublicDetail', [
-            'knowledge' => $knowledge
+            'knowledge' => $knowledge,
+            'versionHistory' => $knowledge->versions,
+            'currentVersion' => $knowledge->currentVersion
+        ]);
+    }
+
+    /**
+     * Display specific version of public knowledge
+     */
+    public function publicShowVersion(int $knowledgeId, int $versionNumber): Response
+    {
+        $knowledge = Knowledge::findOrFail($knowledgeId);
+        
+        // Check if knowledge is published and approved for public access
+        if ($knowledge->status !== 'published' || $knowledge->verification_status !== 'approved') {
+            abort(404, 'Pengetahuan tidak ditemukan atau belum dipublikasikan.');
+        }
+
+        // Find the specific version
+        $version = $knowledge->versions()
+            ->where('version_number', $versionNumber)
+            ->where('status', 'published')
+            ->where('verification_status', 'verified')
+            ->with(['creator:id,name', 'verifier:id,name', 'attachments', 'tags'])
+            ->firstOrFail();
+
+        // Load all published versions for navigation
+        $knowledge->load([
+            'versions' => function($query) {
+                $query->where('status', 'published')
+                      ->where('verification_status', 'verified')
+                      ->with(['creator:id,name', 'verifier:id,name'])
+                      ->orderBy('version_number', 'desc');
+            }
+        ]);
+
+        return Inertia::render('Knowledge/PublicVersionDetail', [
+            'knowledge' => $knowledge,
+            'version' => $version,
+            'versionHistory' => $knowledge->versions
+        ]);
+    }
+
+    /**
+     * Compare two versions of public knowledge
+     */
+    public function publicCompareVersions(int $knowledgeId, int $version1, int $version2): Response
+    {
+        $knowledge = Knowledge::findOrFail($knowledgeId);
+        
+        // Check if knowledge is published and approved for public access
+        if ($knowledge->status !== 'published' || $knowledge->verification_status !== 'approved') {
+            abort(404, 'Pengetahuan tidak ditemukan atau belum dipublikasikan.');
+        }
+
+        // Find both versions
+        $versionOne = $knowledge->versions()
+            ->where('version_number', $version1)
+            ->where('status', 'published')
+            ->where('verification_status', 'verified')
+            ->with(['creator:id,name', 'verifier:id,name', 'attachments', 'tags'])
+            ->firstOrFail();
+
+        $versionTwo = $knowledge->versions()
+            ->where('version_number', $version2)
+            ->where('status', 'published')
+            ->where('verification_status', 'verified')
+            ->with(['creator:id,name', 'verifier:id,name', 'attachments', 'tags'])
+            ->firstOrFail();
+
+        // Load all published versions for navigation
+        $knowledge->load([
+            'versions' => function($query) {
+                $query->where('status', 'published')
+                      ->where('verification_status', 'verified')
+                      ->with(['creator:id,name', 'verifier:id,name'])
+                      ->orderBy('version_number', 'desc');
+            }
+        ]);
+
+        return Inertia::render('Knowledge/PublicVersionCompare', [
+            'knowledge' => $knowledge,
+            'version1' => $versionOne,
+            'version2' => $versionTwo,
+            'versionHistory' => $knowledge->versions
         ]);
     }
 

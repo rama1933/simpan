@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -94,6 +96,24 @@ class Knowledge extends Model
     public function attachments()
     {
         return $this->hasMany(KnowledgeAttachment::class);
+    }
+
+    /**
+     * Get all versions of this knowledge
+     */
+    public function versions()
+    {
+        return $this->hasMany(KnowledgeVersion::class);
+    }
+
+    /**
+     * Get the current published version
+     */
+    public function currentVersion()
+    {
+        return $this->hasOne(KnowledgeVersion::class)
+            ->where('is_current', true)
+            ->where('status', 'published');
     }
 
     /**
