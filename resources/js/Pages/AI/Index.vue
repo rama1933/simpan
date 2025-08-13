@@ -153,7 +153,7 @@ const generationResult = ref('')
 const analyzeContent = async () => {
   analyzing.value = true
   try {
-    const response = await axios.post('/ai/analyze', analysisForm.value)
+    const response = await axios.post('/api/ai/analyze', analysisForm.value)
     if (response.data.success) {
       analysisResult.value = response.data.data.content
     } else {
@@ -169,7 +169,7 @@ const analyzeContent = async () => {
 const suggestTags = async () => {
   suggesting.value = true
   try {
-    const response = await axios.post('/ai/suggest-tags', tagForm.value)
+    const response = await axios.post('/api/ai/suggest-tags', tagForm.value)
     if (response.data.success) {
       tagResult.value = response.data.data.content
     } else {
@@ -185,7 +185,7 @@ const suggestTags = async () => {
 const generateContent = async () => {
   generating.value = true
   try {
-    const response = await axios.post('/ai/generate', {
+    const response = await axios.post('/api/ai/generate', {
       prompt: generationForm.value.prompt,
       options: {
         temperature: generationForm.value.temperature.toString()
