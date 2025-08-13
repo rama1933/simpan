@@ -4,7 +4,7 @@
       <!-- Back Button -->
       <div class="mb-6">
         <Link 
-          :href="route('knowledge.public.show', knowledge.id)"
+          :href="`/knowledge/public/${knowledge.id}`"
           class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200"
         >
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,7 +234,7 @@
                   <Link
                     v-for="v in versionHistory"
                     :key="v.id"
-                    :href="v.id === version.id ? '#' : route('knowledge.public.show.version', { knowledge: knowledge.id, version: v.version_number })"
+                    :href="v.id === version.id ? '#' : `/knowledge/public/${knowledge.id}/version/${v.version_number}`"
                     :class="[
                       'flex items-center justify-between p-2 rounded-lg transition-colors',
                       v.id === version.id 
@@ -263,7 +263,7 @@
         <h3 class="text-lg font-medium text-gray-900 mb-2">Versi Tidak Ditemukan</h3>
         <p class="text-gray-600 mb-6">Versi pengetahuan yang Anda cari tidak ditemukan atau belum dipublikasikan.</p>
         <Link 
-          :href="route('knowledge.public.show', knowledge?.id || 1)"
+          :href="`/knowledge/public/${knowledge?.id || 1}`"
           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Kembali ke Pengetahuan
@@ -276,7 +276,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import PublicLayout from '@/Layouts/PublicLayout.vue'
-import { route } from '@/core/helpers/route'
+
 
 defineProps({
   knowledge: {

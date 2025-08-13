@@ -4,7 +4,7 @@
       <!-- Back Button -->
       <div class="mb-6">
         <Link 
-          :href="route('knowledge.public.show', knowledge.id)"
+          :href="`/knowledge/public/${knowledge.id}`"
           class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200"
         >
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,7 +238,7 @@
             <Link
               v-for="v in versionHistory"
               :key="v.id"
-              :href="route('knowledge.public.show.version', { knowledge: knowledge.id, version: v.version_number })"
+              :href="`/knowledge/public/${knowledge.id}/version/${v.version_number}`"
               :class="[
                 'flex flex-col items-center p-3 rounded-lg border-2 transition-colors',
                 (v.id === version1.id || v.id === version2.id)
@@ -262,7 +262,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import PublicLayout from '@/Layouts/PublicLayout.vue'
-import { route } from '@/core/helpers/route'
 
 defineProps({
   knowledge: {

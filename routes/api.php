@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Knowledge\KnowledgeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\AI\AIController;
+use App\Http\Controllers\Api\GeminiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,4 +33,7 @@ Route::post('/users/filter', [UserController::class, 'filter']);
 // AI API routes
 Route::post('/ai/suggest-tags', [AIController::class, 'suggestTags']);
 Route::post('/ai/analyze', [AIController::class, 'analyze']);
+
+// Gemini AI API routes (public access)
+Route::post('/ai/gemini/chat', [GeminiController::class, 'chat']);
 Route::post('/ai/draft-from-title', [AIController::class, 'draftFromTitle']);
