@@ -11,45 +11,37 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create Admin User
-        $admin = User::create([
-            'name' => 'Admin Utama',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'email_verified_at' => now(),
-        ]);
-        $admin->assignRole('Admin');
-
-        // Create SKPD Users
-        $skpdUsers = [
+        // Create admin user if not exists
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
             [
-                'name' => 'Budi Santoso',
-                'email' => 'budi.santoso@skpd.go.id',
+                'name' => 'Administrator',
                 'password' => Hash::make('password'),
-            ],
-            [
-                'name' => 'Siti Nurhaliza',
-                'email' => 'siti.nurhaliza@skpd.go.id',
-                'password' => Hash::make('password'),
-            ],
-            [
-                'name' => 'Ahmad Rizki',
-                'email' => 'ahmad.rizki@skpd.go.id',
-                'password' => Hash::make('password'),
-            ],
-            [
-                'name' => 'Dewi Sartika',
-                'email' => 'dewi.sartika@skpd.go.id',
-                'password' => Hash::make('password'),
-            ],
-        ];
-
-        foreach ($skpdUsers as $userData) {
-            $user = User::create([
-                ...$userData,
                 'email_verified_at' => now(),
-            ]);
-            $user->assignRole('User SKPD');
+            ]
+        );
+        if (!$admin->hasRole('Admin')) {
+            $admin->assignRole('Admin');
+        }
+
+        // Get SKPD data for user creation
+        $skpds = \App\Models\MasterSKPD::all();
+        
+        // Create SKPD users
+        foreach ($skpds as $skpd) {
+            $email = strtolower(str_replace(['.', ' '], ['', ''], $skpd->kode_skpd)) . '@simpan.go.id';
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => 'Admin ' . $skpd->nama_skpd,
+                    'password' => Hash::make('password123'),
+                    'email_verified_at' => now(),
+                    'skpd_id' => $skpd->id,
+                ]
+            );
+            if (!$user->hasRole('User SKPD')) {
+                $user->assignRole('User SKPD');
+            }
         }
     }
 }
