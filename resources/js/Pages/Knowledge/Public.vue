@@ -211,12 +211,12 @@
                     <div class="p-6">
                         <!-- Category Badge -->
                         <div class="flex items-center justify-between mb-3">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <!-- <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                 {{ item.category?.name || 'Umum' }}
-                            </span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            </span> -->
+                            <!-- <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 Terverifikasi
-                            </span>
+                            </span> -->
                         </div>
 
                         <!-- Title -->
@@ -238,12 +238,12 @@
                                     </svg>
                                     {{ item.author?.name || 'Unknown' }}
                                 </span> -->
-                                <span class="flex items-center">
+                                <!-- <span class="flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                     </svg>
                                     {{ item.skpd?.nama_skpd || 'SKPD' }}
-                                </span>
+                                </span> -->
                             </div>
                             <div>
                                 {{ formatDate(item.created_at) }}

@@ -225,8 +225,9 @@
                           Lihat
                         </Link>
                         <button
-                          @click="compareVersions(currentVersion?.version_number, version.version_number)"
-                          class="flex-1 inline-flex items-center justify-center px-2 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 hover:border-gray-400 rounded-md transition-colors"
+                          @click="currentVersion?.version_number && version.version_number ? compareVersions(currentVersion.version_number, version.version_number) : null"
+                          :disabled="!currentVersion?.version_number || !version.version_number"
+                          class="flex-1 inline-flex items-center justify-center px-2 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 hover:border-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
