@@ -37,8 +37,8 @@ class KnowledgeVersionSeeder extends Seeder
         $tags = Tag::all();
 
         foreach ($knowledges as $knowledge) {
-            // Create 2-3 versions for each knowledge
-            $versionCount = rand(2, 3);
+            // Create 3-4 versions for each knowledge to ensure comparison functionality
+            $versionCount = rand(3, 4);
             
             for ($i = 1; $i <= $versionCount; $i++) {
                 $user = $users->random();
@@ -106,9 +106,9 @@ class KnowledgeVersionSeeder extends Seeder
 
     private function getRandomStatus($versionNumber, $totalVersions)
     {
-        // Ensure at least one version is published (preferably the latest)
-        if ($versionNumber === $totalVersions) {
-            return 'published'; // Latest version is always published
+        // Ensure at least 2 versions are published for comparison functionality
+        if ($versionNumber === $totalVersions || $versionNumber === ($totalVersions - 1)) {
+            return 'published'; // Latest 2 versions are always published
         } else {
             return collect(['archived', 'published'])->random();
         }
@@ -116,9 +116,9 @@ class KnowledgeVersionSeeder extends Seeder
 
     private function getRandomVerificationStatus($versionNumber, $totalVersions)
     {
-        // Ensure at least one version is verified (preferably the latest)
-        if ($versionNumber === $totalVersions) {
-            return 'verified'; // Latest version is always verified
+        // Ensure at least 2 versions are verified for comparison functionality
+        if ($versionNumber === $totalVersions || $versionNumber === ($totalVersions - 1)) {
+            return 'verified'; // Latest 2 versions are always verified
         } else {
             return collect(['verified', 'pending', 'rejected'])->random();
         }

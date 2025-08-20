@@ -3,7 +3,7 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Back Button -->
       <div class="mb-6">
-        <Link 
+        <Link
           :href="'/knowledge/public'"
           class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200"
         >
@@ -109,10 +109,10 @@
               <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
                 <h3 class="text-base font-semibold text-gray-900">Informasi Pengetahuan</h3>
               </div>
-              
+
               <div class="p-4 space-y-4">
                 <!-- Author Info -->
-                <div>
+                <!-- <div>
                   <label class="block text-xs font-medium text-gray-500 mb-1">Penulis</label>
                   <div class="flex items-center space-x-2">
                     <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -125,8 +125,8 @@
                       <p class="text-xs text-gray-500">{{ knowledge?.author?.email || '-' }}</p>
                     </div>
                   </div>
-                </div>
-                
+                </div> -->
+
                 <!-- SKPD Info -->
                 <div>
                   <label class="block text-xs font-medium text-gray-500 mb-1">SKPD</label>
@@ -139,7 +139,7 @@
                     <p class="text-sm font-medium text-gray-900">{{ knowledge?.skpd?.nama_skpd || '-' }}</p>
                   </div>
                 </div>
-                
+
                 <!-- Category Info -->
                 <div>
                   <label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label>
@@ -152,7 +152,7 @@
                     <p class="text-sm font-medium text-gray-900">{{ knowledge?.category?.name || '-' }}</p>
                   </div>
                 </div>
-                
+
                 <!-- Date Info -->
                 <div>
                   <label class="block text-xs font-medium text-gray-500 mb-1">Tanggal Dipublikasi</label>
@@ -165,7 +165,7 @@
                     <p class="text-sm font-medium text-gray-900">{{ formatDate(knowledge?.published_at || knowledge?.created_at) }}</p>
                   </div>
                 </div>
-                
+
                 <!-- Tags Section -->
                 <div class="border-t border-gray-200 pt-4">
                   <div>
@@ -236,27 +236,27 @@
                         </button>
                       </div>
                     </div>
-                    
+
                     <!-- Version Content -->
                     <div class="mb-3">
                       <h4 class="text-sm font-medium text-gray-900 mb-1">{{ version.title }}</h4>
                       <p v-if="version.summary" class="text-xs text-gray-600 line-clamp-2">{{ version.summary }}</p>
                     </div>
-                    
+
                     <!-- Version Meta -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-gray-500">
-                      <div class="flex items-center space-x-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 text-xs text-gray-500">
+                      <!-- <div class="flex items-center space-x-1">
                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                         </svg>
                         <span>{{ version.creator?.name || 'Tidak diketahui' }}</span>
-                      </div>
-                      <div class="flex items-center space-x-1">
+                      </div> -->
+                      <!-- <div class="flex items-center space-x-1">
                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
                         <span>{{ version.verifier?.name || 'Belum diverifikasi' }}</span>
-                      </div>
+                      </div> -->
                       <div class="flex items-center space-x-1">
                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
@@ -279,7 +279,7 @@
         </svg>
         <h3 class="text-lg font-medium text-gray-900 mb-2">Pengetahuan Tidak Ditemukan</h3>
         <p class="text-gray-600 mb-6">Pengetahuan yang Anda cari tidak ditemukan atau belum dipublikasikan.</p>
-        <Link 
+        <Link
           :href="'/knowledge/public'"
           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
@@ -307,7 +307,7 @@
                 </svg>
               </button>
             </div>
-            
+
             <!-- Chat Messages -->
             <div class="h-96 overflow-y-auto border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
               <div v-if="chatMessages.length === 0" class="text-center text-gray-500 mt-20">
@@ -316,20 +316,20 @@
                 </svg>
                 <p>Mulai percakapan dengan AI Assistant tentang pengetahuan ini</p>
               </div>
-              
+
               <div v-for="(message, index) in chatMessages" :key="index" class="mb-4">
                 <div :class="message.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
                   <div :class="[
                     'max-w-xs lg:max-w-md px-4 py-2 rounded-lg',
-                    message.role === 'user' 
-                      ? 'bg-blue-600 text-white' 
+                    message.role === 'user'
+                      ? 'bg-blue-600 text-white'
                       : 'bg-white border border-gray-200 text-gray-800'
                   ]">
                     <p class="text-sm whitespace-pre-wrap">{{ message.content }}</p>
                   </div>
                 </div>
               </div>
-              
+
               <div v-if="isLoading" class="flex justify-start mb-4">
                 <div class="bg-white border border-gray-200 text-gray-800 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
                   <div class="flex items-center space-x-2">
@@ -339,7 +339,7 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Input Area -->
             <div class="flex space-x-2">
               <input
@@ -396,7 +396,7 @@ const isLoading = ref(false)
 // AI Assistant Functions
 function toggleAIAssistant() {
   showAIModal.value = !showAIModal.value
-  
+
   // Tambahkan pesan pembuka jika belum ada pesan
   if (chatMessages.value.length === 0) {
     chatMessages.value.push({
@@ -412,18 +412,18 @@ function closeAIModal() {
 
 async function sendMessage() {
   if (!userMessage.value.trim() || isLoading.value) return
-  
+
   const message = userMessage.value.trim()
   userMessage.value = ''
-  
+
   // Add user message
   chatMessages.value.push({
     role: 'user',
     content: message
   })
-  
+
   isLoading.value = true
-  
+
   try {
     // Call Gemini AI API
     const response = await fetch('/api/ai/gemini/chat', {
@@ -441,13 +441,13 @@ async function sendMessage() {
         }
       })
     })
-    
+
     if (!response.ok) {
       throw new Error('Failed to get AI response')
     }
-    
+
     const data = await response.json()
-    
+
     // Add AI response
     chatMessages.value.push({
       role: 'assistant',
@@ -492,13 +492,13 @@ const compareVersions = (version1, version2) => {
     console.error('Version numbers are required for comparison')
     return
   }
-  
+
   console.log('Comparing versions:', version1, 'vs', version2)
   console.log('Knowledge ID:', props.knowledge.id)
-  
+
   const url = `/knowledge/public/${props.knowledge.id}/compare/${version1}/${version2}`
   console.log('Navigating to:', url)
-  
+
   router.visit(url)
 }
 
