@@ -486,7 +486,7 @@ function formatFileSize(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
-function compareVersions(version1, version2) {
+const compareVersions = (version1, version2) => {
   if (!version1 || !version2) {
     console.error('Version numbers are required for comparison')
     return

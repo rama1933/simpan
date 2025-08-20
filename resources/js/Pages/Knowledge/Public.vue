@@ -1,7 +1,7 @@
 <template>
     <PublicLayout>
         <!-- Page Title -->
-        <PublicPageHeader 
+        <PublicPageHeader
             title="Temukan Pengetahuan"
             description="Jelajahi koleksi pengetahuan yang telah terverifikasi dari Pemerintah Kabupaten Hulu Sungai Selatan"
         />
@@ -62,7 +62,7 @@
                                 @select="handleSelectKnowledge"
                             />
                         </div>
-                        
+
                         <!-- Category -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
@@ -72,7 +72,7 @@
                                 placeholder="Pilih Kategori..."
                             />
                         </div>
-                        
+
                         <!-- SKPD -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">SKPD</label>
@@ -95,7 +95,7 @@
                                     placeholder="Cari tag..."
                                     class="w-full h-[42px] px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors duration-200"
                                 />
-                                
+
                                 <!-- Tag Options Dropdown -->
                                 <div v-if="showTagOptions && tagOptions.length > 0" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                                     <div
@@ -111,7 +111,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Tag Options and Selected Tags (Below main row) -->
                     <div v-if="tagOptions.length > 0 || selectedTagIds.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div v-if="tagOptions.length > 0">
@@ -218,26 +218,26 @@
                                 Terverifikasi
                             </span>
                         </div>
-                        
+
                         <!-- Title -->
                         <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                             {{ item.title }}
                         </h3>
-                        
+
                         <!-- Description -->
                         <p class="text-gray-600 text-sm mb-4 line-clamp-3">
                             {{ item.description || 'Tidak ada deskripsi' }}
                         </p>
-                        
+
                         <!-- Meta Info -->
                         <div class="flex items-center justify-between text-xs text-gray-500">
                             <div class="flex items-center space-x-4">
-                                <span class="flex items-center">
+                                <!-- <span class="flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                     {{ item.author?.name || 'Unknown' }}
-                                </span>
+                                </span> -->
                                 <span class="flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -249,7 +249,7 @@
                                 {{ formatDate(item.created_at) }}
                             </div>
                         </div>
-                        
+
                         <!-- Tags -->
                         <div v-if="item.tags_relation && item.tags_relation.length > 0" class="mt-3 flex flex-wrap gap-1">
                             <span
@@ -363,7 +363,7 @@
                                 </svg>
                             </button>
                         </div>
-                        
+
                         <!-- Chat Messages -->
                         <div class="h-96 overflow-y-auto border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
                             <div v-if="chatMessages.length === 0" class="text-center text-gray-500 mt-20">
@@ -372,20 +372,20 @@
                                 </svg>
                                 <p>Mulai percakapan dengan AI Assistant tentang sistem manajemen pengetahuan</p>
                             </div>
-                            
+
                             <div v-for="(message, index) in chatMessages" :key="index" class="mb-4">
                                 <div :class="message.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
                                     <div :class="[
                                         'max-w-xs lg:max-w-md px-4 py-2 rounded-lg',
-                                        message.role === 'user' 
-                                            ? 'bg-purple-500 text-white' 
+                                        message.role === 'user'
+                                            ? 'bg-purple-500 text-white'
                                             : 'bg-gray-100 text-gray-800'
                                     ]">
                                         <p class="text-sm whitespace-pre-wrap">{{ message.content }}</p>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div v-if="aiLoading" class="flex justify-start mb-4">
                                 <div class="bg-white border border-gray-200 px-4 py-2 rounded-lg">
                                     <div class="flex items-center space-x-2">
@@ -395,7 +395,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Message Input -->
                         <div class="flex space-x-2">
                             <input
@@ -495,14 +495,14 @@ const search = () => {
         ...searchForm,
         tags: selectedTagIds.value.length > 0 ? selectedTagIds.value : undefined
     }
-    
+
     // Remove empty values
     Object.keys(filterParams).forEach(key => {
         if (filterParams[key] === '' || filterParams[key] === null || filterParams[key] === undefined) {
             delete filterParams[key]
         }
     })
-    
+
     router.get('/knowledge/public', filterParams, {
         preserveState: true,
         preserveScroll: true
@@ -525,7 +525,7 @@ const tagNameById = (id) => {
     // Cari di tagOptions terlebih dahulu
     const tag = tagOptions.value.find(t => t.id === id)
     if (tag) return tag.name
-    
+
     // Jika tidak ditemukan, cari di selectedTags cache
     const selectedTag = selectedTags.value.find(t => t.id === id)
     return selectedTag?.name || `Tag ${id}`
@@ -559,7 +559,7 @@ const searchTags = async () => {
         tagOptions.value = []
         return
     }
-    
+
     try {
         const response = await axios.get('/api/knowledge/tags', {
             params: { q: tagsQuery.value }
@@ -611,9 +611,9 @@ const formatDate = (dateString) => {
 
 // Computed properties for filter state
 const hasActiveFilters = computed(() => {
-    return searchForm.search || 
-           searchForm.category_id || 
-           searchForm.skpd_id || 
+    return searchForm.search ||
+           searchForm.category_id ||
+           searchForm.skpd_id ||
            selectedTagIds.value.length > 0
 })
 
@@ -654,18 +654,18 @@ const closeAIModal = () => {
 
 const sendMessage = async () => {
     if (!currentMessage.value.trim() || aiLoading.value) return
-    
+
     const message = currentMessage.value.trim()
     currentMessage.value = ''
-    
+
     // Add user message
     chatMessages.value.push({
         role: 'user',
         content: message
     })
-    
+
     aiLoading.value = true
-    
+
     try {
         // Call Gemini AI API
         const response = await fetch('/api/ai/gemini/chat', {
@@ -683,13 +683,13 @@ const sendMessage = async () => {
                 }
             })
         })
-        
+
         if (!response.ok) {
             throw new Error('Failed to get AI response')
         }
-        
+
         const data = await response.json()
-        
+
         // Add AI response
         chatMessages.value.push({
             role: 'assistant',
