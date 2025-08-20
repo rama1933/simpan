@@ -57,7 +57,7 @@ class KnowledgeVersionSeeder extends Seeder
                         'category_id' => $category->id,
                         'skpd_id' => $skpd->id,
                         'status' => $this->getRandomStatus($i, $versionCount),
-                        'verification_status' => $this->getRandomVerificationStatus(),
+                        'verification_status' => $this->getRandomVerificationStatus($i, $versionCount),
                         'change_type' => $i === 1 ? 'created' : 'updated',
                         'change_reason' => $this->getChangeReason($i),
                         'effective_date' => $this->getRandomDate(),
@@ -106,17 +106,22 @@ class KnowledgeVersionSeeder extends Seeder
 
     private function getRandomStatus($versionNumber, $totalVersions)
     {
-        // Latest version is usually published, older versions are archived
+        // Ensure at least one version is published (preferably the latest)
         if ($versionNumber === $totalVersions) {
-            return collect(['published', 'draft'])->random();
+            return 'published'; // Latest version is always published
         } else {
             return collect(['archived', 'published'])->random();
         }
     }
 
-    private function getRandomVerificationStatus()
+    private function getRandomVerificationStatus($versionNumber, $totalVersions)
     {
-        return collect(['verified', 'pending', 'rejected'])->random();
+        // Ensure at least one version is verified (preferably the latest)
+        if ($versionNumber === $totalVersions) {
+            return 'verified'; // Latest version is always verified
+        } else {
+            return collect(['verified', 'pending', 'rejected'])->random();
+        }
     }
 
     private function getChangeReason($versionNumber)
