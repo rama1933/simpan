@@ -69,13 +69,11 @@ class PublicKnowledgeSeeder extends Seeder
         ];
 
         for ($i = 1; $i <= 100; $i++) {
-            // Random year between 2020-2025
-            $year = rand(2020, 2025);
-            $month = rand(1, 12);
-            $day = rand(1, 28);
-            
-            // Create random date
-            $publishedDate = Carbon::create($year, $month, $day);
+            // Random date between 2023-01-01 and 2025-07-31
+            $startDate = Carbon::create(2023, 1, 1);
+            $endDate = Carbon::create(2025, 7, 31);
+            $randomDays = rand(0, $startDate->diffInDays($endDate));
+            $publishedDate = $startDate->copy()->addDays($randomDays);
             
             // Random title with number
             $baseTitle = $titles[array_rand($titles)];
@@ -83,7 +81,7 @@ class PublicKnowledgeSeeder extends Seeder
             
             // Random content
             $content = $contentTemplates[array_rand($contentTemplates)] . "\n\n";
-            $content .= "Dokumen ini merupakan revisi ke-{$i} yang telah disesuaikan dengan perkembangan terbaru di tahun {$year}. ";
+            $content .= "Dokumen ini merupakan revisi ke-{$i} yang telah disesuaikan dengan perkembangan terbaru di tahun {$publishedDate->year}. ";
             $content .= "Berisi panduan praktis, contoh implementasi, dan evaluasi hasil yang telah terbukti efektif di berbagai instansi pemerintah. ";
             $content .= "Dokumen ini dapat digunakan sebagai referensi untuk meningkatkan kualitas pelayanan dan kinerja organisasi.";
             
@@ -115,7 +113,7 @@ class PublicKnowledgeSeeder extends Seeder
         }
 
         $this->command->info('100 public knowledge data has been seeded successfully!');
-        $this->command->info('Data range: 2020-2025');
+        $this->command->info('Data range: 2023-2025 (until July)');
         $this->command->info('All data is published and verified for public access.');
     }
 }

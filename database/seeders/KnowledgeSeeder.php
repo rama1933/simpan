@@ -2,14 +2,29 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Seeder;
 use App\Models\Knowledge;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\MasterSKPD;
-use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 
 class KnowledgeSeeder extends Seeder
 {
+    /**
+     * Generate random date between 2023-01-01 and 2025-07-31
+     */
+    private function getRandomDate(): Carbon
+    {
+        $startDate = Carbon::create(2023, 1, 1);
+        $endDate = Carbon::create(2025, 7, 31);
+        $randomDays = rand(0, $startDate->diffInDays($endDate));
+        return $startDate->copy()->addDays($randomDays);
+    }
+
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         // Get admin user
@@ -42,7 +57,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Keselamatan Kerja',
                 'skpd_index' => 0,
                 'status' => 'published',
-                'published_at' => now()->subDays(5)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'SOP Penggunaan APD (Alat Pelindung Diri)',
@@ -50,7 +65,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Keselamatan Kerja',
                 'skpd_index' => 0,
                 'status' => 'published',
-                'published_at' => now()->subDays(3)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Prosedur Penanganan Kecelakaan Kerja',
@@ -58,7 +73,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Keselamatan Kerja',
                 'skpd_index' => 0,
                 'status' => 'published',
-                'published_at' => now()->subDays(1)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Standar Kompetensi Kerja Nasional (SKKNI)',
@@ -66,7 +81,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pendidikan',
                 'skpd_index' => 0,
                 'status' => 'published',
-                'published_at' => now()->subDays(7)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Panduan Pelatihan Vokasi',
@@ -74,7 +89,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pendidikan',
                 'skpd_index' => 0,
                 'status' => 'published',
-                'published_at' => now()->subDays(9)
+                'published_at' => $this->getRandomDate()
             ],
 
             // ===== DINAS SOSIAL (SKPD002) =====
@@ -84,7 +99,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pelayanan Publik',
                 'skpd_index' => 1,
                 'status' => 'published',
-                'published_at' => now()->subDays(7)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Panduan Penanganan Penyandang Disabilitas',
@@ -92,7 +107,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pelayanan Publik',
                 'skpd_index' => 1,
                 'status' => 'published',
-                'published_at' => now()->subDays(4)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'SOP Bantuan Bencana Alam',
@@ -100,7 +115,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pelayanan Publik',
                 'skpd_index' => 1,
                 'status' => 'published',
-                'published_at' => now()->subDays(6)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Panduan Pemberdayaan Masyarakat',
@@ -108,7 +123,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pelayanan Publik',
                 'skpd_index' => 1,
                 'status' => 'published',
-                'published_at' => now()->subDays(8)
+                'published_at' => $this->getRandomDate()
             ],
 
             // ===== DINAS KESEHATAN (SKPD003) =====
@@ -118,7 +133,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Kesehatan',
                 'skpd_index' => 2,
                 'status' => 'published',
-                'published_at' => now()->subDays(6)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Standar Sanitasi Lingkungan Kerja',
@@ -126,7 +141,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Kesehatan',
                 'skpd_index' => 2,
                 'status' => 'published',
-                'published_at' => now()->subDays(2)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Panduan Kesehatan Kerja',
@@ -134,7 +149,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Kesehatan',
                 'skpd_index' => 2,
                 'status' => 'published',
-                'published_at' => now()->subDays(10)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'SOP Pelayanan Kesehatan Darurat',
@@ -142,7 +157,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Kesehatan',
                 'skpd_index' => 2,
                 'status' => 'published',
-                'published_at' => now()->subDays(12)
+                'published_at' => $this->getRandomDate()
             ],
 
             // ===== DINAS PENDIDIKAN (SKPD004) =====
@@ -152,7 +167,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pendidikan',
                 'skpd_index' => 3,
                 'status' => 'published',
-                'published_at' => now()->subDays(8)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Standar Kompetensi Kerja Nasional Indonesia (SKKNI)',
@@ -160,7 +175,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pendidikan',
                 'skpd_index' => 3,
                 'status' => 'published',
-                'published_at' => now()->subDays(5)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Panduan Pengembangan SDM',
@@ -168,7 +183,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pendidikan',
                 'skpd_index' => 3,
                 'status' => 'published',
-                'published_at' => now()->subDays(11)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'SOP Akreditasi Lembaga Pelatihan',
@@ -176,7 +191,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Pendidikan',
                 'skpd_index' => 3,
                 'status' => 'published',
-                'published_at' => now()->subDays(13)
+                'published_at' => $this->getRandomDate()
             ],
 
             // ===== DINAS PERHUBUNGAN (SKPD005) =====
@@ -186,7 +201,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Transportasi',
                 'skpd_index' => 4,
                 'status' => 'published',
-                'published_at' => now()->subDays(9)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Panduan Pengelolaan Terminal',
@@ -194,7 +209,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Transportasi',
                 'skpd_index' => 4,
                 'status' => 'published',
-                'published_at' => now()->subDays(6)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'SOP Penanganan Kecelakaan Lalu Lintas',
@@ -202,7 +217,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Transportasi',
                 'skpd_index' => 4,
                 'status' => 'published',
-                'published_at' => now()->subDays(14)
+                'published_at' => $this->getRandomDate()
             ],
             [
                 'title' => 'Panduan Keselamatan Jalan',
@@ -210,7 +225,7 @@ class KnowledgeSeeder extends Seeder
                 'category' => 'Transportasi',
                 'skpd_index' => 4,
                 'status' => 'published',
-                'published_at' => now()->subDays(15)
+                'published_at' => $this->getRandomDate()
             ]
         ];
 
@@ -220,15 +235,22 @@ class KnowledgeSeeder extends Seeder
             $skpd = $skpds[$knowledgeData['skpd_index']];
 
             if ($category && $skpd) {
-                Knowledge::create([
-                    'title' => $knowledgeData['title'],
-                    'content' => $knowledgeData['content'],
-                    'author_id' => $user->id,
-                    'category_id' => $category->id,
-                    'skpd_id' => $skpd->id,
-                    'status' => $knowledgeData['status'],
-                    'published_at' => $knowledgeData['published_at']
-                ]);
+                $randomDate = $this->getRandomDate();
+                Knowledge::firstOrCreate(
+                    [
+                        'title' => $knowledgeData['title'],
+                        'skpd_id' => $skpd->id
+                    ],
+                    [
+                        'content' => $knowledgeData['content'],
+                        'author_id' => $user->id,
+                        'category_id' => $category->id,
+                        'status' => $knowledgeData['status'],
+                        'published_at' => $knowledgeData['published_at'],
+                        'created_at' => $randomDate,
+                        'updated_at' => $randomDate
+                    ]
+                );
             }
         }
 

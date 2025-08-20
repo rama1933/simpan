@@ -17,10 +17,13 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             MasterSKPDSeeder::class,
+            SKPDUserSeeder::class,
             CategorySeeder::class,
             MasterTagSeeder::class,
+            TagSeeder::class,
             KnowledgeSeeder::class,
             KnowledgeVersionSeeder::class,
+            HSSKnowledgeSeeder::class,
         ]);
     }
 }

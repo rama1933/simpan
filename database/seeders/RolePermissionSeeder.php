@@ -22,16 +22,16 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Create Admin role
-        $adminRole = Role::create(['name' => 'Admin']);
-        $adminRole->givePermissionTo(Permission::all());
+        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+        $adminRole->syncPermissions(Permission::all());
 
         // Create User SKPD role
-        $userRole = Role::create(['name' => 'User SKPD']);
-        $userRole->givePermissionTo([
+        $userRole = Role::firstOrCreate(['name' => 'User SKPD']);
+        $userRole->syncPermissions([
             'knowledge.create',
             'knowledge.read',
             'knowledge.update'

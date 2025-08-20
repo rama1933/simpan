@@ -86,7 +86,10 @@ class MasterSKPDSeeder extends Seeder
         ];
 
         foreach ($skpds as $skpd) {
-            MasterSKPD::create($skpd);
+            MasterSKPD::firstOrCreate(
+                ['kode_skpd' => $skpd['kode_skpd']],
+                $skpd
+            );
         }
     }
 }

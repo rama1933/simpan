@@ -15,6 +15,17 @@ use Carbon\Carbon;
 class KnowledgeVersionSeeder extends Seeder
 {
     /**
+     * Generate random date between 2023-01-01 and 2025-07-31
+     */
+    private function getRandomDate(): Carbon
+    {
+        $startDate = Carbon::create(2023, 1, 1);
+        $endDate = Carbon::create(2025, 7, 31);
+        $randomDays = rand(0, $startDate->diffInDays($endDate));
+        return $startDate->copy()->addDays($randomDays);
+    }
+
+    /**
      * Run the database seeds.
      */
     public function run(): void
@@ -34,30 +45,37 @@ class KnowledgeVersionSeeder extends Seeder
                 $category = $categories->random();
                 $skpd = $skpds->random();
                 
-                $version = KnowledgeVersion::create([
-                    'knowledge_id' => $knowledge->id,
-                    'version_number' => $i,
-                    'title' => $knowledge->title . ' - Versi ' . $i,
-                    'content' => $this->generateVersionContent($knowledge->content, $i),
-                    'summary' => $this->generateSummary($knowledge->title, $i),
-                    'category_id' => $category->id,
-                    'skpd_id' => $skpd->id,
-                    'status' => $this->getRandomStatus($i, $versionCount),
-                    'verification_status' => $this->getRandomVerificationStatus(),
-                    'change_type' => $i === 1 ? 'created' : 'updated',
-                    'change_reason' => $this->getChangeReason($i),
-                    'effective_date' => Carbon::now()->subDays(rand(1, 30)),
-                    'expiry_date' => Carbon::now()->addDays(rand(30, 365)),
-                    'created_by' => $user->id,
-                    'verified_by' => $users->random()->id,
-                    'verified_at' => Carbon::now()->subDays(rand(1, 10)),
-                    'created_at' => Carbon::now()->subDays(rand(1, 60)),
-                    'updated_at' => Carbon::now()->subDays(rand(1, 30)),
-                ]);
+                $version = KnowledgeVersion::firstOrCreate(
+                    [
+                        'knowledge_id' => $knowledge->id,
+                        'version_number' => $i
+                    ],
+                    [
+                        'title' => $knowledge->title . ' - Versi ' . $i,
+                        'content' => $this->generateVersionContent($knowledge->content, $i),
+                        'summary' => $this->generateSummary($knowledge->title, $i),
+                        'category_id' => $category->id,
+                        'skpd_id' => $skpd->id,
+                        'status' => $this->getRandomStatus($i, $versionCount),
+                        'verification_status' => $this->getRandomVerificationStatus(),
+                        'change_type' => $i === 1 ? 'created' : 'updated',
+                        'change_reason' => $this->getChangeReason($i),
+                        'effective_date' => $this->getRandomDate(),
+                        'expiry_date' => $this->getRandomDate()->addDays(rand(30, 365)),
+                        'created_by' => $user->id,
+                        'verified_by' => $users->random()->id,
+                        'verified_at' => $this->getRandomDate(),
+                        'created_at' => $this->getRandomDate(),
+                        'updated_at' => $this->getRandomDate(),
+                    ]
+                );
 
-                // Attach random tags
-                $randomTags = $tags->random(rand(1, 3));
-                $version->tags()->attach($randomTags->pluck('id'));
+                // Sync random tags if available
+                if ($tags->isNotEmpty()) {
+                    $randomCount = min(rand(1, 3), $tags->count());
+                    $randomTags = $tags->random($randomCount);
+                    $version->tags()->sync($randomTags->pluck('id'));
+                }
             }
         }
     }
